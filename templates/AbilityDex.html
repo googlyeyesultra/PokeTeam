@@ -1,0 +1,8 @@
+{% extends "NavBar.html" %}
+{% block title %}Ability Dex{% endblock %}
+{% block below_navbar %}
+  Abilities in {{ dataset }}:
+  {% for abil in abilities %}
+    <br>{{abil}}
+  {% endfor %}
+{% endblock %}

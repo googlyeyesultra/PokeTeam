@@ -1,0 +1,10 @@
+{% if cores %}
+  {% for core in cores %}
+    <br>
+    {% for poke in core %}
+      {{ poke }}&nbsp
+    {% endfor %}
+  {% endfor %}
+{% else %}
+  No cores found! This can be a result of too high of a usage threshold or either too large or too small a score requirement.
+{% endif %}

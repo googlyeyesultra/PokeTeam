@@ -1,0 +1,28 @@
+{% extends "NavBar.html" %}
+{% block title %}Pokemon Team Builder{% endblock %}
+{% block below_navbar %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+Team builder for {{ dataset }}.
+Enter anywhere from 1-6 Pokemon for analysis and suggestions.
+<form id=analyze>
+<div class="input pokemon">
+ 	{% for selector in form.selectors %}
+   {{selector}}
+  {% endfor %}
+</div>
+<fieldset class="advanced">
+  <legend>Advanced Options</legend>
+  <dl>
+  <dt>Counter Weighting: {{ form.counter_setting(min='0', required='true') }}</dt>
+  <dd>The counters score encompasses how good a given Pokemon is against Pokemon that are threatening to the team.</dd>
+  <dt>Team Weighting: {{ form.team_setting(min='0', required='true') }}</dt>
+  <dd>The team score encompasses how much more or less often Pokemon are played together.</dd>
+  <dt>Usage Weighting: {{ form.usage_setting(min='0', required='true') }}</dt>
+  <dd>The usage score encompasses how often a Pokemon is played in the format.</dd>
+  </dl>
+</fieldset>
+<input type="submit" value="Analyze">
+<script src="{{ url_for('static', filename='TeamBuilderScript.js') }}"></script>
+</form>
+<div id="analysis_location"></div>
+{% endblock %}

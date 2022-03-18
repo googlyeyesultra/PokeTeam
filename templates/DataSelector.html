@@ -1,0 +1,17 @@
+{% extends "Base.html" %}
+{% block title %}Pokemon Team Builder{% endblock %}
+{% block content %}
+  Pick the dataset to use. Be aware that less played tiers and higher rating requirements have less data available. I would recommend using the 1500 ratings.<br>
+  Also, checks and counters data are flawed for doubles formats. Doubles formats are only included due to a bug in Smogon's stat collection.<br>
+  <form action="" method="post">
+  <div class="input dataset">
+  {{form.selector}}
+  </div>
+  <input type="submit" value="Submit">
+  </form>
+  <br>
+  Or choose one of the most popular formats:
+  {% for dataset in top %}
+    <br>{{dataset}}
+  {% endfor %}
+{% endblock %}

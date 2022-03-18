@@ -1,0 +1,8 @@
+{% extends "NavBar.html" %}
+{% block title %}Move Dex{% endblock %}
+{% block below_navbar %}
+  Moves in {{ dataset }}:
+  {% for move in moves %}
+    <br>{{move}}
+  {% endfor %}
+{% endblock %}
