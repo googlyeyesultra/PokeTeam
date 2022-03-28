@@ -1,4 +1,6 @@
-{% if cores %}
+{% if cores is none %}
+The core finder generated uselessly large cores. Try raising the score requirement.
+{% elif cores %}
   {% for core in cores %}
     <br>
     {% for poke in core %}
@@ -6,5 +8,5 @@
     {% endfor %}
   {% endfor %}
 {% else %}
-  No cores found! This can be a result of too high of a usage threshold or either too large or too small a score requirement.
+No cores found! Try reducing the usage threshold or score requirement.
 {% endif %}
