@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, Markup, abort, url_for
+"""Handles routing, serving, and preparing pages."""
+import os
+from hashlib import blake2s
+import functools
+from flask import (Flask, render_template, request,
+                   redirect, Markup, abort, url_for)
 from waitress import serve
 import analyze
 import display as d
-import os
 import update
-from hashlib import blake2s
 import corefinder
-import functools
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -15,6 +17,7 @@ app.config['SECRET_KEY'] = 'DBE71E66D9EC317B7D2F13DB134F2'
 
 @functools.lru_cache(maxsize=128, typed=False)
 def get_md(dataset):
+    """Get MetagameData object for a format."""
     try:
         return analyze.MetagameData("datasets/" + dataset + ".json",
                                     "datasets/" + dataset + "_threats.npy")
@@ -24,34 +27,37 @@ def get_md(dataset):
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
+    """Page for selecting a format."""
     form = d.DataSelectForm(request.form)
-    form.selector.choices = sorted(
-        [filename[:-5] for filename in os.listdir("datasets") if ".json" in filename])
+    form.selector.choices = sorted([filename[:-5]
+                                    for filename in os.listdir("datasets")
+                                    if ".json" in filename])
 
     if request.method == 'POST':
         return redirect(url_for("analysis", dataset=request.form["selector"]))
-    else:
-        with open("datasets/top_formats") as f:
-            lines = []
-            top = f.read().splitlines()
-            for f in top:
-                format_name, ratings = f.split(" ")
-                line = format_name
-                for rating in ratings.split(","):
-                    link = d.link_for_analysis(format_name, rating)
-                    line += " " + link
-                lines.append(line)
 
-        return render_template("DataSelector.html", form=form, top=lines)
+    with open("datasets/top_formats", encoding="utf-8") as f:
+        lines = []
+        top = f.read().splitlines()
+        for metagame in top:
+            format_name, ratings = metagame.split(" ")
+            line = format_name
+            for rating in ratings.split(","):
+                link = d.link_for_analysis(format_name, rating)
+                line += " " + link
+            lines.append(line)
+
+    return render_template("DataSelector.html", form=form, top=lines)
 
 
 @app.route("/pokemon/<dataset>/<poke>/")
 def display_pokemon(dataset, poke):
+    """Page for displaying data for a specific Pokemon."""
     md = get_md(dataset)
     if poke not in md.pokemon:
         abort(404)
 
-    usage = "{:.1%}".format(md.pokemon[poke]["usage"])
+    usage = f'{md.pokemon[poke]["usage"]:.1%}'
 
     counters_table = d.CountersTable(poke, md, dataset)
     team_table = d.TeamTable(poke, md, dataset)
@@ -59,11 +65,16 @@ def display_pokemon(dataset, poke):
     items_table = d.ItemsTable(poke, md, dataset)
     abilities_table = d.AbilitiesTable(poke, md, dataset)
 
-    return render_template("PokemonInfo.html", poke=poke, dataset=dataset, usage=usage, counters=counters_table, team=team_table, items=items_table, moves=moves_table, abilities=abilities_table)
+    return render_template("PokemonInfo.html",
+                           poke=poke, dataset=dataset,
+                           usage=usage, counters=counters_table,
+                           team=team_table, items=items_table,
+                           moves=moves_table, abilities=abilities_table)
 
 
 @app.route("/pokemon/<dataset>/")
 def pokedex(dataset):
+    """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
     pokemon = [d.link_for_poke(dataset, p) for p in sorted(md.pokemon.keys())]
     return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset)
@@ -71,17 +82,20 @@ def pokedex(dataset):
 
 @app.route("/items/<dataset>/<item>/")
 def display_item(dataset, item):
+    """Page for displaying information about an item."""
     md = get_md(dataset)
 
     item_holders = d.ItemHoldersTable(item, md, dataset)
     if not item_holders.items:
         abort(404)
 
-    return render_template("ItemInfo.html", item=item, dataset=dataset, holders=item_holders)
+    return render_template("ItemInfo.html",
+                           item=item, dataset=dataset, holders=item_holders)
 
 
 @app.route("/items/<dataset>/")
 def item_dex(dataset):
+    """Page for listing all items in a format."""
     md = get_md(dataset)
 
     items = set()
@@ -92,11 +106,13 @@ def item_dex(dataset):
             items.add(item[0])
 
     items_display = [d.link_for_item(dataset, i) for i in sorted(list(items))]
-    return render_template("ItemDex.html", items=items_display, dataset=dataset)
+    return render_template("ItemDex.html",
+                           items=items_display, dataset=dataset)
 
 
 @app.route("/moves/<dataset>/<move>/")
 def display_move(dataset, move):
+    """Page for information about a specific move."""
     md = get_md(dataset)
 
     move_users = d.MoveUsersTable(move, md, dataset)
@@ -104,11 +120,13 @@ def display_move(dataset, move):
     if not move_users.items:
         abort(404)
 
-    return render_template("MoveInfo.html", move=move, dataset=dataset, users=move_users)
+    return render_template("MoveInfo.html",
+                           move=move, dataset=dataset, users=move_users)
 
 
 @app.route("/moves/<dataset>/")
 def move_dex(dataset):
+    """Page that lists all moves in a format."""
     md = get_md(dataset)
 
     moves = set()
@@ -120,11 +138,13 @@ def move_dex(dataset):
 
     moves_display = [d.link_for_move(dataset, m)
                      for m in sorted(list(moves)) if m]
-    return render_template("MoveDex.html", moves=moves_display, dataset=dataset)
+    return render_template("MoveDex.html",
+                           moves=moves_display, dataset=dataset)
 
 
 @app.route("/abilities/<dataset>/<ability>/")
 def display_ability(dataset, ability):
+    """Page for details about a specific ability."""
     md = get_md(dataset)
 
     abil_users = d.AbilityUsersTable(ability, md, dataset)
@@ -132,11 +152,13 @@ def display_ability(dataset, ability):
     if not abil_users.items:
         abort(404)
 
-    return render_template("AbilityInfo.html", abil=ability, dataset=dataset, users=abil_users)
+    return render_template("AbilityInfo.html",
+                           abil=ability, dataset=dataset, users=abil_users)
 
 
 @app.route("/abilities/<dataset>/")
 def ability_dex(dataset):
+    """Page that lists all abilities in a format."""
     md = get_md(dataset)
 
     abils = set()
@@ -147,11 +169,13 @@ def ability_dex(dataset):
 
     abilities_display = [d.link_for_ability(
         dataset, a) for a in sorted(list(abils)) if a]
-    return render_template("AbilityDex.html", abilities=abilities_display, dataset=dataset)
+    return render_template("AbilityDex.html",
+                           abilities=abilities_display, dataset=dataset)
 
 
 @app.route("/analysis/<dataset>/")
 def analysis(dataset):
+    """Page that contains the main team builder."""
     form = d.PokemonForm(request.form)
     md = get_md(dataset)
     sorted_pokemon = sorted(md.pokemon)
@@ -168,8 +192,7 @@ def analysis(dataset):
 
 @app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
 def output_analysis(dataset):
-    threats_table = None
-    recommendations_table = None
+    """Part of page responsible for displaying team building results."""
     team = None
     swaps_text = None
     md = get_md(dataset)
@@ -193,29 +216,39 @@ def output_analysis(dataset):
     if suggested_team:
         js_array = "['" + "','".join(suggested_team) + "']"
         suggested_team = [d.link_for_poke(dataset, t) for t in suggested_team]
-        try_team_link = '<a href="javascript:tryTeam({})" class="try_team_link">Try it!</span></a>'.format(
-            js_array)
-        team = Markup("Possible team including your selections: {}. {}".format(
-            ", ".join(suggested_team), try_team_link))
+        try_team_link = (f'<a href="javascript:tryTeam({js_array})" '
+                          'class="try_team_link">Try it!</span></a>')
+        team = Markup("Possible team including your selections: "
+                     f"{', '.join(suggested_team)}. {try_team_link}")
 
     if swaps:
         swaps_text = "Consider making one of the following changes:"
         for swap in swaps:
-            swaps_text += "<br>Swap {} for {}.".format(d.link_for_poke(dataset, swap), d.link_for_poke(dataset, swaps[swap]))
-            swaps_text += ' <a href="javascript:handleSwapPoke(\'{}\', \'{}\')" class="swap_link"><span class="fas fa-exchange-alt"></span></a>'.format(swap, swaps[swap])
+            swaps_text += (
+                f"<br>Swap {d.link_for_poke(dataset, swap)}"
+                f" for {d.link_for_poke(dataset, swaps[swap])}."
+                ' <a href="javascript:handleSwapPoke('
+                f"'{swap}', '{swaps[swap]}')\" "
+                'class="swap_link">'
+                '<span class="fas fa-exchange-alt"></span></a>')
 
         swaps_text = Markup(swaps_text)
 
-    return render_template("TeamBuilderAnalysis.html", threats=threats_table, recommendations=recommendations_table, team=team, swaps=swaps_text)
+    return render_template("TeamBuilderAnalysis.html", threats=threats_table,
+                           recommendations=recommendations_table, team=team,
+                           swaps=swaps_text)
 
 
 @app.route("/cores/<dataset>/")
 def cores(dataset):
-    return render_template("CoreFinder.html", dataset=dataset, form=d.CoreFinderForm())
+    """Page for finding cores in a format."""
+    return render_template("CoreFinder.html",
+                           dataset=dataset, form=d.CoreFinderForm())
 
 
 @app.route("/cores/<dataset>/find_cores", methods=['POST'])
 def find_cores(dataset):
+    """Part of page responsible for displaying cores in format."""
     md = get_md(dataset)
 
     usage_threshold = float(request.form["usage_threshold"])
@@ -223,7 +256,7 @@ def find_cores(dataset):
     cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
     unlinked_cores = cf.find_cores()
     if unlinked_cores is None:
-        return render_template("CoreFinderResults.html", None)
+        return render_template("CoreFinderResults.html", cores=None)
 
     linked_cores = []
     for core in unlinked_cores:
@@ -234,17 +267,20 @@ def find_cores(dataset):
 
 @app.route("/update/<key>/")
 def request_update(key):
-    # This isn't exactly real security, but it's hopefully enough to prevent random people forcing updates.
+    """Endpoint to download new statistics. Not for public use."""
+    # This isn't real security,
+    # but it's hopefully enough to prevent random people forcing updates.
     blake = blake2s()
     blake.update(key.encode())
-    hex = blake.hexdigest()
-    expected_hex = '0a7758f62d5f8c069bf2a4c24fcb98dc23df90b738cb7ac1e792ed702c746fb8'
+    hex_result = blake.hexdigest()
+    expected_hex = \
+        '0a7758f62d5f8c069bf2a4c24fcb98dc23df90b738cb7ac1e792ed702c746fb8'
 
-    if hex == expected_hex:
-        update.update()
-        return("Update complete!")
-    else:
+    if hex_result != expected_hex:
         abort(401)
+
+    update.update()
+    return "Update complete!"
 
 
 if __name__ == "__main__":

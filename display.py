@@ -31,13 +31,13 @@ class CoreFinderForm(Form):
 class FloatCol(Col):  # Just truncates floats down a bit.
     """Generic float table column. Truncates floats."""
     def td_format(self, content):
-        return "{:.2f}".format(content)
+        return f"{content:.2f}"
 
 
 class PercentCol(Col):
     """Generic percent table column."""
     def td_format(self, content):
-        return "{:.0%}".format(content)
+        return f"{content:.0%}"
 
 
 class ThreatsTable(Table):
@@ -54,6 +54,7 @@ class ThreatsTable(Table):
 
 
 class CountersTable(Table):
+    """Table that lists counters to a given Pokemon."""
     poke = Col("Counter")
     rating = FloatCol("Rating", column_html_attrs={"align": "right"})
 
@@ -202,6 +203,7 @@ class RecommendationsTable(Table):
     team = FloatCol("Team Score")
     usage = FloatCol("Usage Score")
 
+    @staticmethod
     def add_link(poke):
         """Build link to add the Pokemon to the team."""
         return Markup(

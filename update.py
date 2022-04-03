@@ -50,7 +50,8 @@ def update():
     top_formats = sorted(format_playstats,
                          key=format_playstats.get, reverse=True)[:10]
 
-    with open(TEMP_DATA_DIR + TOP_FORMATS_FILE, "w") as top_formats_fd:
+    with open(TEMP_DATA_DIR + TOP_FORMATS_FILE,
+              "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
             line = form + " " + ",".join(sorted(format_ratings[form])) + "\n"
             top_formats_fd.write(line)
@@ -68,7 +69,7 @@ def _download_data():
 
     stats_page = requests.get(STATS_URL)
 
-    last_update = re.findall(r'\<a href="(.*)"', stats_page.text)[-1]
+    last_update = re.findall(r'<a href="(.*)"', stats_page.text)[-1]
 
     chaos_url = STATS_URL + last_update + "chaos/"
     chaos_page = requests.get(chaos_url)
@@ -79,7 +80,7 @@ def _download_data():
         for file in os.scandir(TEMP_DATA_DIR):
             os.remove(file)
 
-    for metagame in re.findall(r'\<a href="(.*)"', chaos_page.text)[1:]:
+    for metagame in re.findall(r'<a href="(.*)"', chaos_page.text)[1:]:
         meta_url = chaos_url + metagame
         req = requests.get(meta_url)
         with open(TEMP_DATA_DIR + metagame, "wb") as metagame_fd:
