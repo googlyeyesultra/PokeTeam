@@ -63,9 +63,6 @@ def prepare_files(json_file, threat_file):
 
         data["total_pokes"] = total
 
-    with open(json_file, "w", encoding="utf-8") as file:
-        json.dump(data, file)
-
     with open(threat_file, "wb") as file:
         threat_matrix = np.empty((len(pokemon), len(pokemon)))
         for index, mon in enumerate(pokemon):
@@ -74,6 +71,13 @@ def prepare_files(json_file, threat_file):
                     _threat_for_poke(pokemon, c_mon, mon)
 
         np.save(file, threat_matrix)
+
+    # Clear the raw checks/counters data since we only need the matrix.
+    for poke in pokemon:
+        del pokemon[poke]["Checks and Counters"]
+
+    with open(json_file, "w", encoding="utf-8") as file:
+        json.dump(data, file)
 
     # Return a little info for the top format list.
     return data["info"]["metagame"], data["info"]["number of battles"]
