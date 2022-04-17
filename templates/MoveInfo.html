@@ -1,6 +1,6 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ move }} Data{% endblock %}
 {% block below_navbar %}
-Data for {{ move }}.
-<br>{{ users }}
+  Data for <span class="move-name" data-move="{{ move }}">{{ move }}</span>.
+  <br>{{ users }}
 {% endblock %}

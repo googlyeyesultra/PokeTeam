@@ -42,10 +42,10 @@ def select_data():
         top = f.read().splitlines()
         for metagame in top:
             format_name, ratings = metagame.split(" ")
-            line = format_name
+            line = [format_name]
             for rating in ratings.split(","):
                 link = d.link_for_analysis(format_name, rating)
-                line += " " + link
+                line.append(link)
             lines.append(line)
 
     return render_template("DataSelector.html", form=form, top=lines)

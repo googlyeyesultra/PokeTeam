@@ -1,6 +1,6 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ abil }} Data{% endblock %}
 {% block below_navbar %}
-  Data for {{ abil }}.
+  Data for <span class="abil-name" data-abil="{{ abil }}">{{ abil }}</span>.
   <br>{{ users }}
 {% endblock %}

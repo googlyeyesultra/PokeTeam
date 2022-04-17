@@ -12,8 +12,14 @@
   </form>
   <br>
   Or choose one of the most popular formats:
-  {% for dataset in top %}
-    <br>{{dataset}}
+  <table class="alignment-table" style="text-align:right">
+  {% for format in top %}
+    <tr>
+    {% for f in format %}
+      <td>{{f}}</td>
+    {% endfor %}
+    </tr>
   {% endfor %}
+  </table>
 </div>
 {% endblock %}

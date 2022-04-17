@@ -251,14 +251,14 @@ def link_for_item(dataset, item):
     """Build link for an item page within given dataset."""
     url = url_for("display_item", dataset=dataset, item=item)
     return Markup(f'<a href="{url}"><span class="item-icon" data-item="{item}">'
-                  f'</span>{item}</a>')
+                  f'</span><span class="item-name" data-item="{item}">{item}</span></a>')
 
 def link_for_move(dataset, move):
     """Build link for a move page within given dataset."""
     url = url_for("display_move", dataset=dataset, move=move)
-    return Markup(f'<a href="{url}">{move}</a>')
+    return Markup(f'<a href="{url}"><span class="move-name" data-move="{move}">{move}</span></a>')
 
 def link_for_ability(dataset, abil):
     """Build link for an ability page within given dataset."""
     url = url_for("display_ability", dataset=dataset, ability=abil)
-    return Markup(f'<a href="{url}">{abil}</a>')
+    return Markup(f'<a href="{url}"><span class="abil-name" data-abil="{abil}">{abil}</span></a>')
