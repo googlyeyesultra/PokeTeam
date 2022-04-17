@@ -2,11 +2,11 @@
 The core finder generated uselessly large cores. Try raising the score requirement.
 {% elif cores %}
   {% for core in cores %}
-    <br>
     {% for poke in core %}
       {{ poke }}&nbsp
-    {% endfor %}
+    {% endfor %}<br>
   {% endfor %}
+{% include "RenderIcons.html" %}
 {% else %}
 No cores found! Try reducing the usage threshold or score requirement.
 {% endif %}

@@ -9,6 +9,7 @@ import analyze
 import display as d
 import update
 import corefinder
+from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -19,8 +20,8 @@ app.config['SECRET_KEY'] = 'DBE71E66D9EC317B7D2F13DB134F2'
 def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
-        return analyze.MetagameData("datasets/" + dataset + ".json",
-                                    "datasets/" + dataset + "_threats.npy")
+        return analyze.MetagameData(DATA_DIR + dataset + ".json",
+                                    DATA_DIR + dataset + THREAT_FILE)
     except FileNotFoundError:
         abort(404)
 
@@ -36,7 +37,7 @@ def select_data():
     if request.method == 'POST':
         return redirect(url_for("analysis", dataset=request.form["selector"]))
 
-    with open("datasets/top_formats", encoding="utf-8") as f:
+    with open(DATA_DIR + TOP_FORMATS_FILE, encoding="utf-8") as f:
         lines = []
         top = f.read().splitlines()
         for metagame in top:
@@ -217,9 +218,9 @@ def output_analysis(dataset):
         js_array = "['" + "','".join(suggested_team) + "']"
         suggested_team = [d.link_for_poke(dataset, t) for t in suggested_team]
         try_team_link = (f'<a href="javascript:tryTeam({js_array})" '
-                          'class="try_team_link">Try it!</span></a>')
-        team = Markup("Possible team including your selections: "
-                     f"{', '.join(suggested_team)}. {try_team_link}")
+                         'class="try_team_link">(try it!)</span></a>')
+        team = Markup(f"Recommended team including your selections {try_team_link}:<br>"
+                      f"{'<br>'.join(suggested_team)}")
 
     if swaps:
         swaps_text = "Consider making one of the following changes:"
@@ -281,7 +282,6 @@ def request_update(key):
 
     update.update()
     return "Update complete!"
-
 
 if __name__ == "__main__":
     serve(app, host='0.0.0.0', port=8080)

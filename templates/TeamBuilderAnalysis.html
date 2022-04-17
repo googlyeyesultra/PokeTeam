@@ -1,4 +1,6 @@
 <script src="https://kit.fontawesome.com/5c40c5d0e7.js" crossorigin="anonymous"></script>
-<div style="float: left; margin-right:10px">{{ recommendations if recommendations }}</div>
-{{ threats if threats }} <br>
+<div style="float: left; margin-right:10px; display:inline-block;">{{ recommendations }}</div>
+<div style="float: left; margin-right:10px; display:inline-block;">{{ threats }}</div>
 {{ team if team }} {{ swaps if swaps }}
+
+{% include "RenderIcons.html" %}

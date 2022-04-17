@@ -1,14 +1,21 @@
 {% extends "Base.html" %}
   {% block content %}
-  <div class="topnav">
-    <a href="{{ url_for('select_data') }}">Data Selector</a>
-    <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
-    <a href="{{ url_for('cores', dataset=dataset) }}">Core Finder</a>
-    <a href="{{ url_for('pokedex', dataset=dataset) }}">Pokedex</a>
-    <a href="{{ url_for('item_dex', dataset=dataset) }}">Item Dex</a>
-    <a href="{{ url_for('move_dex', dataset=dataset) }}">Move Dex</a>
-    <a href="{{ url_for('ability_dex', dataset=dataset) }}">Ability Dex</a>
+  <div class="format_name">
+    {{ dataset }}
   </div>
+  <div class="topnav">
+    <div class="topnav_links">
+      <a href="{{ url_for('select_data') }}">Data Selector</a>
+      <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
+      <a href="{{ url_for('cores', dataset=dataset) }}">Core Finder</a>
+      <a href="{{ url_for('pokedex', dataset=dataset) }}">Pokedex</a>
+      <a href="{{ url_for('item_dex', dataset=dataset) }}">Item Dex</a>
+      <a href="{{ url_for('move_dex', dataset=dataset) }}">Move Dex</a>
+      <a href="{{ url_for('ability_dex', dataset=dataset) }}">Ability Dex</a>
+    </div>
+  </div>
+  <div class="content">
   {% block below_navbar %}
   {% endblock %}
+  </div>
 {% endblock %}

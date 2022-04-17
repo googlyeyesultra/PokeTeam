@@ -1,8 +1,13 @@
 {% extends "NavBar.html" %}
 {% block title %}Item Dex{% endblock %}
 {% block below_navbar %}
-  Items in {{ dataset }}:
-  {% for item in items %}
-    <br>{{item}}
+<table class="alignment-table">
+  {% for itembatch in items|batch(6) %}
+    <tr>
+    {% for item in itembatch %}
+      <td>{{item}}</td>
+    {% endfor %}
+    </tr>
   {% endfor %}
+</table>
 {% endblock %}

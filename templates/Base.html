@@ -1,8 +1,13 @@
 <!doctype html>
 <html lang="en">
-<head><title>{% block title %}{% endblock %}</title></head>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% block content %}
 {% endblock %}
+{% include "RenderIcons.html" %}
+</body>
 </html>

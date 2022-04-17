@@ -1,8 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ poke }} Data{% endblock %}
 {% block below_navbar %}
-  Data for {{ poke }} in {{ dataset }}.
-  <br>Usage: {{ usage }}<br>
+  <img class="poke-sprite" data-poke="{{ poke }}"></img><br>
+  {{ poke }}<br>
+  Usage: {{ usage }}<br>
   <div style="float: left; margin-right:10px">
     {{ counters }}
   </div>

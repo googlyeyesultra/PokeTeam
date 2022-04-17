@@ -2,7 +2,6 @@
 {% block title %}Pokemon Team Builder{% endblock %}
 {% block below_navbar %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-Team builder for {{ dataset }}.
 Enter anywhere from 1-6 Pokemon for analysis and suggestions.
 <form id=analyze>
 <div class="input pokemon">
@@ -14,7 +13,7 @@ Enter anywhere from 1-6 Pokemon for analysis and suggestions.
   <legend>Advanced Options</legend>
   <dl>
   <dt>Counter Weighting: {{ form.counter_setting(min='0', required='true') }}</dt>
-  <dd>The counters score encompasses how good a given Pokemon is against Pokemon that are threatening to the team.</dd>
+  <dd>The counter score encompasses how good a given Pokemon is against Pokemon that are threatening to the team.</dd>
   <dt>Team Weighting: {{ form.team_setting(min='0', required='true') }}</dt>
   <dd>The team score encompasses how much more or less often Pokemon are played together.</dd>
   <dt>Usage Weighting: {{ form.usage_setting(min='0', required='true') }}</dt>

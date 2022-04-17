@@ -7,6 +7,7 @@ from wtforms.fields import DecimalField
 import analyze
 import corefinder
 
+_MAX_TABLE_LEN = 10
 
 class PokemonForm(Form):
     """Form containing Pokemon selectors and weightings for analysis."""
@@ -44,9 +45,10 @@ class ThreatsTable(Table):
     """Table that renders top threats."""
     poke = Col("Threat")
     rating = FloatCol("Rating", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, threats, dataset):
-        threats_to_display = sorted(threats.items(), key=lambda k: -k[1])[:10]
+        threats_to_display = sorted(threats.items(), key=lambda k: -k[1])[:_MAX_TABLE_LEN]
         threats_to_display = [(link_for_poke(dataset, t[0]), t[1])
                               for t in threats_to_display]
         super().__init__([dict(zip(["poke", "rating"], t))
@@ -57,11 +59,12 @@ class CountersTable(Table):
     """Table that lists counters to a given Pokemon."""
     poke = Col("Counter")
     rating = FloatCol("Rating", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, poke, md, dataset):
         dict_threats = md.find_counters(poke)
         counters_to_display = sorted(
-            dict_threats.items(), key=lambda k: -k[1])[:10]
+            dict_threats.items(), key=lambda k: -k[1])[:_MAX_TABLE_LEN]
         counters_to_display = [(link_for_poke(dataset, c[0]), c[1])
                                for c in counters_to_display]
         super().__init__([dict(zip(["poke", "rating"], t))
@@ -72,11 +75,12 @@ class TeamTable(Table):
     """Table that renders top teammates for a given Pokemon."""
     poke = Col("Teammate")
     rating = FloatCol("Rating", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, poke, md, dataset):
         teammates = md.partner_scores(poke)
         teammates_to_display = sorted(teammates.items(),
-                                      key=lambda k: -k[1])[:10]
+                                      key=lambda k: -k[1])[:_MAX_TABLE_LEN]
         teammates_to_display = [(link_for_poke(dataset, t[0]), t[1])
                                 for t in teammates_to_display]
         super().__init__([dict(zip(["poke", "rating"], t))
@@ -87,6 +91,7 @@ class ItemsTable(Table):
     """Table that shows what items a Pokemon uses."""
     item = Col("Item")
     usage = PercentCol("Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, poke, md, dataset):
         count = md.count_pokemon(poke)  # TODO move some of this into analyze?
@@ -100,6 +105,7 @@ class AbilitiesTable(Table):
     """Table that shows what abilities a Pokemon uses."""
     abil = Col("Ability")
     usage = PercentCol("Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, poke, md, dataset):
         count = md.count_pokemon(poke)  # TODO move some of this into analyze?
@@ -113,12 +119,13 @@ class MovesTable(Table):
     """Table that shows what moves a Pokemon uses."""
     move = Col("Move")
     usage = PercentCol("Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, poke, md, dataset):
         count = md.count_pokemon(poke)  # TODO move some of this into analyze?
         moves = sorted([(link_for_move(dataset, move[0]), move[1]/count)
                        for move in md.pokemon[poke]["Moves"].items()],
-                       key=lambda kv: -kv[1])[:10]
+                       key=lambda kv: -kv[1])[:_MAX_TABLE_LEN]
         super().__init__([dict(zip(["move", "usage"], t)) for t in moves])
 
 
@@ -130,6 +137,7 @@ class ItemHoldersTable(Table):
     hold_percent = PercentCol(
         "Item Usage", column_html_attrs={"align": "right"})
     usage = PercentCol("Pokemon Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, item, md, dataset):
         holders = [] # TODO move some of this into analyze?
@@ -140,7 +148,7 @@ class ItemHoldersTable(Table):
                 holders.append((link_for_poke(dataset, poke),
                                hold * usage, hold, usage))
 
-        holders = sorted(holders, key=lambda h: -h[1])[:10]
+        holders = sorted(holders, key=lambda h: -h[1])[:_MAX_TABLE_LEN]
 
         fields = ["holder", "combined", "hold_percent", "usage"]
         super().__init__([dict(zip(fields, h)) for h in holders])
@@ -154,6 +162,7 @@ class MoveUsersTable(Table):
     use_percent = PercentCol(
         "Move Usage", column_html_attrs={"align": "right"})
     usage = PercentCol("Pokemon Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, move, md, dataset):
         users = []
@@ -164,7 +173,7 @@ class MoveUsersTable(Table):
                 users.append((link_for_poke(dataset, poke),
                              use * usage, use, usage))
 
-        users = sorted(users, key=lambda u: -u[1])[:10]
+        users = sorted(users, key=lambda u: -u[1])[:_MAX_TABLE_LEN]
 
         fields = ["user", "combined", "use_percent", "usage"]
         super().__init__([dict(zip(fields, u)) for u in users])
@@ -178,6 +187,7 @@ class AbilityUsersTable(Table):
     use_percent = PercentCol(
         "Ability Usage", column_html_attrs={"align": "right"})
     usage = PercentCol("Pokemon Usage", column_html_attrs={"align": "right"})
+    classes = ["data-table"]
 
     def __init__(self, abil, md, dataset):
         users = []
@@ -189,7 +199,7 @@ class AbilityUsersTable(Table):
                 users.append((link_for_poke(dataset, poke),
                              use * usage, use, usage))
 
-        users = sorted(users, key=lambda u: -u[1])[:10]
+        users = sorted(users, key=lambda u: -u[1])[:_MAX_TABLE_LEN]
 
         fields = ["user", "combined", "use_percent", "usage"]
         super().__init__([dict(zip(fields, u)) for u in users])
@@ -199,9 +209,10 @@ class RecommendationsTable(Table):
     """Table that provides recommendations for a team."""
     poke = Col("Recommendations")
     overall = FloatCol("Overall Score")
-    counters = FloatCol("Counters Score")
+    counter = FloatCol("Counter Score")
     team = FloatCol("Team Score")
     usage = FloatCol("Usage Score")
+    classes = ["data-table"]
 
     @staticmethod
     def add_link(poke):
@@ -219,8 +230,8 @@ class RecommendationsTable(Table):
                                    x[1][3],
                                    RecommendationsTable.add_link(x[0]))
                                   for x in bundled.items()],
-                                 key=lambda k: -k[1])[:10]
-        fields = ["poke", "overall", "counters", "team", "usage", "add"]
+                                 key=lambda k: -k[1])[:_MAX_TABLE_LEN]
+        fields = ["poke", "overall", "counter", "team", "usage", "add"]
         self.add_column("add", Col("+", show=include_add_link))
         super().__init__([dict(zip(fields, r)) for r in reco_to_display])
 
@@ -233,12 +244,14 @@ def link_for_analysis(format_name, rating):
 def link_for_poke(dataset, poke):
     """Build link for a Pokemon page within given dataset."""
     url = url_for("display_pokemon", dataset=dataset, poke=poke)
-    return Markup(f'<a href="{url}">{poke}</a>')
+    return Markup(f'<a href="{url}"><span class="poke-icon" data-poke="{poke}">'
+                  f'</span>{poke}</a>')
 
 def link_for_item(dataset, item):
     """Build link for an item page within given dataset."""
     url = url_for("display_item", dataset=dataset, item=item)
-    return Markup(f'<a href="{url}">{item}</a>')
+    return Markup(f'<a href="{url}"><span class="item-icon" data-item="{item}">'
+                  f'</span>{item}</a>')
 
 def link_for_move(dataset, move):
     """Build link for a move page within given dataset."""

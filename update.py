@@ -9,12 +9,9 @@ import os
 import re
 import requests
 import preprocess
+from file_constants import *
 
 STATS_URL = "https://www.smogon.com/stats/"
-DATA_DIR = "./datasets/"
-TEMP_DATA_DIR = "./datasets_temp/"
-TOP_FORMATS_FILE = "top_formats"
-
 
 def update():
     """Do whole update procedure.
@@ -29,7 +26,7 @@ def update():
 
     for file in os.scandir(TEMP_DATA_DIR):
         try:
-            threat_filename = file.path[:-5] + "_threats.npy"
+            threat_filename = file.path[:-5] + THREAT_FILE
             format_name, times_played = \
                 preprocess.prepare_files(file, threat_filename)
 

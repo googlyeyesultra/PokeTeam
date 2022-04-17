@@ -1,8 +1,13 @@
 {% extends "NavBar.html" %}
 {% block title %}Pokedex{% endblock %}
 {% block below_navbar %}
-  Pokemon in {{ dataset }}:
-  {% for poke in pokemon %}
-    <br>{{poke}}
+<table class="alignment-table">
+  {% for pokebatch in pokemon|batch(6) %}
+    <tr>
+    {% for poke in pokebatch %}
+      <td>{{poke}}</td>
+    {% endfor %}
+    </tr>
   {% endfor %}
+</table>
 {% endblock %}
