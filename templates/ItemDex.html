@@ -1,13 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}Item Dex{% endblock %}
 {% block below_navbar %}
-<table class="alignment-table">
-  {% for itembatch in items|batch(6) %}
-    <tr>
-    {% for item in itembatch %}
-      <td>{{item}}</td>
-    {% endfor %}
-    </tr>
+<div class="align-box">
+  {% for item in items %}
+    {{ item }}
   {% endfor %}
-</table>
+</div>
 {% endblock %}

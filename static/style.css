@@ -90,19 +90,10 @@ body {
     margin-right: 4px;
 }
 
-.alignment-table {
-    border-style: none;
-    border-collapse: collapse;
-    padding: 0;
-    margin: 0;
-}
-
-.alignment-table td, tr {
-    border-style: none;
-    border-collapse: collapse;
-    padding: 0;
-    padding-right: 4px;
-    margin: 0;
+.align-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 220px);
+    gap: 0;
 }
 
 dl {

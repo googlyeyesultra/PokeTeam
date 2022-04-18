@@ -1,13 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}Pokedex{% endblock %}
 {% block below_navbar %}
-<table class="alignment-table">
-  {% for pokebatch in pokemon|batch(6) %}
-    <tr>
-    {% for poke in pokebatch %}
-      <td>{{poke}}</td>
+<div class="align-box">
+    {% for poke in pokemon %}
+        {{poke}}
     {% endfor %}
-    </tr>
-  {% endfor %}
-</table>
+</div>
 {% endblock %}

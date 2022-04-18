@@ -71,4 +71,5 @@ class CoreFinder:
             if len(x) >= 2:
                 cores.append([self.keys[y] for y in x])
 
+        cores.sort(key=lambda x: len(x))
         return cores

@@ -1,13 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}Move Dex{% endblock %}
 {% block below_navbar %}
-<table class="alignment-table">
-  {% for movebatch in moves|batch(6) %}
-    <tr>
-    {% for move in movebatch %}
-      <td>{{move}}</td>
-    {% endfor %}
-    </tr>
+<div class="align-box">
+  {% for move in moves %}
+    {{ move }}
   {% endfor %}
-</table>
+</div>
 {% endblock %}

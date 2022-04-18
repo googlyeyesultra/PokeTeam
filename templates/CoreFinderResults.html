@@ -1,11 +1,15 @@
 {% if cores is none %}
 The core finder generated uselessly large cores. Try raising the score requirement.
 {% elif cores %}
-  {% for core in cores %}
-    {% for poke in core %}
-      {{ poke }}
-    {% endfor %}<br>
-  {% endfor %}
+<div class="align-box">
+      {% for core in cores %}
+      <div style="border:1px solid black;">
+        {% for poke in core %}
+          {{ poke }}<br>
+        {% endfor %}
+      </div>
+      {% endfor %}
+</div>
 {% include "RenderIcons.html" %}
 {% else %}
 No cores found! Try reducing the usage threshold or score requirement.

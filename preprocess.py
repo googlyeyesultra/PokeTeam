@@ -43,7 +43,7 @@ def prepare_files(json_file, threat_file):
 
             changes = num_pokes != len(pokemon)
 
-            # Clear out checks/counters for pokemon we don't have.
+            # Clear out checks/counters for Pokemon we don't have.
             for poke in pokemon:
                 pokemon[poke]["Checks and Counters"] = \
                     {c: data for (c, data)

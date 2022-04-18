@@ -1,13 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}Ability Dex{% endblock %}
 {% block below_navbar %}
-<table class="alignment-table">
-  {% for abilbatch in abilities|batch(6) %}
-    <tr>
-    {% for abil in abilbatch %}
-      <td>{{abil}}</td>
-    {% endfor %}
-    </tr>
+<div class="align-box">
+  {% for abil in abilities %}
+    {{ abil }}
   {% endfor %}
-</table>
+</div>
 {% endblock %}
