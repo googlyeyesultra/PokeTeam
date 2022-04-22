@@ -300,17 +300,17 @@ class MetagameData:
             t_scores.append(self._get_team_score(team, poke))
             u_scores.append(self._get_usage_score(poke))
 
-        scores = {}
+        scores = []
         for index, poke in enumerate(self.pokemon):
             combined = self._get_combined_score(
                 c_scores[index], t_scores[index], u_scores[index], weights)
 
-            scores[poke] = (combined, c_scores[index],
-                            t_scores[index], u_scores[index])
+            scores.append((poke, combined, c_scores[index],
+                            t_scores[index], u_scores[index]))
 
         return scores
 
-    def _get_best(self, team, weights):
+    def _get_best(self, team, weights, scores=None):
         """Find the best addition (greedily) to a partial team.
 
         Args:
@@ -318,14 +318,15 @@ class MetagameData:
 
             weights (Weights): How important each kind of score is.
 
+            scores (list of tuples): scores for each Poke to avoid recalculating.
+
         Returns:
             str: Name of best Pokemon to add.
         """
         threats = self._find_threats(team)
-        scores = self._scores(team, threats, weights)
-        return sorted(scores.items(),
-                      key=lambda kv: kv[1][0],
-                      reverse=True)[0][0]
+        if not scores:
+            scores = self._scores(team, threats, weights)
+        return sorted(scores, key=lambda kv: -kv[1])[0][0]
 
     def _build_full(self, team, best, weights):
         """Recommend a full team from a partial one.
@@ -411,8 +412,8 @@ class MetagameData:
             threats_dict (dict str->float): Maps Pokemon name to how
             threatening that Pokemon is to the team.
 
-            scores (dict str->tuple): Maps Pokemon name to
-            (combined score, counter score, team score, usage score).
+            scores (list of tuple):
+            (Pokemon name, combined score, counter score, team score, usage score).
 
             my_team (list of str): Suggested full team,
             or None if team is already full.
@@ -422,8 +423,7 @@ class MetagameData:
         """
         threats = self._find_threats(team)
         scores = self._scores(team, threats, weights)
-        best = sorted(scores.items(),
-                      key=lambda kv: kv[1][0], reverse=True)[0][0]
+        best = self._get_best(team, weights, scores)
         my_team = self._build_full(team, best, weights)
         swaps = self._suggest_swaps(team, weights)
 

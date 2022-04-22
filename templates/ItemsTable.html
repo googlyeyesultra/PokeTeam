@@ -1,0 +1,9 @@
+<table class="data-table">
+    <tr><th>Item</th><th>Usage</th></tr>
+    {% for item in items[:5] %}
+        <tr>
+            <td>{{ lb.item_link(item[0], dataset) }}</td>
+            <td class="r-align">{{ "{:.0%}".format(item[1]) }}</td>
+        </tr>
+    {% endfor %}
+</table>

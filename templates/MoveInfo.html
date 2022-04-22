@@ -2,5 +2,5 @@
 {% block title %}{{ move }} data{% endblock %}
 {% block below_navbar %}
   Data for <span class="move-name" data-move="{{ move }}">{{ move }}</span>.
-  <br>{{ users }}
+  <br>{% include "MoveUsersTable.html" %}
 {% endblock %}

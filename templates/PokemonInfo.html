@@ -5,17 +5,17 @@
   {{ poke }}<br>
   Usage: {{ usage }}<br>
   <div style="float: left; margin-right:10px">
-    {{ counters }}
+    {% include "CountersTable.html" %}
   </div>
   <div style="float: left; margin-right:10px">
-    {{ team }}
+    {% include "TeammatesTable.html" %}
   </div>
   <div style="float: left; margin-right:10px">
-    {{ moves }}
+    {% include "MovesTable.html" %}
   </div>
   <div style="float: left; margin-right:10px">
-    {{ items }}
+    {% include "ItemsTable.html" %}
   </div>
-    {{ abilities }}
+    {% include "AbilitiesTable.html" %}
 
 {% endblock %}

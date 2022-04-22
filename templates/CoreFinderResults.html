@@ -1,3 +1,4 @@
+{% import "link_builder.html" as lb %}
 {% if cores is none %}
 The core finder generated uselessly large cores. Try raising the score requirement.
 {% elif cores %}
@@ -5,7 +6,7 @@ The core finder generated uselessly large cores. Try raising the score requireme
       {% for core in cores %}
       <div style="border:1px solid black;">
         {% for poke in core %}
-          {{ poke }}<br>
+          {{lb.poke_link(poke, dataset)}}<br>
         {% endfor %}
       </div>
       {% endfor %}

@@ -1,0 +1,9 @@
+<table class="data-table">
+    <tr><th>Counter</th><th>Rating</th></tr>
+    {% for counter in counters[:10] %}
+        <tr>
+            <td>{{ lb.poke_link(counter[0], dataset) }}</td>
+            <td class="r-align">{{ "{:.2f}".format(counter[1]) }}</td>
+        </tr>
+    {% endfor %}
+</table>

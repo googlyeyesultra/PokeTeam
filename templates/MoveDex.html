@@ -3,7 +3,7 @@
 {% block below_navbar %}
 <div class="align-box">
   {% for move in moves %}
-    {{ move }}
+    {{ lb.move_link(move, dataset) }}
   {% endfor %}
 </div>
 {% endblock %}

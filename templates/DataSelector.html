@@ -15,8 +15,9 @@
   <table class="alignment-table" style="text-align:right">
   {% for format in top %}
     <tr>
-    {% for f in format %}
-      <td>{{f}}</td>
+      <td>{{format[0]}}</td>
+    {% for rating in format[1] %}
+      <td>{{lb.analysis_link(format[0], rating)}}</td>
     {% endfor %}
     </tr>
   {% endfor %}

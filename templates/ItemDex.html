@@ -3,7 +3,7 @@
 {% block below_navbar %}
 <div class="align-box">
   {% for item in items %}
-    {{ item }}
+    {{ lb.item_link(item, dataset) }}
   {% endfor %}
 </div>
 {% endblock %}

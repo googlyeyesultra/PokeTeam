@@ -1,9 +1,10 @@
 {% extends "NavBar.html" %}
 {% block title %}Pokedex{% endblock %}
 {% block below_navbar %}
-<div class="align-box">
+
+<div class="wide-align-box">
     {% for poke in pokemon %}
-        {{poke}}
+        {{ lb.poke_dex_sprite(poke, dataset) }}
     {% endfor %}
 </div>
 {% endblock %}

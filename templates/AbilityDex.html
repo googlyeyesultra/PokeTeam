@@ -3,7 +3,7 @@
 {% block below_navbar %}
 <div class="align-box">
   {% for abil in abilities %}
-    {{ abil }}
+    {{ lb.abil_link(abil, dataset) }}
   {% endfor %}
 </div>
 {% endblock %}

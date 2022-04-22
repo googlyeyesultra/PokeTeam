@@ -3,7 +3,7 @@ import os
 from hashlib import blake2s
 import functools
 from flask import (Flask, render_template, request,
-                   redirect, Markup, abort, url_for)
+                   redirect, abort, url_for)
 from waitress import serve
 import analyze
 import display as d
@@ -13,8 +13,9 @@ from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
 app.config['SECRET_KEY'] = 'DBE71E66D9EC317B7D2F13DB134F2'
-
 
 @functools.lru_cache(maxsize=128, typed=False)
 def get_md(dataset):
@@ -38,17 +39,13 @@ def select_data():
         return redirect(url_for("analysis", dataset=request.form["selector"]))
 
     with open(DATA_DIR + TOP_FORMATS_FILE, encoding="utf-8") as f:
-        lines = []
         top = f.read().splitlines()
+        formats = []
         for metagame in top:
             format_name, ratings = metagame.split(" ")
-            line = [format_name]
-            for rating in ratings.split(","):
-                link = d.link_for_analysis(format_name, rating)
-                line.append(link)
-            lines.append(line)
+            formats.append((format_name, ratings.split(",")))
 
-    return render_template("DataSelector.html", form=form, top=lines)
+    return render_template("DataSelector.html", form=form, top=formats)
 
 
 @app.route("/pokemon/<dataset>/<poke>/")
@@ -58,26 +55,31 @@ def display_pokemon(dataset, poke):
     if poke not in md.pokemon:
         abort(404)
 
-    usage = f'{md.pokemon[poke]["usage"]:.1%}'
+    usage = f'{md.pokemon[poke]["usage"]:.1%}' # MOVE THIS FORMATTING TO FRONTEND
 
-    counters_table = d.CountersTable(poke, md, dataset)
-    team_table = d.TeamTable(poke, md, dataset)
-    moves_table = d.MovesTable(poke, md, dataset)
-    items_table = d.ItemsTable(poke, md, dataset)
-    abilities_table = d.AbilitiesTable(poke, md, dataset)
+    counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
+    teammates = sorted(md.partner_scores(poke).items(), key=lambda kv: -kv[1])
+    count = md.count_pokemon(poke)
+    items = sorted([(item[0], item[1]/count) for item in md.pokemon[poke]["Items"].items()],
+                   key=lambda kv: -kv[1])
+    moves = sorted([(m[0], m[1]/count) for m in md.pokemon[poke]["Moves"].items()],
+                   key=lambda kv: -kv[1])
+    abilities = sorted([(a[0], a[1]/count) for a in md.pokemon[poke]["Abilities"].items()],
+                           key=lambda kv: -kv[1])
 
     return render_template("PokemonInfo.html",
                            poke=poke, dataset=dataset,
-                           usage=usage, counters=counters_table,
-                           team=team_table, items=items_table,
-                           moves=moves_table, abilities=abilities_table)
+                           usage=usage,
+                           counters=counters,
+                           teammates=teammates, items=items,
+                           moves=moves, abilities=abilities)
 
 
 @app.route("/pokemon/<dataset>/")
 def pokedex(dataset):
     """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
-    pokemon = [d.link_for_poke(dataset, p) for p in sorted(md.pokemon.keys())]
+    pokemon = sorted(md.pokemon.keys())
     return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset)
 
 
@@ -86,12 +88,19 @@ def display_item(dataset, item):
     """Page for displaying information about an item."""
     md = get_md(dataset)
 
-    item_holders = d.ItemHoldersTable(item, md, dataset)
-    if not item_holders.items:
+    holders = []
+    for poke in md.pokemon:
+        if item in md.pokemon[poke]["Items"]:
+            hold = md.pokemon[poke]["Items"][item] / md.count_pokemon(poke)
+            usage = md.pokemon[poke]["usage"]
+            holders.append((poke, hold * usage, hold, usage))
+
+    holders.sort(key=lambda h: -h[1])
+    if not holders:
         abort(404)
 
     return render_template("ItemInfo.html",
-                           item=item, dataset=dataset, holders=item_holders)
+                           item=item, dataset=dataset, holders=holders)
 
 
 @app.route("/items/<dataset>/")
@@ -106,9 +115,8 @@ def item_dex(dataset):
         for item in top_items:
             items.add(item[0])
 
-    items_display = [d.link_for_item(dataset, i) for i in sorted(list(items))]
     return render_template("ItemDex.html",
-                           items=items_display, dataset=dataset)
+                           items=sorted(list(items)), dataset=dataset)
 
 
 @app.route("/moves/<dataset>/<move>/")
@@ -116,13 +124,20 @@ def display_move(dataset, move):
     """Page for information about a specific move."""
     md = get_md(dataset)
 
-    move_users = d.MoveUsersTable(move, md, dataset)
+    users = []
+    for poke in md.pokemon:
+        if move in md.pokemon[poke]["Moves"]:
+            use = md.pokemon[poke]["Moves"][move] / md.count_pokemon(poke)
+            usage = md.pokemon[poke]["usage"]
+            users.append((poke, use * usage, use, usage))
 
-    if not move_users.items:
+    users.sort(key=lambda u: -u[1])
+
+    if not users:
         abort(404)
 
     return render_template("MoveInfo.html",
-                           move=move, dataset=dataset, users=move_users)
+                           move=move, dataset=dataset, move_users=users)
 
 
 @app.route("/moves/<dataset>/")
@@ -137,24 +152,31 @@ def move_dex(dataset):
         for move in top_moves:
             moves.add(move[0])
 
-    moves_display = [d.link_for_move(dataset, m)
-                     for m in sorted(list(moves)) if m]
+    display_moves = [m for m in sorted(list(moves)) if m]
     return render_template("MoveDex.html",
-                           moves=moves_display, dataset=dataset)
+                           moves=display_moves, dataset=dataset)
 
 
-@app.route("/abilities/<dataset>/<ability>/")
-def display_ability(dataset, ability):
+@app.route("/abilities/<dataset>/<abil>/")
+def display_ability(dataset, abil):
     """Page for details about a specific ability."""
     md = get_md(dataset)
 
-    abil_users = d.AbilityUsersTable(ability, md, dataset)
+    users = []
+    for poke in md.pokemon:  # TODO move some of this into analyze?
+        if abil in md.pokemon[poke]["Abilities"]:
+            use = (md.pokemon[poke]["Abilities"][abil] /
+                   md.count_pokemon(poke))
+            usage = md.pokemon[poke]["usage"]
+            users.append((poke, use * usage, use, usage))
 
-    if not abil_users.items:
+    users.sort(key=lambda u: -u[1])
+
+    if not users:
         abort(404)
 
     return render_template("AbilityInfo.html",
-                           abil=ability, dataset=dataset, users=abil_users)
+                           abil=abil, dataset=dataset, abil_users=users)
 
 
 @app.route("/abilities/<dataset>/")
@@ -168,10 +190,9 @@ def ability_dex(dataset):
             if abil[1] / md.count_pokemon(poke) > .06:
                 abils.add(abil[0])
 
-    abilities_display = [d.link_for_ability(
-        dataset, a) for a in sorted(list(abils)) if a]
+    display_abils = [a for a in sorted(list(abils)) if a]
     return render_template("AbilityDex.html",
-                           abilities=abilities_display, dataset=dataset)
+                           abilities=display_abils, dataset=dataset)
 
 
 @app.route("/analysis/<dataset>/")
@@ -194,8 +215,6 @@ def analysis(dataset):
 @app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
 def output_analysis(dataset):
     """Part of page responsible for displaying team building results."""
-    team = None
-    swaps_text = None
     md = get_md(dataset)
 
     my_pokes = []
@@ -210,34 +229,15 @@ def output_analysis(dataset):
     weights = analyze.Weights(counter_setting, team_setting, usage_setting)
     threats, bundled, suggested_team, swaps = md.analyze(my_pokes, weights)
 
-    threats_table = d.ThreatsTable(threats, dataset)
-    recommendations_table = d.RecommendationsTable(
-        bundled, dataset, len(my_pokes) < 6)
+    recommendations = sorted(bundled, key=lambda p: -p[1])
 
-    if suggested_team:
-        js_array = "['" + "','".join(suggested_team) + "']"
-        suggested_team = [d.link_for_poke(dataset, t) for t in suggested_team]
-        try_team_link = (f'<a href="javascript:tryTeam({js_array})" '
-                         'class="try_team_link">(try it!)</span></a>')
-        team = Markup(f"Recommended team including your selections {try_team_link}:<br>"
-                      f"{'<br>'.join(suggested_team)}")
-
-    if swaps:
-        swaps_text = "Consider making one of the following changes:"
-        for swap in swaps:
-            swaps_text += (
-                f"<br>Swap {d.link_for_poke(dataset, swap)}"
-                f" for {d.link_for_poke(dataset, swaps[swap])}."
-                ' <a href="javascript:handleSwapPoke('
-                f"'{swap}', '{swaps[swap]}')\" "
-                'class="swap_link">'
-                '<span class="fas fa-exchange-alt"></span></a>')
-
-        swaps_text = Markup(swaps_text)
-
-    return render_template("TeamBuilderAnalysis.html", threats=threats_table,
-                           recommendations=recommendations_table, team=team,
-                           swaps=swaps_text)
+    return render_template("TeamBuilderAnalysis.html",
+                           dataset=dataset,
+                           threats=sorted(threats.items(), key=lambda k: -k[1]),
+                           recommendations=recommendations,
+                           suggested_team=suggested_team,
+                           swaps=(swaps.items() if swaps else None),
+                           add_links=(len(my_pokes) < 6))
 
 
 @app.route("/cores/<dataset>/")
@@ -255,15 +255,8 @@ def find_cores(dataset):
     usage_threshold = float(request.form["usage_threshold"])
     score_requirement = float(request.form["score_requirement"])
     cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
-    unlinked_cores = cf.find_cores()
-    if unlinked_cores is None:
-        return render_template("CoreFinderResults.html", cores=None)
 
-    linked_cores = []
-    for core in unlinked_cores:
-        linked_cores.append([d.link_for_poke(dataset, x) for x in core])
-
-    return render_template("CoreFinderResults.html", cores=linked_cores)
+    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores())
 
 
 @app.route("/update/<key>/")

@@ -1,0 +1,9 @@
+<table class="data-table">
+    <tr><th>Threat</th><th>Rating</th></tr>
+    {% for threat in threats[:10] %}
+        <tr>
+            <td>{{ lb.poke_link(threat[0], dataset) }}</td>
+            <td class="r-align">{{ "{:.2f}".format(threat[1]) }}</td>
+        </tr>
+    {% endfor %}
+</table>

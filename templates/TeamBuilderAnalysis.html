@@ -1,6 +1,20 @@
 <script src="https://kit.fontawesome.com/5c40c5d0e7.js" crossorigin="anonymous"></script>
-<div style="float: left; margin-right:10px; display:inline-block;">{{ recommendations }}</div>
-<div style="float: left; margin-right:10px; display:inline-block;">{{ threats }}</div>
-{{ team if team }} {{ swaps if swaps }}
+{% import "link_builder.html" as lb %}
+<div style="float: left; margin-right:10px; display:inline-block;">{% include "RecommendationsTable.html" %}</div>
+<div style="float: left; margin-right:10px; display:inline-block;">{% include "ThreatsTable.html" %}</div>
+{% if suggested_team %}
+    Recommended team including your selections {{lb.try_team_link(suggested_team)}}:
+    {% for poke in suggested_team %}
+        <br> {{lb.poke_link(poke, dataset)}}
+    {% endfor %}
+{% endif %}
+
+{% if swaps %}
+    Consider making one of the following changes:
+    {% for swap in swaps %}
+        <br>Swap {{lb.poke_link(swap[0], dataset)}} for {{lb.poke_link(swap[1], dataset)}}.
+        {{lb.swap_link(swap)}}
+    {% endfor %}
+{% endif %}
 
 {% include "RenderIcons.html" %}

@@ -1,6 +1,6 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ item }} data{% endblock %}
 {% block below_navbar %}
-  Data for <span class="item-name" data-item="{{ item }}">{{ item }}</span>.
-  <br>{{ holders }}
+  Data for {{lb.item_no_link(item, dataset)}}.
+  <br>{% include "ItemHoldersTable.html" %}
 {% endblock %}

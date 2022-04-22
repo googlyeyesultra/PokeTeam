@@ -2,5 +2,5 @@
 {% block title %}{{ abil }} Data{% endblock %}
 {% block below_navbar %}
   Data for <span class="abil-name" data-abil="{{ abil }}">{{ abil }}</span>.
-  <br>{{ users }}
+  <br>{% include "AbilityUsersTable.html" %}
 {% endblock %}

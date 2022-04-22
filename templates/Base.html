@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+{% import "link_builder.html" as lb %}
 {% block content %}
 {% endblock %}
 {% include "RenderIcons.html" %}
