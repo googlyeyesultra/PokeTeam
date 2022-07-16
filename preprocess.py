@@ -4,7 +4,7 @@ import ujson as json
 import numpy as np
 
 COUNTER_COVERED_FACTOR = 1
-
+MIN_USAGE = 0.0015
 
 def prepare_files(json_file, threat_file):
     """Validate and pre-process files directly from Smogon.
@@ -39,7 +39,7 @@ def prepare_files(json_file, threat_file):
             # Also trim out some Pokemon with extraordinarily low usage.
             pokemon = {name: info for (name, info) in data["data"].items()
                        if (len(info["Checks and Counters"]) > 9
-                           and info["usage"] > 0.0015)}
+                           and info["usage"] > MIN_USAGE)}
 
             changes = num_pokes != len(pokemon)
 

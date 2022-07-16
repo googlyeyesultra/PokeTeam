@@ -1,10 +1,10 @@
 {% extends "Base.html" %}
   {% block content %}
-  <div class="format_name">
+  <div class="format-name">
     {{ dataset }}
   </div>
   <div class="topnav">
-    <div class="topnav_links">
+    <div class="topnav-links">
       <a href="{{ url_for('select_data') }}">Data Selector</a>
       <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
       <a href="{{ url_for('cores', dataset=dataset) }}">Core Finder</a>

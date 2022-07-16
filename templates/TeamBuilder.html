@@ -1,7 +1,6 @@
 {% extends "NavBar.html" %}
 {% block title %}Pokemon Team Builder{% endblock %}
 {% block below_navbar %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 Enter anywhere from 1-6 Pokemon for analysis and suggestions.
 <form id=analyze>
 <div class="input pokemon">
@@ -11,14 +10,20 @@ Enter anywhere from 1-6 Pokemon for analysis and suggestions.
 </div>
 <fieldset class="advanced">
   <legend>Advanced Options</legend>
-  <dl>
-  <dt>Counter Weighting: {{ form.counter_setting(min='0', required='true') }}</dt>
-  <dd>The counter score encompasses how good a given Pokemon is against Pokemon that are threatening to the team.</dd>
-  <dt>Team Weighting: {{ form.team_setting(min='0', required='true') }}</dt>
-  <dd>The team score encompasses how much more or less often Pokemon are played together.</dd>
-  <dt>Usage Weighting: {{ form.usage_setting(min='0', required='true') }}</dt>
-  <dd>The usage score encompasses how often a Pokemon is played in the format.</dd>
-  </dl>
+  <table class="alignment-table">
+  <tr><td>Counter Weighting:</td>
+    <td>{{ form.counter_setting(min='0', required='true') }}</td>
+    <td><span class="fas fa-question-circle"><span class="tooltip">The counter score encompasses how good a given Pokemon is against Pokemon that are threatening to the team.</span></span></td>
+  </tr>
+  <tr><td>Team Weighting:</td>
+    <td>{{ form.team_setting(min='0', required='true') }}</td>
+    <td><span class="fas fa-question-circle"><span class="tooltip">The team score encompasses how much more or less often Pokemon are played together.</span></span></td>
+  </tr>
+  <tr><td>Usage Weighting:</td>
+    <td>{{ form.usage_setting(min='0', required='true') }}</td>
+    <td><span class="fas fa-question-circle"><span class="tooltip">The usage score encompasses how often a Pokemon is played in the format.</span></span></td>
+  </tr>
+  </table>
 </fieldset>
 <input type="submit" value="Analyze">
 <script src="{{ url_for('static', filename='TeamBuilderScript.js') }}"></script>

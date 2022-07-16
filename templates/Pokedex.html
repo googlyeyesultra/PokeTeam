@@ -2,7 +2,7 @@
 {% block title %}Pokedex{% endblock %}
 {% block below_navbar %}
 
-<div class="wide-align-box">
+<div class="align-box">
     {% for poke in pokemon %}
         {{ lb.poke_dex_sprite(poke, dataset) }}
     {% endfor %}
