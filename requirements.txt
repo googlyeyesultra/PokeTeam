@@ -1,0 +1,7 @@
+Flask~=2.0.3
+waitress~=2.1.1
+requests~=2.27.1
+ujson~=5.1.0
+numpy~=1.22.3
+WTForms~=3.0.1
+networkx~=2.7.1
