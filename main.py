@@ -278,4 +278,4 @@ def request_update(key):
 
 
 if __name__ == "__main__":
-    serve(app, host='0.0.0.0', port=8080)
+    serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
