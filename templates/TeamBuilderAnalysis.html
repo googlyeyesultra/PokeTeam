@@ -9,11 +9,13 @@
 {% endif %}
 
 {% if swaps %}
+    <div>
     Consider making one of the following changes:
     {% for swap in swaps %}
         <br>Swap {{lb.poke_link(swap[0], dataset)}} for {{lb.poke_link(swap[1], dataset)}}.
         {{lb.swap_link(swap)}}
     {% endfor %}
+    </div>
 {% endif %}
 
 {% include "RenderIcons.html" %}
