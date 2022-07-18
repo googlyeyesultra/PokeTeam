@@ -1,7 +1,7 @@
 {% extends "NavBar.html" %}
 {% block title %}Item Dex{% endblock %}
 {% block below_navbar %}
-<div class="align-box">
+<div class="vert-align-box">
   {% for item in items %}
     {{ lb.item_link(item, dataset) }}
   {% endfor %}

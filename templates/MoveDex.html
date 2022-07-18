@@ -1,7 +1,7 @@
 {% extends "NavBar.html" %}
 {% block title %}Move Dex{% endblock %}
 {% block below_navbar %}
-<div class="align-box">
+<div class="vert-align-box">
   {% for move in moves %}
     {{ lb.move_link(move, dataset) }}
   {% endfor %}

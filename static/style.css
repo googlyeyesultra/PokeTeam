@@ -157,6 +157,14 @@ body {
     align-items: flex-start;
 }
 
+.vert-align-box {
+    column-width: 220px;
+}
+
+.vert-align-box > * {
+    display: block;
+}
+
 .align-box {
     display: grid;
     grid-template-columns: repeat(auto-fill, 220px);
