@@ -4,18 +4,11 @@
   <img class="poke-sprite" data-poke="{{ poke }}"></img><br>
   {{ poke }}<br>
   Usage: {{ usage }}<br>
-  <div style="float: left; margin-right:10px">
+  <div class="tables-wrapper">
     {% include "CountersTable.html" %}
-  </div>
-  <div style="float: left; margin-right:10px">
     {% include "TeammatesTable.html" %}
-  </div>
-  <div style="float: left; margin-right:10px">
     {% include "MovesTable.html" %}
-  </div>
-  <div style="float: left; margin-right:10px">
     {% include "ItemsTable.html" %}
-  </div>
     {% include "AbilitiesTable.html" %}
-
+  </div>
 {% endblock %}

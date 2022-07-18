@@ -149,6 +149,14 @@ body {
     margin-right: 4px;
 }
 
+.tables-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    column-gap: 10px;
+    row-gap: 5px;
+    align-items: flex-start;
+}
+
 .align-box {
     display: grid;
     grid-template-columns: repeat(auto-fill, 220px);

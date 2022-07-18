@@ -1,11 +1,14 @@
 {% import "link_builder.html" as lb %}
-<div style="float: left; margin-right:10px; display:inline-block;">{% include "RecommendationsTable.html" %}</div>
-<div style="float: left; margin-right:10px; display:inline-block;">{% include "ThreatsTable.html" %}</div>
+<div class="tables-wrapper">
+{% include "RecommendationsTable.html" %}
+{% include "ThreatsTable.html" %}
 {% if suggested_team %}
+    <div>
     Recommended team including your selections {{lb.try_team_link(suggested_team)}}:
     {% for poke in suggested_team %}
-        <br> {{lb.poke_link(poke, dataset)}}
+        <br>{{lb.poke_link(poke, dataset)}}
     {% endfor %}
+    </div>
 {% endif %}
 
 {% if swaps %}
@@ -17,5 +20,5 @@
     {% endfor %}
     </div>
 {% endif %}
-
+</div>
 {% include "RenderIcons.html" %}
