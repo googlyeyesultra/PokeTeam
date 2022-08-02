@@ -5,3 +5,4 @@ ujson~=5.1.0
 numpy~=1.22.3
 WTForms~=3.0.1
 networkx~=2.7.1
+boto3~=1.24.42

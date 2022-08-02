@@ -1,15 +1,17 @@
 """Handles routing, serving, and preparing pages."""
 import os
-from hashlib import blake2s
 import functools
+
+from botocore.exceptions import ClientError
 from flask import (Flask, render_template, request,
                    redirect, abort, url_for)
+import boto3
 from waitress import serve
 import analyze
 import display as d
 import update
 import corefinder
-from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE
+from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE, BUCKET
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -17,26 +19,37 @@ app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
 app.config['SECRET_KEY'] = 'DBE71E66D9EC317B7D2F13DB134F2'
 
+s3_session = boto3.session.Session(aws_access_key_id=os.environ.get("s3-access-key"),
+                                aws_secret_access_key=os.environ.get("s3-secret-key"))
+s3_bucket = s3_session.resource("s3", endpoint_url=os.environ.get("s3-endpoint")).Bucket(BUCKET)
+
+
 @functools.lru_cache(maxsize=128, typed=False)
 def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
+        if not os.path.exists(DATA_DIR + dataset + ".json"):
+            s3_bucket.download_file(dataset + ".json", DATA_DIR + dataset + ".json")
+            s3_bucket.download_file(dataset + THREAT_FILE, DATA_DIR + dataset + THREAT_FILE)
         return analyze.MetagameData(DATA_DIR + dataset + ".json",
                                     DATA_DIR + dataset + THREAT_FILE)
-    except FileNotFoundError:
+    except (FileNotFoundError, ClientError):
         abort(404)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
     """Page for selecting a format."""
-    form = d.DataSelectForm(request.form)
-    form.selector.choices = sorted([filename[:-5]
-                                    for filename in os.listdir("datasets")
-                                    if ".json" in filename])
-
     if request.method == 'POST':
         return redirect(url_for("analysis", dataset=request.form["selector"]))
+
+    form = d.DataSelectForm(request.form)
+    datasets = [obj.key[:-5] for obj in s3_bucket.objects.all()
+                if ".json" in obj.key]
+    form.selector.choices = sorted(datasets)
+
+    if not os.path.exists(DATA_DIR + TOP_FORMATS_FILE):
+        s3_bucket.download_file(TOP_FORMATS_FILE, DATA_DIR + TOP_FORMATS_FILE)
 
     with open(DATA_DIR + TOP_FORMATS_FILE, encoding="utf-8") as f:
         top = f.read().splitlines()
@@ -262,15 +275,7 @@ def find_cores(dataset):
 @app.route("/update/<key>/")
 def request_update(key):
     """Endpoint to download new statistics. Not for public use."""
-    # This isn't real security,
-    # but it's hopefully enough to prevent random people forcing updates.
-    blake = blake2s()
-    blake.update(key.encode())
-    hex_result = blake.hexdigest()
-    expected_hex = \
-        '0a7758f62d5f8c069bf2a4c24fcb98dc23df90b738cb7ac1e792ed702c746fb8'
-
-    if hex_result != expected_hex:
+    if key != os.environ.get("update-pass"):
         abort(401)
 
     update.update()
@@ -278,4 +283,6 @@ def request_update(key):
 
 
 if __name__ == "__main__":
+    if not os.path.exists(DATA_DIR):
+        os.mkdir(DATA_DIR)
     serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))

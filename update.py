@@ -8,10 +8,12 @@ The actual mechanics of that preprocessing and validation exist elsewhere.
 import os
 import re
 import requests
+import boto3
 import preprocess
 from file_constants import *
 
 STATS_URL = "https://www.smogon.com/stats/"
+
 
 def update():
     """Do whole update procedure.
@@ -54,6 +56,15 @@ def update():
             top_formats_fd.write(line)
 
     os.rename(TEMP_DATA_DIR, DATA_DIR)
+    print("Clearing old files.")
+    session = boto3.session.Session(aws_access_key_id=os.environ.get("s3-access-key"),
+                                    aws_secret_access_key=os.environ.get("s3-secret-key"))
+    bucket = session.resource("s3", endpoint_url=os.environ.get("s3-endpoint")).Bucket(BUCKET)
+    bucket.objects.all().delete()
+    print("Uploading.")
+    for file in os.scandir(DATA_DIR):
+        bucket.upload_file(file.path, file.name)
+
     print("Update complete!")
 
 
