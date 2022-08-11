@@ -20,6 +20,7 @@ def update():
 
     Delete existing files, download new ones, preprocess and validate.
     """
+    print("Update started.")
     _download_data()
     print("Data downloaded.")
 
@@ -57,9 +58,9 @@ def update():
 
     os.rename(TEMP_DATA_DIR, DATA_DIR)
     print("Clearing old files.")
-    session = boto3.session.Session(aws_access_key_id=os.environ.get("s3-access-key"),
-                                    aws_secret_access_key=os.environ.get("s3-secret-key"))
-    bucket = session.resource("s3", endpoint_url=os.environ.get("s3-endpoint")).Bucket(BUCKET)
+    session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
+                                    aws_secret_access_key=os.environ["S3_SECRET_KEY"])
+    bucket = session.resource("s3", endpoint_url=os.environ["S3_ENDPOINT"]).Bucket(os.environ["BUCKET"])
     bucket.objects.all().delete()
     print("Uploading.")
     for file in os.scandir(DATA_DIR):

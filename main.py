@@ -11,17 +11,17 @@ import analyze
 import display as d
 import update
 import corefinder
-from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE, BUCKET
+from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
-app.config['SECRET_KEY'] = 'DBE71E66D9EC317B7D2F13DB134F2'
+app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
-s3_session = boto3.session.Session(aws_access_key_id=os.environ.get("s3-access-key"),
-                                aws_secret_access_key=os.environ.get("s3-secret-key"))
-s3_bucket = s3_session.resource("s3", endpoint_url=os.environ.get("s3-endpoint")).Bucket(BUCKET)
+s3_session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
+                                   aws_secret_access_key=os.environ["S3_SECRET_KEY"])
+s3_bucket = s3_session.resource("s3", endpoint_url=os.environ["S3_ENDPOINT"]).Bucket(os.environ["BUCKET"])
 
 
 @functools.lru_cache(maxsize=128, typed=False)
@@ -275,7 +275,7 @@ def find_cores(dataset):
 @app.route("/update/<key>/")
 def request_update(key):
     """Endpoint to download new statistics. Not for public use."""
-    if key != os.environ.get("update-pass"):
+    if key != os.environ["UPDATE_PASS"]:
         abort(401)
 
     update.update()
@@ -285,4 +285,4 @@ def request_update(key):
 if __name__ == "__main__":
     if not os.path.exists(DATA_DIR):
         os.mkdir(DATA_DIR)
-    serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
+    serve(app, host='0.0.0.0', port=int(os.environ["PORT"]))
