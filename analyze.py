@@ -167,16 +167,32 @@ class MetagameData:
         Returns:
             float >= 0: High score corresponds to going well with teammates.
         """
-        product_ratios = 1
+
+        # Geometric mean of the P(X|Y)/P(X|not Y) ratio
+        # Weighted by 1 / usage of the mon on team.
+        # Log form required.
+        log_sum = 0
+        sum_usage_factor = 0
         for mon in team:
+            usage_factor = 1 / self.pokemon[mon]["usage"]
+            sum_usage_factor += usage_factor
             # We add a bit to the denominator because it can be zero.
             # If it is, we'll get a massive number, which is good.
             # P(X|not Y) is 0 if X doesn't occur without Y.
             # So Y needs to be on team.
-            product_ratios *= (self._p_x_given_y(poke, mon)
-                               / (self._p_x_given_not_y(poke, mon) + .001))
+            ratio = ((self._p_x_given_y(poke, mon))
+                                 / (self._p_x_given_not_y(poke, mon) + .001))
+            # On the flipside, if P(X|Y) is 0, we need to not put Y on the team.
+            # This is common where X and Y are the same mon.
+            if ratio == 0:
+                # This behaves the same way multiplying by 0 would in the non-log form.
+                log_sum = -math.inf
+                break
+            else:
+                log_sum += usage_factor * math.log10(((self._p_x_given_y(poke, mon))
+                                 / (self._p_x_given_not_y(poke, mon) + .001)))
 
-        return product_ratios ** (1/len(team))
+        return 10 ** (log_sum / sum_usage_factor)
 
     def _get_usage_score(self, poke):
         """Generate a score based on often a Pokemon is used.
