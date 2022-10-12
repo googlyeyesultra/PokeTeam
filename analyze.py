@@ -305,8 +305,9 @@ class MetagameData:
             weights (Weights): How much to value each score when combining.
 
         Returns:
-            scores (dict str->tuple): (combined, counter, team, usage)
+            scores (list of tuple): (name, combined, counter, team, usage)
             Each value is a float >= 0.
+            In order by index of Pokemon.
         """
         c_scores = []
         t_scores = []
@@ -324,6 +325,8 @@ class MetagameData:
             scores.append((poke, combined, c_scores[index],
                             t_scores[index], u_scores[index]))
 
+        # TODO consider refactoring to return a dictionary.
+        # Maybe dict (name -> a scores object)
         return scores
 
     def _get_best(self, team, weights, scores=None):
@@ -339,10 +342,31 @@ class MetagameData:
         Returns:
             str: Name of best Pokemon to add.
         """
-        threats = self._find_threats(team)
         if not scores:
+            threats = self._find_threats(team)
             scores = self._scores(team, threats, weights)
         return sorted(scores, key=lambda kv: -kv[1])[0][0]
+
+    def _get_best_with_improvement(self, team, current, weights):
+        """Find the best swap for a Pokemon on a team
+
+        Args:
+            team (list of str): Names of Pokemon already on the team, except the one to swap.
+
+            current (str): Name of Pokemon we're considering swapping out.
+
+            weights (Weights): How important each kind of score is.
+
+            scores (list of tuples): scores for each Poke to avoid recalculating.
+
+        Returns:
+            (str, float): Name of best Pokemon to swap in (can be same), how much of an improvement it is.
+        """
+        threats = self._find_threats(team)
+        scores = self._scores(team, threats, weights)
+        best = self._get_best(team, weights, scores)
+        improvement = scores[self._indices[best]][1] - scores[self._indices[current]][1]
+        return best, improvement
 
     def _build_full(self, team, best, weights):
         """Recommend a full team from a partial one.
@@ -374,21 +398,24 @@ class MetagameData:
         teams = set(tuple(sorted(my_team)))
         while change_made:
             change_made = False
+            most_improvement = (None, 0, -1) # Mon to use, score, index of swap.
             # Start at len(team) to leave Pokemon the user specified in.
             for x in range(len(team), 6):
                 old_member = my_team[x]
                 team_without = my_team[:x] + my_team[x+1:]
-                new_member = self._get_best(team_without, weights)
+                improvement = self._get_best_with_improvement(team_without, old_member, weights) + (x,)
+                if improvement[1] > most_improvement[1]:
+                    most_improvement = improvement
 
-                if new_member != old_member:
-                    change_made = True
-                    my_team[x] = new_member
-                    sorted_team = tuple(sorted(my_team))
-                    if sorted_team in teams:  # Break cycles.
-                        change_made = False
-                        break
+            if most_improvement[0]:
+                change_made = True
+                my_team[most_improvement[2]] = most_improvement[0]
+                sorted_team = tuple(sorted(my_team))
+                if sorted_team in teams:  # Break cycles.
+                    change_made = False
+                    break
 
-                    teams.add(sorted_team)
+                teams.add(sorted_team)
 
         return my_team
 
@@ -400,9 +427,10 @@ class MetagameData:
             weights (Weights): How important each kind of score is.
 
         Returns:
-            swaps (dict str->str): Suggested swaps.
-            swaps["Aipom"] = "Pichu"
+            swaps (dict str->(str, float)): Suggested swaps.
+            swaps["Aipom"] = ("Pichu", 1.2)
             means you should consider swapping Aipom with Pichu
+            and that it believes that improves the team by 1.2
             None if team is not full.
         """
         if len(team) != 6:
@@ -411,9 +439,9 @@ class MetagameData:
         swaps = {}
         # Try removing each individual Pokemon and test if anything is better.
         for x in range(6):
-            new_poke = self._get_best(team[:x] + team[x + 1:], weights)
-            if new_poke != team[x]:
-                swaps[team[x]] = new_poke
+            swap = self._get_best_with_improvement(team[:x] + team[x + 1:], team[x], weights)
+            if swap[0] != team[x]:
+                swaps[team[x]] = swap
 
         return swaps
 

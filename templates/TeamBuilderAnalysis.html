@@ -2,6 +2,7 @@
 <div class="tables-wrapper">
 {% include "RecommendationsTable.html" %}
 {% include "ThreatsTable.html" %}
+
 {% if suggested_team %}
     <div>
     Recommended team including your selections {{lb.try_team_link(suggested_team)}}:
@@ -12,13 +13,7 @@
 {% endif %}
 
 {% if swaps %}
-    <div>
-    Consider making one of the following changes:
-    {% for swap in swaps %}
-        <br>Swap {{lb.poke_link(swap[0], dataset)}} for {{lb.poke_link(swap[1], dataset)}}.
-        {{lb.swap_link(swap)}}
-    {% endfor %}
-    </div>
+{% include "SwapsTable.html" %}
 {% endif %}
 </div>
 {% include "RenderIcons.html" %}

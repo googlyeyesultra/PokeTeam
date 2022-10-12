@@ -249,7 +249,7 @@ def output_analysis(dataset):
                            threats=sorted(threats.items(), key=lambda k: -k[1]),
                            recommendations=recommendations,
                            suggested_team=suggested_team,
-                           swaps=(swaps.items() if swaps else None),
+                           swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
                            add_links=(len(my_pokes) < 6))
 
 

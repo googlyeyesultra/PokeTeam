@@ -37,5 +37,5 @@
 {%- endmacro %}
 
 {% macro swap_link(swap) -%}
-<a href="javascript:handleSwapPoke('{{swap[0]}}', '{{swap[1]}}')" class="swap_link"><span class="fas fa-exchange-alt"></span></a>
+<a href="javascript:handleSwapPoke('{{swap[0]}}', '{{swap[1][0]}}')" class="swap_link"><span class="fas fa-exchange-alt"></span></a>
 {%- endmacro %}

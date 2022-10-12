@@ -1,0 +1,12 @@
+<table class="data-table">
+    <tr><th colspan="4">Suggested Swaps</th></tr>
+    <tr><th>Current</th><th><span class="fas fa-exchange-alt"></span></th><th>New</th><th>Improvement</th></tr>
+    {% for swap in swaps %}
+        <tr>
+            <td>{{lb.poke_link(swap[0], dataset)}}</td>
+            <td>{{lb.swap_link(swap)}}</td>
+            <td>{{lb.poke_link(swap[1][0], dataset)}}</td>
+            <td class="r-align">{{ "{:.1f}".format(swap[1][1]) }}</td>
+        </tr>
+    {% endfor %}
+</table>
