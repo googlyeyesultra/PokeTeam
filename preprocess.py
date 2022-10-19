@@ -56,12 +56,18 @@ def prepare_files(json_file, threat_file):
         data["indices"] = indices
         data["data"] = pokemon
 
-        #  Calculate total number of Pokemon that appear.
-        total = 0
+        # Calculate average pokemon per team. Typically a little less than 6.
+        # Smaller in some formats like 1v1.
+        # Can't just use number of battles since that isn't weighted by rating.
+        total_pokes = 0
+        total_team_members = 0
         for poke in pokemon:
-            total += sum(pokemon[poke]["Abilities"].values())
+            total_pokes += sum(pokemon[poke]["Abilities"].values())
+            total_team_members += sum(pokemon[poke]["Teammates"].values())
 
-        data["total_pokes"] = total
+        data["total_pokes"] = total_pokes
+        data["pokes_per_team"] = total_team_members / total_pokes + 1
+        data["num_teams"] = total_pokes / data["pokes_per_team"]
 
     with open(threat_file, "wb") as file:
         threat_matrix = np.empty((len(pokemon), len(pokemon)))

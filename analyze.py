@@ -66,6 +66,8 @@ class MetagameData:
             self.pokemon = data["data"]
             self._indices = data["indices"]
             self._total_pokes = data["total_pokes"]
+            self._pokes_per_team = data["pokes_per_team"]
+            self._num_teams = data["num_teams"]
 
         with open(threat_file, "rb") as file:
             self._threat_matrix = np.load(file)
@@ -97,7 +99,7 @@ class MetagameData:
             Note that it can be a non-integer as Smogon weights statistics by
             player rating.
         """
-        return int(sum(self.pokemon[poke]["Abilities"].values()))
+        return sum(self.pokemon[poke]["Abilities"].values())
 
     def _p_x_given_y(self, x, y):
         """Calculate probability that x appears on a team if y does.
@@ -128,13 +130,12 @@ class MetagameData:
         """
         if y not in self.pokemon[x]["Teammates"]:
             # Never appear together, so P(x|not y) = p(x)
-            return self.pokemon[x]["usage"]
+            return self.count_pokemon(x) / self._num_teams
 
         # P(x|not y) = P(x and not y) / P(not y)
         # (x - (x U y)) is count of times x appeared without y
-        count_x_and_not_y = (self.count_pokemon(x)
-                             - self.pokemon[x]["Teammates"][y])
-        pokes_except_y = self._total_pokes - self.count_pokemon(y)
+        count_x_and_not_y = self.count_pokemon(x) - self.pokemon[x]["Teammates"][y]
+        pokes_except_y = self._num_teams - self.count_pokemon(y)
         return count_x_and_not_y / pokes_except_y
 
     def _get_counter_score(self, threats, team_size, poke):
@@ -169,19 +170,24 @@ class MetagameData:
         """
 
         # Geometric mean of the P(X|Y)/P(X|not Y) ratio
+        # Where x is the mon we're considering adding.
         # Weighted by 1 / usage of the mon on team.
         # Log form required.
         log_sum = 0
         sum_usage_factor = 0
         for mon in team:
-            usage_factor = 1 / self.pokemon[mon]["usage"]
+            usage_factor = (1 / self.pokemon[mon]["usage"])
             sum_usage_factor += usage_factor
-            # We add a bit to the denominator because it can be zero.
-            # If it is, we'll get a massive number, which is good.
             # P(X|not Y) is 0 if X doesn't occur without Y.
             # So Y needs to be on team.
-            ratio = ((self._p_x_given_y(poke, mon))
-                                 / (self._p_x_given_not_y(poke, mon) + .001))
+            given_not = self._p_x_given_not_y(poke, mon)
+            assert(0 <= given_not <= 1)
+            if given_not == 0:
+                ratio = math.inf
+            else:
+                given = self._p_x_given_y(poke, mon)
+                assert(0 <= given <= 1)
+                ratio = given / given_not
             # On the flipside, if P(X|Y) is 0, we need to not put Y on the team.
             # This is common where X and Y are the same mon.
             if ratio == 0:
@@ -189,8 +195,7 @@ class MetagameData:
                 log_sum = -math.inf
                 break
             else:
-                log_sum += usage_factor * math.log10(((self._p_x_given_y(poke, mon))
-                                 / (self._p_x_given_not_y(poke, mon) + .001)))
+                log_sum += usage_factor * math.log10(ratio)
 
         return 10 ** (log_sum / sum_usage_factor)
 

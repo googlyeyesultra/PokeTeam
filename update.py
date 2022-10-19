@@ -56,7 +56,12 @@ def update():
             line = form + " " + ",".join(sorted(format_ratings[form])) + "\n"
             top_formats_fd.write(line)
 
+    if os.path.isdir(DATA_DIR):
+        for file in os.scandir(DATA_DIR):
+            os.remove(file)
+        os.rmdir(DATA_DIR)
     os.rename(TEMP_DATA_DIR, DATA_DIR)
+
     print("Clearing old files.")
     session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
                                     aws_secret_access_key=os.environ["S3_SECRET_KEY"])
@@ -70,12 +75,7 @@ def update():
 
 
 def _download_data():
-    """Remove any pre-existing data and downloads the new data from Smogon."""
-    if os.path.isdir(DATA_DIR):
-        for file in os.scandir(DATA_DIR):
-            os.remove(file)
-        os.rmdir(DATA_DIR)
-
+    """Downloads the new data from Smogon."""
     stats_page = requests.get(STATS_URL)
 
     last_update = re.findall(r'<a href="(.*)"', stats_page.text)[-1]
