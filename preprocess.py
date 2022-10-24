@@ -2,18 +2,20 @@
 
 import ujson as json
 import numpy as np
+import math
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
 
-def prepare_files(json_file, threat_file):
+
+def prepare_files(json_file, threat_file, teammate_file):
     """Validate and pre-process files directly from Smogon.
 
     Removes Pokemon with extremely low usage.
     Removes Pokemon without counters data.
     Trims out counters data for Pokemon that are no longer included.
     Verifies that there is a reasonable number of Pokemon remaining.
-    Builds a threat matrix.
+    Builds a threat matrix and a teammate matrix.
 
     Args:
         json_file (str): Path to file containing raw version of
@@ -22,6 +24,11 @@ def prepare_files(json_file, threat_file):
         threat_file (str): Path to save the numpy threat matrix to.
         File will be overwritten.
         threat_matrix[x, y] is how threatening the Pokemon with index
+        y is to the Pokemon with index x.
+        
+        teammate_file (str): Path to save the numpy teammate matrix to.
+        File will be overwritten.
+        team_matrix[x, y] is how good a teammate the Pokemon with index
         y is to the Pokemon with index x.
 
     Returns:
@@ -69,18 +76,41 @@ def prepare_files(json_file, threat_file):
         data["pokes_per_team"] = total_team_members / total_pokes + 1
         data["num_teams"] = total_pokes / data["pokes_per_team"]
 
-    with open(threat_file, "wb") as file:
-        threat_matrix = np.empty((len(pokemon), len(pokemon)))
-        for index, mon in enumerate(pokemon):
-            for column, c_mon in enumerate(pokemon):
-                threat_matrix[index, column] = \
-                    _threat_for_poke(pokemon, c_mon, mon)
+        total_pairs = 0
+        for poke in pokemon:
+            total_pairs += sum(pokemon[poke]["Teammates"].values())
 
+        data["total_pairs"] = total_pairs  # TODO maybe div by 2? Currently counts both ways.
+
+    threat_matrix = np.empty((len(pokemon), len(pokemon)))
+    for index, mon in enumerate(pokemon):
+        for column, c_mon in enumerate(pokemon):
+            threat_matrix[index, column] = \
+                _threat_for_poke(pokemon, c_mon, mon)
+
+    with open(threat_file, "wb") as file:
         np.save(file, threat_matrix)
 
-    # Clear the raw checks/counters data since we only need the matrix.
+    total_pairs = 0
+    for mon in pokemon:
+        total_pairs += sum(pokemon[mon]["Teammates"].values())  # TODO if we save this sum we can speed up some other operations
+
+    team_matrix = np.empty((len(pokemon), len(pokemon)))
+    for index, mon in enumerate(pokemon):
+        for column, c_mon in enumerate(pokemon):
+            denom = _p_x_given_not_y(pokemon, c_mon, mon, total_pairs)
+            if denom == 0:
+                team_matrix[index, column] = math.inf
+            else:
+                team_matrix[index, column] = _p_x_given_y(pokemon, c_mon, mon) / denom
+
+    with open(teammate_file, "wb") as file:
+        np.save(file, team_matrix)
+
+    # Clear the raw data since we only need the matrices.
     for poke in pokemon:
         del pokemon[poke]["Checks and Counters"]
+        del pokemon[poke]["Teammates"]
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)
@@ -117,3 +147,43 @@ def _threat_for_poke(pokemon, threat, poke):
         # Don't need one counter for every mon that's weak to something.
         strength *= COUNTER_COVERED_FACTOR
     return strength * weight
+
+
+def _p_x_given_y(pokemon, x, y):
+    """Calculate probability that x appears in a slot if y is on team.
+
+    Args:
+        x (str): Name of a Pokemon.
+
+        y (str): Name of a Pokemon.
+
+    Returns:
+        float [0, 1]: Probability(x is in a slot|y is on that team)
+    """
+    if y not in pokemon[x]["Teammates"]:
+        return 0  # Never appear together.
+
+    return pokemon[x]["Teammates"][y] / sum(pokemon[y]["Teammates"].values())
+
+
+def _p_x_given_not_y(pokemon, x, y, total_pairs):
+    """Calculate probability that x appears on a slot if y does not.
+
+    Args:
+        x (str): Name of a Pokemon.
+
+        y (str): Name of a Pokemon.
+
+    Returns:
+        float [0, 1]: Probability(x is on a team|y is not on that team)
+    """
+
+    if y not in pokemon[x]["Teammates"]:
+        # Never appear together, so P(x|not y) = p(x)
+        return sum(pokemon[x]["Teammates"].values()) / total_pairs
+
+    # P(x|not y) = P(x and not y) / P(not y)
+    # (x - (x U y)) is count of times x appeared without y
+    count_x_and_not_y = sum(pokemon[x]["Teammates"].values()) - pokemon[x]["Teammates"][y]
+    count_not_y = total_pairs - sum(pokemon[y]["Teammates"].values())
+    return count_x_and_not_y / count_not_y

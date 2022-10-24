@@ -30,8 +30,9 @@ def update():
     for file in os.scandir(TEMP_DATA_DIR):
         try:
             threat_filename = file.path[:-5] + THREAT_FILE
+            teammate_filename = file.path[:-5] + TEAMMATE_FILE
             format_name, times_played = \
-                preprocess.prepare_files(file, threat_filename)
+                preprocess.prepare_files(file, threat_filename, teammate_filename)
 
             # Files are named like gen8ou-1500.json
             rating = file.name[:-5].split("-")[1]
@@ -43,7 +44,7 @@ def update():
             else:
                 format_ratings[format_name].append(rating)
             print(file.name + " is valid.")
-        except AssertionError:
+        except AssertionError:  # TODO should pass up a message about why.
             os.remove(file)
             print(file.name + " failed validation.")
 

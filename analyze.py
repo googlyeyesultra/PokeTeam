@@ -49,7 +49,7 @@ class MetagameData:
     Contains data for a provided metagame and performs useful analysis on it.
     """
 
-    def __init__(self, json_file, threat_file):
+    def __init__(self, json_file, threat_file, team_file):
         """Load metagame data from file.
 
         Args:
@@ -68,9 +68,13 @@ class MetagameData:
             self._total_pokes = data["total_pokes"]
             self._pokes_per_team = data["pokes_per_team"]
             self._num_teams = data["num_teams"]
+            self._total_pairs = data["total_pairs"]
 
         with open(threat_file, "rb") as file:
             self._threat_matrix = np.load(file)
+
+        with open(team_file, "rb") as file:
+            self._team_matrix = np.load(file)
 
     def _find_threats(self, team):
         """Generate threat ratings for threats for a provided team.
@@ -99,44 +103,8 @@ class MetagameData:
             Note that it can be a non-integer as Smogon weights statistics by
             player rating.
         """
+        # This should probably be precalculated.
         return sum(self.pokemon[poke]["Abilities"].values())
-
-    def _p_x_given_y(self, x, y):
-        """Calculate probability that x appears on a team if y does.
-
-        Args:
-            x (str): Name of a Pokemon.
-
-            y (str): Name of a Pokemon.
-
-        Returns:
-            float [0, 1]: Probability(x is on a team|y is on that team)
-        """
-        if y not in self.pokemon[x]["Teammates"]:
-            return 0  # Never appear together
-
-        return self.pokemon[x]["Teammates"][y] / self.count_pokemon(y)
-
-    def _p_x_given_not_y(self, x, y):
-        """Calculate probability that x appears on a team if y does not.
-
-        Args:
-            x (str): Name of a Pokemon.
-
-            y (str): Name of a Pokemon.
-
-        Returns:
-            float [0, 1]: Probability(x is on a team|y is not on that team)
-        """
-        if y not in self.pokemon[x]["Teammates"]:
-            # Never appear together, so P(x|not y) = p(x)
-            return self.count_pokemon(x) / self._num_teams
-
-        # P(x|not y) = P(x and not y) / P(not y)
-        # (x - (x U y)) is count of times x appeared without y
-        count_x_and_not_y = self.count_pokemon(x) - self.pokemon[x]["Teammates"][y]
-        pokes_except_y = self._num_teams - self.count_pokemon(y)
-        return count_x_and_not_y / pokes_except_y
 
     def _get_counter_score(self, threats, team_size, poke):
         """Generate a score based on how good a Pokemon \
@@ -180,16 +148,10 @@ class MetagameData:
             sum_usage_factor += usage_factor
             # P(X|not Y) is 0 if X doesn't occur without Y.
             # So Y needs to be on team.
-            given_not = self._p_x_given_not_y(poke, mon)
-            assert(0 <= given_not <= 1)
-            if given_not == 0:
-                ratio = math.inf
-            else:
-                given = self._p_x_given_y(poke, mon)
-                assert(0 <= given <= 1)
-                ratio = given / given_not
-            # On the flipside, if P(X|Y) is 0, we need to not put Y on the team.
+            # On the flip side, if P(X|Y) is 0, we need to not put Y on the team.
             # This is common where X and Y are the same mon.
+
+            ratio = self._team_matrix[self._indices[mon], self._indices[poke]]
             if ratio == 0:
                 # This behaves the same way multiplying by 0 would in the non-log form.
                 log_sum = -math.inf
@@ -328,7 +290,7 @@ class MetagameData:
                 c_scores[index], t_scores[index], u_scores[index], weights)
 
             scores.append((poke, combined, c_scores[index],
-                            t_scores[index], u_scores[index]))
+                t_scores[index], u_scores[index]))
 
         # TODO consider refactoring to return a dictionary.
         # Maybe dict (name -> a scores object)
@@ -353,7 +315,7 @@ class MetagameData:
         return sorted(scores, key=lambda kv: -kv[1])[0][0]
 
     def _get_best_with_improvement(self, team, current, weights):
-        """Find the best swap for a Pokemon on a team
+        """Find the best swap for a Pokemon on a team.
 
         Args:
             team (list of str): Names of Pokemon already on the team, except the one to swap.
@@ -403,7 +365,7 @@ class MetagameData:
         teams = set(tuple(sorted(my_team)))
         while change_made:
             change_made = False
-            most_improvement = (None, 0, -1) # Mon to use, score, index of swap.
+            most_improvement = (None, 0, -1)  # Mon to use, score, index of swap.
             # Start at len(team) to leave Pokemon the user specified in.
             for x in range(len(team), 6):
                 old_member = my_team[x]

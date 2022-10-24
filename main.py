@@ -11,7 +11,7 @@ import analyze
 import display as d
 import update
 import corefinder
-from file_constants import DATA_DIR, TOP_FORMATS_FILE, THREAT_FILE
+from file_constants import *
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -29,10 +29,13 @@ def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
         if not os.path.exists(DATA_DIR + dataset + ".json"):
+            # TODO should check all three files
             s3_bucket.download_file(dataset + ".json", DATA_DIR + dataset + ".json")
             s3_bucket.download_file(dataset + THREAT_FILE, DATA_DIR + dataset + THREAT_FILE)
+            s3_bucket.download_file(dataset + TEAMMATE_FILE, DATA_DIR + dataset + TEAMMATE_FILE)
         return analyze.MetagameData(DATA_DIR + dataset + ".json",
-                                    DATA_DIR + dataset + THREAT_FILE)
+                                    DATA_DIR + dataset + THREAT_FILE,
+                                    DATA_DIR + dataset + TEAMMATE_FILE)
     except (FileNotFoundError, ClientError):
         abort(404)
 
@@ -68,7 +71,7 @@ def display_pokemon(dataset, poke):
     if poke not in md.pokemon:
         abort(404)
 
-    usage = f'{md.pokemon[poke]["usage"]:.1%}' # MOVE THIS FORMATTING TO FRONTEND
+    usage = f'{md.pokemon[poke]["usage"]:.1%}'  # TODO MOVE THIS FORMATTING TO FRONTEND
 
     counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
     teammates = sorted(md.partner_scores(poke).items(), key=lambda kv: -kv[1])
@@ -78,7 +81,7 @@ def display_pokemon(dataset, poke):
     moves = sorted([(m[0], m[1]/count) for m in md.pokemon[poke]["Moves"].items()],
                    key=lambda kv: -kv[1])
     abilities = sorted([(a[0], a[1]/count) for a in md.pokemon[poke]["Abilities"].items()],
-                           key=lambda kv: -kv[1])
+                   key=lambda kv: -kv[1])
 
     return render_template("PokemonInfo.html",
                            poke=poke, dataset=dataset,
