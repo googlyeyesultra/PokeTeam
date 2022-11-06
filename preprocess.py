@@ -78,9 +78,10 @@ def prepare_files(json_file, threat_file, teammate_file):
 
         total_pairs = 0
         for poke in pokemon:
-            total_pairs += sum(pokemon[poke]["Teammates"].values())
+            # Divide by 2 - otherwise we count (A, B) and (B, A).
+            total_pairs += sum(pokemon[poke]["Teammates"].values()) / 2
 
-        data["total_pairs"] = total_pairs  # TODO maybe div by 2? Currently counts both ways.
+        data["total_pairs"] = total_pairs
 
     threat_matrix = np.empty((len(pokemon), len(pokemon)))
     for index, mon in enumerate(pokemon):
@@ -95,6 +96,13 @@ def prepare_files(json_file, threat_file, teammate_file):
     for mon in pokemon:
         total_pairs += sum(pokemon[mon]["Teammates"].values())  # TODO if we save this sum we can speed up some other operations
 
+    # team score for X given Y is TODO
+    # If X never appears with Y, needs to be 0.
+    # If X appears on every team with Y, needs to be huge.
+    # P(X|Y): 1 if x appears on every team with Y. Maybe divide by 1-P(X|Y)? Except it's per slot, so it won't be 1. 0 if never appears with Y.
+    # P(Y|X): Not obviously useful?
+    # P(X|not Y):
+    # P(Y|not X):
     team_matrix = np.empty((len(pokemon), len(pokemon)))
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
@@ -110,7 +118,7 @@ def prepare_files(json_file, threat_file, teammate_file):
     # Clear the raw data since we only need the matrices.
     for poke in pokemon:
         del pokemon[poke]["Checks and Counters"]
-        del pokemon[poke]["Teammates"]
+        # del pokemon[poke]["Teammates"]  # Corefinder still uses this data.
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)
@@ -166,7 +174,7 @@ def _p_x_given_y(pokemon, x, y):
     return pokemon[x]["Teammates"][y] / sum(pokemon[y]["Teammates"].values())
 
 
-def _p_x_given_not_y(pokemon, x, y, total_pairs):
+def _p_x_given_not_y(pokemon, x, y, total_pairs):  # TODO try using this other ways. What about dividing by opposite direction? p(y|not x)?
     """Calculate probability that x appears on a slot if y does not.
 
     Args:

@@ -12,7 +12,7 @@ import numpy as np
 
 COUNTER_WEIGHT_DEFAULT = 2
 TEAM_WEIGHT_DEFAULT = 5
-USAGE_WEIGHT_DEFAULT = 2
+USAGE_WEIGHT_DEFAULT = 2  # TODO maybe move this up to 3
 
 
 @dataclass(frozen=True)
@@ -139,13 +139,10 @@ class MetagameData:
 
         # Geometric mean of the P(X|Y)/P(X|not Y) ratio
         # Where x is the mon we're considering adding.
-        # Weighted by 1 / usage of the mon on team.
         # Log form required.
         log_sum = 0
         sum_usage_factor = 0
         for mon in team:
-            usage_factor = (1 / self.pokemon[mon]["usage"])
-            sum_usage_factor += usage_factor
             # P(X|not Y) is 0 if X doesn't occur without Y.
             # So Y needs to be on team.
             # On the flip side, if P(X|Y) is 0, we need to not put Y on the team.
@@ -157,9 +154,9 @@ class MetagameData:
                 log_sum = -math.inf
                 break
             else:
-                log_sum += usage_factor * math.log10(ratio)
+                log_sum += math.log10(ratio)
 
-        return 10 ** (log_sum / sum_usage_factor)
+        return 10 ** (log_sum / len(team))
 
     def _get_usage_score(self, poke):
         """Generate a score based on often a Pokemon is used.

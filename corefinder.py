@@ -7,7 +7,7 @@ from networkx.algorithms import clique
 from networkx import Graph
 import numpy
 
-SCORE_REQUIREMENT_DEFAULT = .03
+SCORE_REQUIREMENT_DEFAULT = 6
 USAGE_THRESHOLD_DEFAULT = .01
 
 
@@ -38,17 +38,9 @@ class CoreFinder:
             for team_poke_index, team_poke in enumerate(self.keys):
                 if poke_index == team_poke_index:
                     data[poke_index, team_poke_index] = True
-                elif team_poke in md.pokemon[poke]["Teammates"]:
-                    symmetric_score = (md.pokemon[poke]["Teammates"][team_poke]
-                                 / md.count_pokemon(poke)
-                                 * (1 - md.pokemon[team_poke]["usage"]))
-                    symmetric_score *= (md.pokemon[team_poke]["Teammates"][poke]
-                                  / md.count_pokemon(team_poke)
-                                  * (1 - md.pokemon[poke]["usage"]))
-                    data[poke_index, team_poke_index] = \
-                        (symmetric_score > score_requirement)
                 else:
-                    data[poke_index, team_poke_index] = False
+                    symmetric_score = (md._get_team_score([poke], team_poke) * md._get_team_score([team_poke], poke)) ** .5  # TODO if we use this it shouldn't be private.
+                    data[poke_index, team_poke_index] = (symmetric_score > score_requirement)
 
         self.graph = Graph(data)
 
