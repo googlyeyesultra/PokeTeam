@@ -57,7 +57,8 @@ def prepare_files(json_file, threat_file, teammate_file):
                      in pokemon[poke]["Checks and Counters"].items()
                      if c in pokemon}
 
-        assert len(pokemon) >= 20  # Not enough data to even try.
+        # Not enough data to even try.
+        assert len(pokemon) >= 20, "Not enough Pokemon remaining after cleanup."
         for index, mon in enumerate(pokemon):
             indices[mon] = index
         data["indices"] = indices

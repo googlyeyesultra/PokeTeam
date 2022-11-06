@@ -39,7 +39,7 @@ class CoreFinder:
                 if poke_index == team_poke_index:
                     data[poke_index, team_poke_index] = True
                 else:
-                    symmetric_score = (md._get_team_score([poke], team_poke) * md._get_team_score([team_poke], poke)) ** .5  # TODO if we use this it shouldn't be private.
+                    symmetric_score = (md._get_team_score([poke], team_poke) * md._get_team_score([team_poke], poke)) ** .5
                     data[poke_index, team_poke_index] = (symmetric_score > score_requirement)
 
         self.graph = Graph(data)

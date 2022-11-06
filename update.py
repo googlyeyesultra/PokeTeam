@@ -44,9 +44,9 @@ def update():
             else:
                 format_ratings[format_name].append(rating)
             print(file.name + " is valid.")
-        except AssertionError:  # TODO should pass up a message about why.
+        except AssertionError as e:
             os.remove(file)
-            print(file.name + " failed validation.")
+            print(file.name + " failed validation: " + e)
 
     top_formats = sorted(format_playstats,
                          key=format_playstats.get, reverse=True)[:10]
