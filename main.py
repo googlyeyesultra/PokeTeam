@@ -29,9 +29,10 @@ def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
         if not os.path.exists(DATA_DIR + dataset + ".json"):
-            # TODO should check all three files
             s3_bucket.download_file(dataset + ".json", DATA_DIR + dataset + ".json")
+        if not os.path.exists(DATA_DIR + dataset + THREAT_FILE):
             s3_bucket.download_file(dataset + THREAT_FILE, DATA_DIR + dataset + THREAT_FILE)
+        if not os.path.exists(DATA_DIR + dataset + TEAMMATE_FILE):
             s3_bucket.download_file(dataset + TEAMMATE_FILE, DATA_DIR + dataset + TEAMMATE_FILE)
         return analyze.MetagameData(DATA_DIR + dataset + ".json",
                                     DATA_DIR + dataset + THREAT_FILE,
