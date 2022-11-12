@@ -8,7 +8,7 @@ from networkx import Graph
 import numpy
 
 SCORE_REQUIREMENT_DEFAULT = 6
-USAGE_THRESHOLD_DEFAULT = .01
+USAGE_THRESHOLD_DEFAULT = 1
 
 
 class CoreFinder:

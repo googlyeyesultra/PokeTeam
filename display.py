@@ -21,6 +21,6 @@ class DataSelectForm(Form):
 
 class CoreFinderForm(Form):
     """Form to select settings for core finding."""
-    usage_threshold = DecimalField(default=corefinder.USAGE_THRESHOLD_DEFAULT)
+    usage_threshold = DecimalField(default=corefinder.USAGE_THRESHOLD_DEFAULT, places=1)
     score_requirement = DecimalField(
         default=corefinder.SCORE_REQUIREMENT_DEFAULT)

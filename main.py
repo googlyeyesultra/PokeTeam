@@ -269,7 +269,7 @@ def find_cores(dataset):
     """Part of page responsible for displaying cores in format."""
     md = get_md(dataset)
 
-    usage_threshold = float(request.form["usage_threshold"])
+    usage_threshold = float(request.form["usage_threshold"]) / 100
     score_requirement = float(request.form["score_requirement"])
     cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
 
