@@ -1,14 +1,10 @@
-{% macro poke_dex_sprite(poke, dataset) -%}
-<a href="{{url_for('display_pokemon', dataset=dataset, poke=poke)}}"><figure><img class="poke-dex-sprite" data-poke="{{poke}}"><figcaption>{{poke}}</figcaption></figure></a>
-{%- endmacro %}
-
 {% macro poke_link(poke, dataset) -%}
 <a href="{{url_for('display_pokemon', dataset=dataset, poke=poke)}}"><span class="poke-icon" data-poke="{{poke}}"></span>{{poke}}</a>
 {%- endmacro %}
 
 {% macro item_link(item, dataset) -%}
-{% if item != "nothing" %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span>
-{% else %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span>Nothing{% endif %}
+{% if item != "nothing" %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span></a>
+{% else %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span>Nothing</a>{% endif %}
 {%- endmacro %}
 
 {% macro item_no_link(item, dataset) -%}

@@ -2,9 +2,20 @@
 {% block title %}Pokedex{% endblock %}
 {% block below_navbar %}
 
-<div class="align-box">
+<table id="pokedex" class="data-table sortable">
+    <thead>
+        <tr>
+            <th class="searchable">Pokemon</th>
+            <th>Usage</th>
+        </tr>
+    </thead>
+    <tbody>
     {% for poke in pokemon %}
-        {{ lb.poke_dex_sprite(poke, dataset) }}
+        <tr>
+            <td>{{ lb.poke_link(poke[0], dataset) }}</td>
+            <td>{{ "{:.2%}".format(poke[1]) }}</td>
+        </tr>
     {% endfor %}
-</div>
+    </tbody>
+</table>
 {% endblock %}

@@ -8,12 +8,14 @@ This identifies common cores. Subsets of cores are also cores.
 <fieldset class="advanced">
   <legend>Advanced Options</legend>
   <table class="alignment-table">
+    <tbody>
     <tr><td>Usage Threshold:</td><td>{{ form.usage_threshold(min='0', max='100', step='.1', required='true') }}%</td>
       <td><span class="fas fa-question-circle"><span class="tooltip">Excludes Pokemon with usage below the threshold. Note that some Pokemon with exceptionally low usage are already excluded.</span></span>
     </td></tr>
-  <tr><td>Score Requirement:</td><td>{{ form.score_requirement(min='.01', step='.01', required='true') }}</td>
-    <td><span class="fas fa-question-circle"><span class="tooltip">The score requirement determines how much Pokemon need to be used together in order to be considered part of the same core. A high value will tend to result in few, small cores.</span></span></tr>
+    <tr><td>Score Requirement:</td><td>{{ form.score_requirement(min='.01', step='.01', required='true') }}</td>
+    <td><span class="fas fa-question-circle"><span class="tooltip">The score requirement determines how much Pokemon need to be used together in order to be considered part of the same core. A high value will tend to result in few, small cores.</span></span>
     </td></tr>
+    </tbody>
   </table>
 </fieldset>
 <input type="submit" value="Find Cores">

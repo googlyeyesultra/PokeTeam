@@ -18,3 +18,16 @@ $(this).text(Dex.items.get($(this).data("item")).name)})
 
 $(".move-name").each(function () {
 $(this).text(Dex.moves.get($(this).data("move")).name)})
+
+$(".sortable").each(function () {
+    $(this).DataTable({
+    paging: false,
+    autoWidth: false,
+    columnDefs: [
+        {targets: "searchable", searchable: true},
+        {targets: "_all", searchable: false}
+    ],
+    order: [],
+    orderClasses: false
+    });
+});

@@ -13,14 +13,16 @@
   <br>
   Or choose one of the most popular formats:
   <table class="alignment-table" style="text-align:right">
-  {% for format in top %}
-    <tr>
-      <td>{{format[0]}}</td>
-    {% for rating in format[1] %}
-      <td>{{lb.analysis_link(format[0], rating)}}</td>
-    {% endfor %}
-    </tr>
-  {% endfor %}
+    <tbody>
+      {% for format in top %}
+        <tr>
+          <td>{{format[0]}}</td>
+        {% for rating in format[1] %}
+          <td>{{lb.analysis_link(format[0], rating)}}</td>
+        {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
   </table>
 </div>
 {% endblock %}

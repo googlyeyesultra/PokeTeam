@@ -96,7 +96,7 @@ def display_pokemon(dataset, poke):
 def pokedex(dataset):
     """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
-    pokemon = sorted(md.pokemon.keys())
+    pokemon = sorted([(x, md.pokemon[x]["usage"]) for x in md.pokemon.keys()], key=lambda pair: -pair[1])
     return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset)
 
 

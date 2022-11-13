@@ -1,24 +1,28 @@
 <table class="data-table">
-    <tr>
-        <th>Recommendation</th>
-        <th>Overall Score</th>
-        <th>Counter Score</th>
-        <th>Team Score</th>
-        <th>Usage Score</th>
-        {% if add_links %}
-                <th>&#10010</th>
-        {% endif %}
-    </tr>
-    {% for reco in recommendations[:10] %}
+    <thead>
         <tr>
-            <td>{{ lb.poke_link(reco[0], dataset) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(reco[1]) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(reco[2]) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(reco[3]) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(reco[4]) }}</td>
+            <th>Recommendation</th>
+            <th>Overall Score</th>
+            <th>Counter Score</th>
+            <th>Team Score</th>
+            <th>Usage Score</th>
             {% if add_links %}
-                <td>{{ lb.add_link(reco[0]) }}</td>
+                    <th>&#10010</th>
             {% endif %}
         </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+        {% for reco in recommendations[:10] %}
+            <tr>
+                <td>{{ lb.poke_link(reco[0], dataset) }}</td>
+                <td class="r-align">{{ "{:.2f}".format(reco[1]) }}</td>
+                <td class="r-align">{{ "{:.2f}".format(reco[2]) }}</td>
+                <td class="r-align">{{ "{:.2f}".format(reco[3]) }}</td>
+                <td class="r-align">{{ "{:.2f}".format(reco[4]) }}</td>
+                {% if add_links %}
+                    <td>{{ lb.add_link(reco[0]) }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>

@@ -1,9 +1,11 @@
 <table class="data-table">
     <tr><th>Ability</th><th>Usage</th></tr>
+    <tbody>
     {% for abil in abilities[:5] %}
         <tr>
             <td>{{ lb.abil_link(abil[0], dataset) }}</td>
             <td class="r-align">{{ "{:.0%}".format(abil[1]) }}</td>
         </tr>
     {% endfor %}
+    </tbody>
 </table>

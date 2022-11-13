@@ -1,5 +1,6 @@
 <table class="data-table">
-    <tr><th>User</th><th>Combined Usage</th><th>Move Usage</th><th>Pokemon Usage</th></tr>
+    <thead><tr><th>User</th><th>Combined Usage</th><th>Move Usage</th><th>Pokemon Usage</th></tr></thead>
+    <tbody>
     {% for user in move_users[:10] %}
         <tr>
             <td>{{ lb.poke_link(user[0], dataset) }}</td>
@@ -8,4 +9,5 @@
             <td class="r-align">{{ "{:.0%}".format(user[3]) }}</td>
         </tr>
     {% endfor %}
+    </tbody>
 </table>

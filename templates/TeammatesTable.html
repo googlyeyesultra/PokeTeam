@@ -1,9 +1,11 @@
 <table class="data-table">
-    <tr><th>Teammate</th><th>Rating</th></tr>
-    {% for teammate in teammates[:10] %}
-        <tr>
-            <td>{{ lb.poke_link(teammate[0], dataset) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(teammate[1]) }}</td>
-        </tr>
-    {% endfor %}
+    <thead><tr><th>Teammate</th><th>Rating</th></tr></thead>
+    <tbody>
+        {% for teammate in teammates[:10] %}
+            <tr>
+                <td>{{ lb.poke_link(teammate[0], dataset) }}</td>
+                <td class="r-align">{{ "{:.2f}".format(teammate[1]) }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
