@@ -20,6 +20,19 @@ $(".move-name").each(function () {
 $(this).text(Dex.moves.get($(this).data("move")).name)})
 
 $(".sortable").each(function () {
+    sort_th = $("th.sort_desc")
+    sort_dir = "desc"
+    if(!sort_th.length) {
+        sort_th = $("th.sort_asc")
+        sort_dir = "asc"
+    }
+
+    if(sort_th.length) {
+        sort_order = [[sort_th.index(), sort_dir]]
+    } else {
+        sort_order = []
+    }
+
     $(this).DataTable({
     paging: false,
     autoWidth: false,
@@ -27,7 +40,7 @@ $(".sortable").each(function () {
         {targets: "searchable", searchable: true},
         {targets: "_all", searchable: false}
     ],
-    order: [],
+    order: sort_order,
     orderClasses: false
     });
 });
