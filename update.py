@@ -46,7 +46,7 @@ def update():
             print(file.name + " is valid.")
         except AssertionError as e:
             os.remove(file)
-            print(file.name + " failed validation: " + e)
+            print(file.name + " failed validation: " + str(e))
 
     top_formats = sorted(format_playstats,
                          key=format_playstats.get, reverse=True)[:10]

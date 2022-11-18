@@ -93,10 +93,6 @@ def prepare_files(json_file, threat_file, teammate_file):
     with open(threat_file, "wb") as file:
         np.save(file, threat_matrix)
 
-    total_pairs = 0
-    for mon in pokemon:
-        total_pairs += sum(pokemon[mon]["Teammates"].values())  # TODO if we save this sum we can speed up some other operations
-
     # team score for X given Y is TODO
     # If X never appears with Y, needs to be 0.
     # If X appears on every team with Y, needs to be huge.
@@ -107,7 +103,7 @@ def prepare_files(json_file, threat_file, teammate_file):
     team_matrix = np.empty((len(pokemon), len(pokemon)))
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
-            denom = _p_x_given_not_y(pokemon, c_mon, mon, total_pairs)
+            denom = _p_x_given_not_y(pokemon, c_mon, mon, data["total_pairs"])
             if denom == 0:
                 team_matrix[index, column] = math.inf
             else:
