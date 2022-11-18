@@ -62,7 +62,21 @@ def prepare_files(json_file, threat_file, teammate_file):
         for index, mon in enumerate(pokemon):
             indices[mon] = index
         data["indices"] = indices
-        data["data"] = pokemon
+
+        # Round values to reduce size of files.
+        for poke in pokemon:
+            pokemon[poke]["Moves"] = \
+                {m: round(data, 3) for (m, data)
+                 in pokemon[poke]["Moves"].items()}
+            pokemon[poke]["Abilities"] = \
+                {a: round(data, 3) for (a, data)
+                 in pokemon[poke]["Abilities"].items()}
+            pokemon[poke]["Items"] = \
+                {i: round(data, 3) for (i, data)
+                 in pokemon[poke]["Items"].items()}
+            for c in pokemon[poke]["Checks and Counters"]:
+                pokemon[poke]["Checks and Counters"][c] = \
+                    tuple(round(x, 2) for x in pokemon[poke]["Checks and Counters"][c])
 
         # Calculate average pokemon per team. Typically a little less than 6.
         # Smaller in some formats like 1v1.
@@ -73,18 +87,18 @@ def prepare_files(json_file, threat_file, teammate_file):
             total_pokes += sum(pokemon[poke]["Abilities"].values())
             total_team_members += sum(pokemon[poke]["Teammates"].values())
 
-        data["total_pokes"] = total_pokes
-        data["pokes_per_team"] = total_team_members / total_pokes + 1
-        data["num_teams"] = total_pokes / data["pokes_per_team"]
+        data["total_pokes"] = round(total_pokes, 3)
+        data["pokes_per_team"] = round(total_team_members / total_pokes + 1, 3)
+        data["num_teams"] = round(total_pokes / data["pokes_per_team"], 3)
 
         total_pairs = 0
         for poke in pokemon:
             # Divide by 2 - otherwise we count (A, B) and (B, A).
             total_pairs += sum(pokemon[poke]["Teammates"].values()) / 2
 
-        data["total_pairs"] = total_pairs
+        data["total_pairs"] = round(total_pairs, 3)
 
-    threat_matrix = np.empty((len(pokemon), len(pokemon)))
+    threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
             threat_matrix[index, column] = \
@@ -100,7 +114,7 @@ def prepare_files(json_file, threat_file, teammate_file):
     # P(Y|X): Not obviously useful?
     # P(X|not Y):
     # P(Y|not X):
-    team_matrix = np.empty((len(pokemon), len(pokemon)))
+    team_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
             denom = _p_x_given_not_y(pokemon, c_mon, mon, data["total_pairs"])
@@ -115,7 +129,17 @@ def prepare_files(json_file, threat_file, teammate_file):
     # Clear the raw data since we only need the matrices.
     for poke in pokemon:
         del pokemon[poke]["Checks and Counters"]
-        # del pokemon[poke]["Teammates"]  # Corefinder still uses this data.
+        del pokemon[poke]["Teammates"]
+        del pokemon[poke]["Happiness"]
+        del pokemon[poke]["Spreads"]
+        del pokemon[poke]["Viability Ceiling"]
+        del pokemon[poke]["Raw count"]
+
+    del data["info"]["cutoff"]
+    del data["info"]["cutoff deviation"]
+    del data["info"]["team type"]
+
+    data["data"] = pokemon
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)
