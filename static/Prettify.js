@@ -41,6 +41,8 @@ $(".sortable").each(function () {
         {targets: "_all", searchable: false}
     ],
     order: sort_order,
-    orderClasses: false
+    orderClasses: false,
+    language: {search: "",
+               searchPlaceholder: "Search",},
     });
 });
