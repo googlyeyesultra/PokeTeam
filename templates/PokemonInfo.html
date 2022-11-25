@@ -1,7 +1,7 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ poke }} data{% endblock %}
 {% block below_navbar %}
-  <img class="poke-sprite" data-poke="{{ poke }}"></img><br>
+  <img class="poke-sprite" data-poke="{{ poke }}" data-gen="{{ gen }}"><br>
   {{ poke }}<br>
   Usage: {{ usage }}<br>
   <div class="tables-wrapper">

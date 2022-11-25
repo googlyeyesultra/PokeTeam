@@ -1,6 +1,7 @@
 """Handles routing, serving, and preparing pages."""
 import os
 import functools
+import re
 
 from botocore.exceptions import ClientError
 from flask import (Flask, render_template, request,
@@ -24,7 +25,7 @@ s3_session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"]
 s3_bucket = s3_session.resource("s3", endpoint_url=os.environ["S3_ENDPOINT"]).Bucket(os.environ["BUCKET"])
 
 
-@functools.lru_cache(maxsize=128, typed=False)
+@functools.lru_cache(maxsize=64, typed=False)
 def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
@@ -40,6 +41,10 @@ def get_md(dataset):
     except (FileNotFoundError, ClientError):
         abort(404)
 
+@functools.lru_cache(maxsize=64, typed=False)
+def get_gen(dataset):  # TODO consider moving this elsewhere. Preprocessing, maybe?
+    """Get generation number for a format."""
+    return re.match("^gen([0-9]*)", dataset).group(1)
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
@@ -89,7 +94,8 @@ def display_pokemon(dataset, poke):
                            usage=usage,
                            counters=counters,
                            teammates=teammates, items=items,
-                           moves=moves, abilities=abilities)
+                           moves=moves, abilities=abilities,
+                           gen=get_gen(dataset))
 
 
 @app.route("/pokemon/<dataset>/")
@@ -97,7 +103,7 @@ def pokedex(dataset):
     """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
     pokemon = sorted([(x, md.pokemon[x]["usage"]) for x in md.pokemon.keys()], key=lambda pair: -pair[1])
-    return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset)
+    return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset, gen=get_gen(dataset))
 
 
 @app.route("/items/<dataset>/<item>/")
@@ -117,7 +123,8 @@ def display_item(dataset, item):
         abort(404)
 
     return render_template("ItemInfo.html",
-                           item=item, dataset=dataset, holders=holders)
+                           item=item, dataset=dataset, holders=holders,
+                           gen=get_gen(dataset))
 
 
 @app.route("/items/<dataset>/")
@@ -133,7 +140,8 @@ def item_dex(dataset):
             items.add(item[0])
 
     return render_template("ItemDex.html",
-                           items=sorted(list(items)), dataset=dataset)
+                           items=sorted(list(items)), dataset=dataset,
+                           gen=get_gen(dataset))
 
 
 @app.route("/moves/<dataset>/<move>/")
@@ -154,7 +162,8 @@ def display_move(dataset, move):
         abort(404)
 
     return render_template("MoveInfo.html",
-                           move=move, dataset=dataset, move_users=users)
+                           move=move, dataset=dataset, move_users=users,
+                           gen=get_gen(dataset))
 
 
 @app.route("/moves/<dataset>/")
@@ -171,7 +180,8 @@ def move_dex(dataset):
 
     display_moves = [m for m in sorted(list(moves)) if m]
     return render_template("MoveDex.html",
-                           moves=display_moves, dataset=dataset)
+                           moves=display_moves, dataset=dataset,
+                           gen=get_gen(dataset))
 
 
 @app.route("/abilities/<dataset>/<abil>/")
@@ -193,7 +203,8 @@ def display_ability(dataset, abil):
         abort(404)
 
     return render_template("AbilityInfo.html",
-                           abil=abil, dataset=dataset, abil_users=users)
+                           abil=abil, dataset=dataset, abil_users=users,
+                           gen=get_gen(dataset))
 
 
 @app.route("/abilities/<dataset>/")
@@ -209,7 +220,8 @@ def ability_dex(dataset):
 
     display_abils = [a for a in sorted(list(abils)) if a]
     return render_template("AbilityDex.html",
-                           abilities=display_abils, dataset=dataset)
+                           abilities=display_abils, dataset=dataset,
+                           gen=get_gen(dataset))
 
 
 @app.route("/analysis/<dataset>/")
@@ -226,7 +238,8 @@ def analysis(dataset):
         else:
             selector.choices = [("", "None")] + selector.choices
 
-    return render_template('TeamBuilder.html', form=form, dataset=dataset)
+    return render_template('TeamBuilder.html', form=form, dataset=dataset,
+                           gen=get_gen(dataset))
 
 
 @app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
@@ -254,14 +267,16 @@ def output_analysis(dataset):
                            recommendations=recommendations,
                            suggested_team=suggested_team,
                            swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
-                           add_links=(len(my_pokes) < 6))
+                           add_links=(len(my_pokes) < 6),
+                           gen=get_gen(dataset))
 
 
 @app.route("/cores/<dataset>/")
 def cores(dataset):
     """Page for finding cores in a format."""
     return render_template("CoreFinder.html",
-                           dataset=dataset, form=d.CoreFinderForm())
+                           dataset=dataset, form=d.CoreFinderForm(),
+                           gen=get_gen(dataset))
 
 
 @app.route("/cores/<dataset>/find_cores", methods=['POST'])
@@ -273,7 +288,8 @@ def find_cores(dataset):
     score_requirement = float(request.form["score_requirement"])
     cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
 
-    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores())
+    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
+                           gen=get_gen(dataset))
 
 
 @app.route("/update/<key>/")

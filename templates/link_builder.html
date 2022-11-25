@@ -3,13 +3,11 @@
 {%- endmacro %}
 
 {% macro item_link(item, dataset) -%}
-{% if item != "nothing" %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span></a>
-{% else %}<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span>Nothing</a>{% endif %}
+<a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span></a>
 {%- endmacro %}
 
 {% macro item_no_link(item, dataset) -%}
-{%- if item != "nothing" -%}<span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span>
-{%- else -%}<span class="item-icon" data-item="{{item}}"></span>Nothing{%- endif %}
+<span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span>
 {%- endmacro %}
 
 {% macro move_link(move, dataset) -%}

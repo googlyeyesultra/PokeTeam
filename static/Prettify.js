@@ -1,9 +1,6 @@
 $(".poke-icon").each(function() {
 $(this).attr("style", pkmn.img.Icons.getPokemon($(this).data("poke")).style)})
 
-$(".poke-dex-sprite").each(function() {
-$(this).attr("src", pkmn.img.Sprites.getDexPokemon($(this).data("poke")).url)})
-
 $(".item-icon").each(function() {
     $(this).attr("style", pkmn.img.Icons.getItem($(this).data("item")).style)
     if ($(this).data("item") == "nothing") {
@@ -13,13 +10,18 @@ $(".item-icon").each(function() {
 })
 
 $(".poke-sprite").each(function() {
-$(this).attr("src", pkmn.img.Sprites.getPokemon($(this).data("poke")).url)})
+$(this).attr("src", pkmn.img.Sprites.getPokemon($(this).data("poke"), {gen: $(this).data("gen")}).url)})
 
 $(".abil-name").each(function () {
 $(this).text(pkmn.dex.Dex.abilities.get($(this).data("abil")).name)})
 
 $(".item-name").each(function () {
-$(this).text(pkmn.dex.Dex.items.get($(this).data("item")).name)})
+    if($(this).data("item") == "nothing") {
+        $(this).text("Nothing")
+    } else {
+        $(this).text(pkmn.dex.Dex.items.get($(this).data("item")).name)
+    }
+})
 
 $(".move-name").each(function () {
 $(this).text(pkmn.dex.Dex.moves.get($(this).data("move")).name)})
