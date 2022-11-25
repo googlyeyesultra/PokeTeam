@@ -5,7 +5,12 @@ $(".poke-dex-sprite").each(function() {
 $(this).attr("src", pkmn.img.Sprites.getDexPokemon($(this).data("poke")).url)})
 
 $(".item-icon").each(function() {
-$(this).attr("style", pkmn.img.Icons.getItem($(this).data("item")).style)})
+    $(this).attr("style", pkmn.img.Icons.getItem($(this).data("item")).style)
+    if ($(this).data("item") == "nothing") {
+        $(this).css("background", "transparent url(/static/icons/no_item.png)")
+        $(this).css("background-size", "100% 100%")
+    }
+})
 
 $(".poke-sprite").each(function() {
 $(this).attr("src", pkmn.img.Sprites.getPokemon($(this).data("poke")).url)})
