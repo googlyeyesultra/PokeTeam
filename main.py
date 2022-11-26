@@ -178,11 +178,10 @@ def move_dex(dataset):
         for move in top_moves:
             moves.add(move[0])
 
-    display_moves = [m for m in sorted(list(moves)) if m]
+    display_moves = sorted(list(moves), key=str.lower)
     return render_template("MoveDex.html",
                            moves=display_moves, dataset=dataset,
                            gen=get_gen(dataset))
-
 
 @app.route("/abilities/<dataset>/<abil>/")
 def display_ability(dataset, abil):

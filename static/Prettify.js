@@ -31,14 +31,22 @@ $(".item-name").each(function () {
 })
 
 $(".move-name").each(function () {
-$(this).text(pkmn.dex.Dex.moves.get($(this).data("move")).name)})
+    if ($(this).data("move") != "No Move") {
+        $(this).text(pkmn.dex.Dex.moves.get($(this).data("move")).name)
+    }
+})
 
 $(".move-category").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).category)})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("—")
+    } else {
+        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).category)
+    }
+})
 
 $(".move-power").each(function () {
 var power = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).basePower
-    if (power == 0) {
+    if (power == 0 || $(this).data("move") == "No Move") {
         $(this).text("—")
         $(this).attr("data-order", 0)
     } else {
@@ -59,16 +67,27 @@ $(".move-accuracy").each(function () {
 })
 
 $(".move-pp").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).pp)})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("—")
+    } else {
+        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).pp)
+}})
 
 $(".move-priority").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).priority)})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("—")
+    } else {
+        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).priority)
+}})
 
 $(".move-type").each(function () {
-    var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
-    $(this).html(type_display(move_type))
-    $(this).attr("data-search", move_type)
-})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("—")
+    } else {
+        var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
+        $(this).html(type_display(move_type))
+        $(this).attr("data-search", move_type)
+}})
 
 $(".poke-type").each(function () {
     var types = pkmn.dex.Dex.forGen($(this).data("gen")).species.get($(this).data("poke")).types
@@ -81,7 +100,11 @@ $(".poke-type").each(function () {
 })
 
 $(".move-full-desc").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).desc)})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("Occurs when a Pokemon doesn't have 4 moves.")
+    } else {
+        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).desc)
+}})
 
 $(".abil-short-desc").each(function () {
 $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).abilities.get($(this).data("abil")).shortDesc)})
@@ -90,7 +113,11 @@ $(".abil-full-desc").each(function () {
 $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).abilities.get($(this).data("abil")).desc)})
 
 $(".move-short-desc").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).shortDesc)})
+    if ($(this).data("move") == "No Move") {
+        $(this).text("Occurs when a Pokemon doesn't have 4 moves.")
+    } else {
+        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).shortDesc)
+}})
 
 $(".base-stats").each(function () {
     const dex = pkmn.dex.Dex.forGen($(this).data("gen"))

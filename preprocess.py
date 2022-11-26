@@ -63,6 +63,11 @@ def prepare_files(json_file, threat_file, teammate_file):
             indices[mon] = index
         data["indices"] = indices
 
+        # Fix no move being an empty string.
+        for poke in pokemon:
+            if "" in pokemon[poke]["Moves"]:
+                pokemon[poke]["Moves"]["No Move"] = pokemon[poke]["Moves"].pop("")
+
         # Round values to reduce size of files.
         for poke in pokemon:
             pokemon[poke]["Moves"] = \
