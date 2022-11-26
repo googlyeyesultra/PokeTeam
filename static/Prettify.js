@@ -40,8 +40,10 @@ $(".move-power").each(function () {
 var power = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).basePower
     if (power == 0) {
         $(this).text("—")
+        $(this).attr("data-order", 0)
     } else {
         $(this).text(power)
+        $(this).attr("data-order", power)
     }
 })
 
@@ -49,8 +51,10 @@ $(".move-accuracy").each(function () {
     var accuracy = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).accuracy
     if (typeof accuracy != "number") {
         $(this).text("—")
+        $(this).attr("data-order", 0)
     } else {
         $(this).text(accuracy + "%")
+        $(this).attr("data-order", accuracy)
     }
 })
 
