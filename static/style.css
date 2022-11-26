@@ -100,7 +100,6 @@ input[type=number] {
   display: block;
   width: max-content;
   margin-bottom: 10px;
-  box-shadow: 1px 1px 2px;
 }
 
 .base-stats-wrapper {
@@ -109,11 +108,6 @@ input[type=number] {
 
 .data-table {
   border-collapse: collapse;
-  border: 1px solid black;
-}
-
-.data-table th, td {
-  border: 1px solid black;
 }
 
 .data-table th, td {
