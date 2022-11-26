@@ -71,23 +71,25 @@ input[type=number] {
 .info-table {
     border-style: none;
     border-collapse: collapse;
-    clear: both;
-}
-
-.info-table td, tr {
-    border-style: none;
-    border-collapse: collapse;
+    text-align: center;
 }
 
 .info-table th {
-    font-size: .8rem;
+    font-size: .7rem;
     font-weight: normal;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .info-table td {
-    margin: auto;
     padding-top: 2px;
     padding-bottom: 2px;
+}
+
+.info-table td > * {
+    vertical-align: middle;
+    margin: 0 auto;
+    display: block;
 }
 
 .info-box {
@@ -99,6 +101,7 @@ input[type=number] {
   border-width: 2px;
   display: block;
   width: max-content;
+  max-width: 75%;
   margin-bottom: 10px;
 }
 
@@ -245,11 +248,7 @@ body {
 }
 
 .alignment-table td, tr {
-    border-style: none;
-    border-collapse: collapse;
-    padding: 0;
     padding-right: 4px;
-    margin: 0;
 }
 
 .r-align {
