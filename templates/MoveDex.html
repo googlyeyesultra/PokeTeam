@@ -1,9 +1,30 @@
 {% extends "NavBar.html" %}
 {% block title %}Move Dex{% endblock %}
 {% block below_navbar %}
-<div class="vert-align-box">
-  {% for move in moves %}
-    {{ lb.move_link(move, dataset) }}
-  {% endfor %}
-</div>
+<table id="movedex" class="data-table sortable">
+    <thead>
+        <tr>
+            <th class="searchable sort_asc">Move</th>
+            <th class="unsortable">Type</th>
+            <th class="hidden unsortable">Text Type</th>
+            <th class="searchable unsortable">Category</th>
+            <th>Power</th>
+            <th>Accuracy</th>
+            <th class="searchable unsortable">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for move in moves %}
+        <tr>
+            <td>{{ lb.move_link(move, dataset) }}</td>
+            <td><img class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td><span class="move-type-text" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+            <td><span class="move-category" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+            <td><span class="move-power" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+            <td><span class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+            <td><span class="move-short-desc" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

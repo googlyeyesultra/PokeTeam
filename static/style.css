@@ -38,6 +38,7 @@ input[type=number] {
   width: 20em;
   text-align: center;
   top: 50%;
+  box-shadow: 1px 1px 2px;
 }
 
 .tooltip::after {
@@ -59,6 +60,51 @@ input[type=number] {
 
 .fa-question-circle:hover .tooltip {
   visibility: visible;
+}
+
+.info-title {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: Sans-Serif;
+}
+
+.info-table {
+    border-style: none;
+    border-collapse: collapse;
+    clear: both;
+}
+
+.info-table td, tr {
+    border-style: none;
+    border-collapse: collapse;
+}
+
+.info-table th {
+    font-size: .8rem;
+    font-weight: normal;
+}
+
+.info-table td {
+    margin: auto;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.info-box {
+  background-color: var(--checker-color-1);
+  color: var(--text-color);
+  padding: 5px 10px 5px 10px;
+  border-radius: 6px;
+  border-style: solid;
+  border-width: 2px;
+  display: block;
+  width: max-content;
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 2px;
+}
+
+.base-stats-wrapper {
+    float:right;
 }
 
 .data-table {
@@ -83,6 +129,7 @@ input[type=number] {
 }
 
 .data-table tbody tr {
+  vertical-align: bottom;
   height: 40px;
 }
 
@@ -106,6 +153,7 @@ form {
 .topnav {
   background-color: var(--navbar-color);
   overflow: hidden;
+  font-family: Sans-Serif;
 }
 
 .topnav a {
@@ -114,7 +162,7 @@ form {
   text-align: center;
   padding: 5px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 1.2rem;
 }
 
 .topnav a:hover {
@@ -133,7 +181,8 @@ form {
   background-color: var(--navbar-color);
   overflow: hidden;
   text-align: center;
-  font-size: 20px;
+  font-size: 1.5rem;
+  font-family: Sans-Serif;
   color: var(--light-text-color);
 }
 

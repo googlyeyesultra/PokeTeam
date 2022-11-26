@@ -1,6 +1,9 @@
 {% extends "NavBar.html" %}
-{% block title %}{{ abil }} data{% endblock %}
+{% block title %}{{ abil }}{% endblock %}
 {% block below_navbar %}
-  Data for <span class="abil-name" data-abil="{{ abil }}">{{ abil }}</span>.
-  <br>{% include "AbilityUsersTable.html" %}
+  <div class="info-box">
+  <span class="abil-name info-title" data-abil="{{ abil }}">{{ abil }}</span>
+  <div class="abil-full-desc" data-abil="{{abil}}" data-gen="{{gen}}"></div>
+  </div>
+  {% include "AbilityUsersTable.html" %}
 {% endblock %}

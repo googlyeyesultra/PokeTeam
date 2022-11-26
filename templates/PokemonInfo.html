@@ -1,9 +1,25 @@
 {% extends "NavBar.html" %}
-{% block title %}{{ poke }} data{% endblock %}
+{% block title %}{{ poke }}{% endblock %}
 {% block below_navbar %}
-  <img class="poke-sprite" data-poke="{{ poke }}" data-gen="{{ gen }}"><br>
-  {{ poke }}<br>
-  Usage: {{ usage }}<br>
+  <div class="info-box">
+    <div class="info-title">{{poke}}</div>
+    <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
+    <span class="base-stats-wrapper"><canvas class="base-stats" data-poke="{{poke}}" data-gen="{{gen}}"></canvas></span>
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="poke-type" data-poke="{{poke}}" data-gen="{{gen}}"></span></td>
+          <td>{{usage}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="tables-wrapper">
     {% include "CountersTable.html" %}
     {% include "TeammatesTable.html" %}

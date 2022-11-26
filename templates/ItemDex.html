@@ -1,9 +1,20 @@
 {% extends "NavBar.html" %}
 {% block title %}Item Dex{% endblock %}
 {% block below_navbar %}
-<div class="vert-align-box">
-  {% for item in items %}
-    {{ lb.item_link(item, dataset) }}
-  {% endfor %}
-</div>
+<table id="itemdex" class="data-table sortable">
+    <thead>
+        <tr>
+            <th class="searchable sort_asc">Item</th>
+            <th class="searchable unsortable">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+        <tr>
+            <td>{{ lb.item_link(item, dataset) }}</td>
+            <td><span class="item-desc" data-item="{{item}}" data-gen="{{gen}}"></span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

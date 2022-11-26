@@ -1,6 +1,31 @@
 {% extends "NavBar.html" %}
-{% block title %}{{ move }} data{% endblock %}
+{% block title %}{{ move }}{% endblock %}
 {% block below_navbar %}
-  Data for <span class="move-name" data-move="{{ move }}">{{ move }}</span>.
-  <br>{% include "MoveUsersTable.html" %}
+  <div class="info-box">
+  <span class="move-name info-title" data-move="{{move}}">{{ move }}</span>
+    <table class="info-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Power</th>
+          <th>Accuracy</th>
+          <th>PP</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><img class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
+          <td><span class="move-category" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+          <td><span class="move-power" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+          <td><span class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+          <td><span class="move-pp" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+          <td><span class="move-priority" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  <div class="move-full-desc" data-move="{{move}}" data-gen="{{gen}}"></div>
+  </div>
+  {% include "MoveUsersTable.html" %}
 {% endblock %}

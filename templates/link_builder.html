@@ -6,8 +6,8 @@
 <a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span></a>
 {%- endmacro %}
 
-{% macro item_no_link(item, dataset) -%}
-<span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span>
+{% macro item_title(item, dataset) -%}
+<span class="item-name" data-item="{{item}}">{{item}}</span><span class="item-icon" data-item="{{item}}"></span>
 {%- endmacro %}
 
 {% macro move_link(move, dataset) -%}

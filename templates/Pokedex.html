@@ -6,6 +6,8 @@
     <thead>
         <tr>
             <th class="searchable">Pokemon</th>
+            <th class="unsortable">Type</th>
+            <th class="hidden unsortable">Text Type</th>
             <th class="sort_desc">Usage</th>
         </tr>
     </thead>
@@ -13,6 +15,8 @@
     {% for poke in pokemon %}
         <tr>
             <td>{{ lb.poke_link(poke[0], dataset) }}</td>
+            <td><span class="poke-type" data-poke="{{poke[0]}}" data-gen="{{gen}}"></td>
+            <td><span class="poke-type-text" data-poke="{{poke[0]}}" data-gen="{{gen}}"></span></td>
             <td>{{ "{:.2%}".format(poke[1]) }}</td>
         </tr>
     {% endfor %}

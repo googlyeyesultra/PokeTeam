@@ -1,9 +1,20 @@
 {% extends "NavBar.html" %}
 {% block title %}Ability Dex{% endblock %}
 {% block below_navbar %}
-<div class="vert-align-box">
-  {% for abil in abilities %}
-    {{ lb.abil_link(abil, dataset) }}
-  {% endfor %}
-</div>
+<table id="abilitydex" class="data-table sortable">
+    <thead>
+        <tr>
+            <th class="searchable sort_asc">Ability</th>
+            <th class="searchable unsortable">Description</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for abil in abilities %}
+        <tr>
+            <td>{{ lb.abil_link(abil, dataset) }}</td>
+            <td><span class="abil-short-desc" data-abil="{{abil}}" data-gen="{{gen}}"></span></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
