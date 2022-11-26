@@ -111,9 +111,11 @@ $(".base-stats").each(function () {
     var data = []
     var colors = []
     for(key in dex.stats.names) {
-        labels.push(dex.stats.names[key] + ": " + base_stats[key].toString().padStart(4))
-        data.push(base_stats[key])
-        colors.push("hsl(" + Math.min(145, Math.max(0, base_stats[key] - 40)) + ", 70%, 50%)")
+        if (dex.stats.names[key][0] != "[") { // Special defense in gen 1.
+            labels.push(dex.stats.names[key] + ": " + base_stats[key].toString().padStart(4))
+            data.push(base_stats[key])
+            colors.push("hsl(" + Math.min(145, Math.max(0, base_stats[key] - 40)) + ", 70%, 50%)")
+        }
     }
     new Chart(
         $(this)[0],

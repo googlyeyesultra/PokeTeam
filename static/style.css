@@ -102,10 +102,6 @@ input[type=number] {
   margin-bottom: 10px;
 }
 
-.base-stats-wrapper {
-    float:right;
-}
-
 .data-table {
   border-collapse: collapse;
 }
@@ -113,6 +109,10 @@ input[type=number] {
 .data-table th, td {
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.data-table td {
+  padding-bottom: 2px;
 }
 
 .data-table th {
@@ -200,12 +200,12 @@ body {
     align-items: flex-start;
 }
 
-.vert-align-box {
-    column-width: 220px;
+.side-by-side {
+    display: flex;
 }
 
-.vert-align-box > * {
-    display: block;
+.side-by-side > * {
+    align-self: center;
 }
 
 .align-box {

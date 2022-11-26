@@ -3,8 +3,10 @@
 {% block below_navbar %}
   <div class="info-box">
     <div class="info-title">{{poke}}</div>
-    <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
-    <span class="base-stats-wrapper"><canvas class="base-stats" data-poke="{{poke}}" data-gen="{{gen}}"></canvas></span>
+    <div class="side-by-side">
+      <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
+      <span class="base-stats-wrapper"><canvas class="base-stats" data-poke="{{poke}}" data-gen="{{gen}}"></canvas></span>
+    </div>
     <table class="info-table">
       <thead>
         <tr>
