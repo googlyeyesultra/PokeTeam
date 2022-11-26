@@ -1,6 +1,7 @@
 function type_display(pokemon_type, img) {
     img.attr("src", pkmn.img.Icons.getType(pokemon_type).url)
     img.attr("alt", pokemon_type)
+    img.attr("class", "pokemon-type")
     return img
 }
 

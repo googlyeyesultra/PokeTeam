@@ -69,7 +69,6 @@ input[type=number] {
 }
 
 .info-table {
-    border-style: none;
     border-collapse: collapse;
     text-align: center;
 }
@@ -79,6 +78,7 @@ input[type=number] {
     font-weight: normal;
     padding-left: 20px;
     padding-right: 20px;
+    padding-top: 2px;
 }
 
 .info-table td {
@@ -89,20 +89,19 @@ input[type=number] {
 .info-table td > * {
     vertical-align: middle;
     margin: 0 auto;
-    display: block;
+}
+
+.poke-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .info-box {
-  background-color: var(--checker-color-1);
-  color: var(--text-color);
   padding: 5px 10px 5px 10px;
-  border-radius: 6px;
-  border-style: solid;
-  border-width: 2px;
   display: block;
   width: max-content;
   max-width: 75%;
-  margin-bottom: 10px;
 }
 
 .data-table {
