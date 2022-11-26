@@ -5,8 +5,7 @@
     <thead>
         <tr>
             <th class="searchable sort_asc">Move</th>
-            <th class="unsortable">Type</th>
-            <th class="hidden unsortable">Text Type</th>
+            <th class="searchable unsortable">Type</th>
             <th class="searchable unsortable">Category</th>
             <th>Power</th>
             <th>Accuracy</th>
@@ -17,12 +16,11 @@
     {% for move in moves %}
         <tr>
             <td>{{ lb.move_link(move, dataset) }}</td>
-            <td><img class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
-            <td><span class="move-type-text" data-move="{{move}}" data-gen="{{gen}}"></span></td>
-            <td><span class="move-category" data-move="{{move}}" data-gen="{{gen}}"></span></td>
-            <td><span class="move-power" data-move="{{move}}" data-gen="{{gen}}"></span></td>
-            <td><span class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></span></td>
-            <td><span class="move-short-desc" data-move="{{move}}" data-gen="{{gen}}"></span></td>
+            <td class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td class="move-category" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td class="move-power" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td class="move-short-desc" data-move="{{move}}" data-gen="{{gen}}"></td>
         </tr>
     {% endfor %}
     </tbody>

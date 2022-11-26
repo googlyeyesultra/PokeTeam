@@ -1,7 +1,7 @@
-function type_display(pokemon_type, img) {
+function type_display(pokemon_type) {
+    var img = $("<img>")
     img.attr("src", pkmn.img.Icons.getType(pokemon_type).url)
     img.attr("alt", pokemon_type)
-    img.attr("class", "pokemon-type")
     return img
 }
 
@@ -62,26 +62,18 @@ $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("mo
 
 $(".move-type").each(function () {
     var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
-    type_display(move_type, $(this))
-})
-
-$(".move-type-text").each(function () {
-    var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
-    $(this).text(move_type)
+    $(this).html(type_display(move_type))
+    $(this).attr("data-search", move_type)
 })
 
 $(".poke-type").each(function () {
     var types = pkmn.dex.Dex.forGen($(this).data("gen")).species.get($(this).data("poke")).types
     var images = []
     for (type in types) {
-        images.push(type_display(types[type], $("<img>")))
+        images.push(type_display(types[type]))
     }
     $(this).html(images)
-})
-
-$(".poke-type-text").each(function () {
-    var types = pkmn.dex.Dex.forGen($(this).data("gen")).species.get($(this).data("poke")).types
-    $(this).text(types.join(", "))
+    $(this).attr("data-search", types.join(" "))
 })
 
 $(".move-full-desc").each(function () {
@@ -95,15 +87,6 @@ $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).abilities.get($(this).data
 
 $(".move-short-desc").each(function () {
 $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).shortDesc)})
-
-$(".poke-type").each(function () {
-    var types = pkmn.dex.Dex.forGen($(this).data("gen")).species.get($(this).data("poke")).types
-    var images = []
-    for (type in types) {
-        images.push(type_display(types[type], $("<img>")))
-    }
-    $(this).html(images)
-})
 
 $(".base-stats").each(function () {
     const dex = pkmn.dex.Dex.forGen($(this).data("gen"))
@@ -189,7 +172,6 @@ $(".sortable").each(function () {
     autoWidth: false,
     columnDefs: [
         {targets: "searchable", searchable: true},
-        {targets: "hidden", visible: false, searchable: true},
         {targets: "unsortable", orderable: false},
         {targets: "_all", searchable: false}
     ],

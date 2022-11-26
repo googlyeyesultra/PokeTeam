@@ -12,7 +12,7 @@
     {% for abil in abilities %}
         <tr>
             <td>{{ lb.abil_link(abil, dataset) }}</td>
-            <td><span class="abil-short-desc" data-abil="{{abil}}" data-gen="{{gen}}"></span></td>
+            <td class="abil-short-desc" data-abil="{{abil}}" data-gen="{{gen}}"></td>
         </tr>
     {% endfor %}
     </tbody>
