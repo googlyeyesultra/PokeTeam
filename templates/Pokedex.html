@@ -15,7 +15,7 @@
     {% for poke in pokemon %}
         <tr>
             <td>{{ lb.poke_link(poke[0], dataset) }}</td>
-            <td><span class="poke-type" data-poke="{{poke[0]}}" data-gen="{{gen}}"></td>
+            <td><span class="poke-type" data-poke="{{poke[0]}}" data-gen="{{gen}}"></span></td>
             <td><span class="poke-type-text" data-poke="{{poke[0]}}" data-gen="{{gen}}"></span></td>
             <td>{{ "{:.2%}".format(poke[1]) }}</td>
         </tr>
