@@ -4,10 +4,10 @@ import ujson as json
 import numpy as np
 import math
 import re
+import subprocess
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
-
 
 def prepare_files(json_file, threat_file, teammate_file):
     """Validate and pre-process files directly from Smogon.
@@ -153,21 +153,21 @@ def prepare_files(json_file, threat_file, teammate_file):
     abils = set()
     for poke in pokemon:
         sorted_abils = sorted(pokemon[poke]["Abilities"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Abilities"] = dict(sorted_abils)
+        pokemon[poke]["Abilities"] = dict([a for a in sorted_abils if a[1] > .05])
         abils.update(pokemon[poke]["Abilities"].keys())
     data["abilities"] = dict.fromkeys(sorted(list(abils)), {})
 
     moves = set()
     for poke in pokemon:
         sorted_moves = sorted(pokemon[poke]["Moves"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Moves"] = dict(sorted_moves)
+        pokemon[poke]["Moves"] = dict([m for m in sorted_moves if m[1] > .05])
         moves.update(pokemon[poke]["Moves"].keys())
     data["moves"] = dict.fromkeys(sorted(list(moves)), {})
 
     items = set()
     for poke in pokemon:
         sorted_items = sorted(pokemon[poke]["Items"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Items"] = dict(sorted_items)
+        pokemon[poke]["Items"] = dict([i for i in sorted_items if i[1] > .05])
         items.update(pokemon[poke]["Items"].keys())
     data["items"] = dict.fromkeys(sorted(list(items)), {})
 

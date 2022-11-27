@@ -11,6 +11,10 @@ import requests
 import boto3
 import preprocess
 from file_constants import *
+import subprocess
+
+PREPROCESS_CMD = "node"
+PREPROCESS_ARGS = ["./nodejs/preprocess.mjs"]
 
 STATS_URL = "https://www.smogon.com/stats/"
 
@@ -57,6 +61,9 @@ def update():
             line = form + " " + ",".join(sorted(format_ratings[form])) + "\n"
             top_formats_fd.write(line)
 
+    print("Running script preprocessing.")
+    subprocess.call([PREPROCESS_CMD] + PREPROCESS_ARGS)
+
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):
             os.remove(file)
@@ -73,7 +80,6 @@ def update():
         bucket.upload_file(file.path, file.name)
 
     print("Update complete!")
-
 
 def _download_data():
     """Downloads the new data from Smogon."""
