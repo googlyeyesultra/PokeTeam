@@ -3,3 +3,4 @@ datasets/*
 dump/*
 .spyproject/*
 /datasets_temp/
+/nodejs/

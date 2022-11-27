@@ -3,6 +3,7 @@
 import ujson as json
 import numpy as np
 import math
+import re
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
@@ -35,16 +36,18 @@ def prepare_files(json_file, threat_file, teammate_file):
         str: name of metagame (e.g. gen8ou)
         int: number of battles in metagame (not filtered by rating)
     """
+
     indices = {}
     with open(json_file, "r", encoding="utf-8") as file:
         data = json.load(file)
-        pokemon = data["data"].items()
+        pokemon = data.pop("data")
+
         changes = True
         while changes:
             num_pokes = len(pokemon)
             # First, get rid of any Pokemon without counters data.
             # Also trim out some Pokemon with extraordinarily low usage.
-            pokemon = {name: info for (name, info) in data["data"].items()
+            pokemon = {name: info for (name, info) in pokemon.items()
                        if (len(info["Checks and Counters"]) > 9
                            and info["usage"] > MIN_USAGE)}
 
@@ -66,7 +69,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         # Fix no move being an empty string.
         for poke in pokemon:
             if "" in pokemon[poke]["Moves"]:
-                pokemon[poke]["Moves"]["No Move"] = pokemon[poke]["Moves"].pop("")
+                pokemon[poke]["Moves"]["nomove"] = pokemon[poke]["Moves"].pop("")
 
         # Round values to reduce size of files.
         for poke in pokemon:
@@ -89,19 +92,20 @@ def prepare_files(json_file, threat_file, teammate_file):
         total_pokes = 0
         total_team_members = 0
         for poke in pokemon:
-            total_pokes += sum(pokemon[poke]["Abilities"].values())
+            pokemon[poke]["count"] = sum(pokemon[poke]["Abilities"].values())
+            total_pokes += pokemon[poke]["count"]
             total_team_members += sum(pokemon[poke]["Teammates"].values())
 
-        data["total_pokes"] = round(total_pokes, 3)
-        data["pokes_per_team"] = round(total_team_members / total_pokes + 1, 3)
-        data["num_teams"] = round(total_pokes / data["pokes_per_team"], 3)
+        data["info"]["total_pokes"] = round(total_pokes, 3)
+        data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, 3)
+        data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], 3)
 
         total_pairs = 0
         for poke in pokemon:
             # Divide by 2 - otherwise we count (A, B) and (B, A).
             total_pairs += sum(pokemon[poke]["Teammates"].values()) / 2
 
-        data["total_pairs"] = round(total_pairs, 3)
+        data["info"]["total_pairs"] = round(total_pairs, 3)
 
     threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
     for index, mon in enumerate(pokemon):
@@ -122,7 +126,7 @@ def prepare_files(json_file, threat_file, teammate_file):
     team_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
-            denom = _p_x_given_not_y(pokemon, c_mon, mon, data["total_pairs"])
+            denom = _p_x_given_not_y(pokemon, c_mon, mon, data["info"]["total_pairs"])
             if denom == 0:
                 team_matrix[index, column] = math.inf
             else:
@@ -144,7 +148,30 @@ def prepare_files(json_file, threat_file, teammate_file):
     del data["info"]["cutoff deviation"]
     del data["info"]["team type"]
 
-    data["data"] = pokemon
+    data["pokemon"] = pokemon
+
+    abils = set()
+    for poke in pokemon:
+        sorted_abils = sorted(pokemon[poke]["Abilities"].items(), key=lambda i: -i[1])[:10]
+        pokemon[poke]["Abilities"] = dict(sorted_abils)
+        abils.update(pokemon[poke]["Abilities"].keys())
+    data["abilities"] = dict.fromkeys(sorted(list(abils)), {})
+
+    moves = set()
+    for poke in pokemon:
+        sorted_moves = sorted(pokemon[poke]["Moves"].items(), key=lambda i: -i[1])[:10]
+        pokemon[poke]["Moves"] = dict(sorted_moves)
+        moves.update(pokemon[poke]["Moves"].keys())
+    data["moves"] = dict.fromkeys(sorted(list(moves)), {})
+
+    items = set()
+    for poke in pokemon:
+        sorted_items = sorted(pokemon[poke]["Items"].items(), key=lambda i: -i[1])[:10]
+        pokemon[poke]["Items"] = dict(sorted_items)
+        items.update(pokemon[poke]["Items"].keys())
+    data["items"] = dict.fromkeys(sorted(list(items)), {})
+
+    data["info"]["gen"] = re.match("^gen([0-9]*)", data["info"]["metagame"]).group(1)
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)

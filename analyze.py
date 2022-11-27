@@ -63,12 +63,12 @@ class MetagameData:
         """
         with open(json_file, "r", encoding="utf-8") as file:
             data = json.load(file)
-            self.pokemon = data["data"]
+            self.pokemon = data["pokemon"]
             self._indices = data["indices"]
-            self._total_pokes = data["total_pokes"]
-            self._pokes_per_team = data["pokes_per_team"]
-            self._num_teams = data["num_teams"]
-            self._total_pairs = data["total_pairs"]
+            self._total_pokes = data["info"]["total_pokes"]
+            self._pokes_per_team = data["info"]["pokes_per_team"]
+            self._num_teams = data["info"]["num_teams"]
+            self._total_pairs = data["info"]["total_pairs"]
 
         with open(threat_file, "rb") as file:
             self._threat_matrix = np.load(file)
@@ -103,8 +103,7 @@ class MetagameData:
             Note that it can be a non-integer as Smogon weights statistics by
             player rating.
         """
-        # This should probably be precalculated.
-        return sum(self.pokemon[poke]["Abilities"].values())
+        return self.pokemon[poke]["count"]
 
     def _get_counter_score(self, threats, team_size, poke):
         """Generate a score based on how good a Pokemon \
