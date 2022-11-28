@@ -27,7 +27,7 @@ fs.readdirSync(data_dir).forEach(file => {
 			}
 			generations[gen]["pokemon"][poke]["types"] = this_dex.species.get(poke).types
 		}
-		for(let move in json_data["moves"]) {
+		for(let move of json_data["moves"]) {
 			if (move in generations[gen]["moves"]) continue;
 			generations[gen]["moves"][move] = {};
 			if(move == "nomove") {
@@ -57,7 +57,7 @@ fs.readdirSync(data_dir).forEach(file => {
 				generations[gen]["moves"][move]["priority"] = move_data.priority;
 			}
 		}
-		for(let abil in json_data["abilities"]) {
+		for(let abil of json_data["abilities"]) {
 			if (abil in generations[gen]["abilities"]) continue;
 			generations[gen]["abilities"][abil] = {};
 			var abil_data = this_dex.abilities.get(abil);
@@ -65,7 +65,7 @@ fs.readdirSync(data_dir).forEach(file => {
 			generations[gen]["abilities"][abil]["short_desc"] = abil_data.shortDesc;
 			generations[gen]["abilities"][abil]["full_desc"] = abil_data.desc;
 		}
-		for(let item in json_data["items"]) {
+		for(let item of json_data["items"]) {
 			if (item in generations[gen]["items"]) continue;
 			generations[gen]["items"][item] = {};
 			if(item == "nothing") {

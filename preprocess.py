@@ -155,21 +155,21 @@ def prepare_files(json_file, threat_file, teammate_file):
         sorted_abils = sorted(pokemon[poke]["Abilities"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Abilities"] = dict([a for a in sorted_abils if a[1] > .05])
         abils.update(pokemon[poke]["Abilities"].keys())
-    data["abilities"] = dict.fromkeys(sorted(list(abils)), {})
+    data["abilities"] = sorted(list(abils))
 
     moves = set()
     for poke in pokemon:
         sorted_moves = sorted(pokemon[poke]["Moves"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Moves"] = dict([m for m in sorted_moves if m[1] > .05])
         moves.update(pokemon[poke]["Moves"].keys())
-    data["moves"] = dict.fromkeys(sorted(list(moves)), {})
+    data["moves"] = sorted(list(moves))
 
     items = set()
     for poke in pokemon:
         sorted_items = sorted(pokemon[poke]["Items"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Items"] = dict([i for i in sorted_items if i[1] > .05])
         items.update(pokemon[poke]["Items"].keys())
-    data["items"] = dict.fromkeys(sorted(list(items)), {})
+    data["items"] = sorted(list(items))
 
     # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
     # Supports through gen 19.
