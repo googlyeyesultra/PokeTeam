@@ -14,7 +14,7 @@ from file_constants import *
 import subprocess
 
 PREPROCESS_CMD = "node"
-PREPROCESS_ARGS = ["./nodejs/preprocess.mjs"]
+PREPROCESS_ARGS = ["./nodejs/build_dexes.mjs"]
 
 STATS_URL = "https://www.smogon.com/stats/"
 
