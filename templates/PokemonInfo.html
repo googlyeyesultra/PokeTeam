@@ -5,7 +5,7 @@
     <div class="info-title">{{poke}}</div>
     <div class="side-by-side">
       <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
-      <span class="base-stats-wrapper"><canvas class="base-stats" data-poke="{{poke}}" data-gen="{{gen}}"></canvas></span>
+      <span><canvas class="base-stats" data-stats='{{base_stats|tojson}}'></canvas></span>
     </div>
     <table class="info-table">
       <thead>
@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <tr>
-          <td class="poke-type" data-poke="{{poke}}" data-gen="{{gen}}"></td>
+          <td class="poke-type" data-types='{{types|tojson}}'></td>
           <td>{{usage}}</td>
         </tr>
       </tbody>

@@ -90,7 +90,7 @@ $(".move-type").each(function () {
 }})
 
 $(".poke-type").each(function () {
-    var types = pkmn.dex.Dex.forGen($(this).data("gen")).species.get($(this).data("poke")).types
+    var types = $(this).data("types")
     var images = []
     for (type in types) {
         images.push(type_display(types[type]))
@@ -120,17 +120,14 @@ $(".move-short-desc").each(function () {
 }})
 
 $(".base-stats").each(function () {
-    const dex = pkmn.dex.Dex.forGen($(this).data("gen"))
-    const base_stats = dex.species.get($(this).data("poke")).baseStats
     var labels = []
     var data = []
     var colors = []
-    for(key in dex.stats.names) {
-        if (dex.stats.names[key][0] != "[") { // Special defense in gen 1.
-            labels.push(dex.stats.names[key] + ": " + base_stats[key].toString().padStart(4))
-            data.push(base_stats[key])
-            colors.push("hsl(" + Math.min(145, Math.max(0, base_stats[key] - 40)) + ", 70%, 50%)")
-        }
+    var stats = $(this).data("stats")
+    for(key in stats) {
+        labels.push(key + ": " + stats[key].toString().padStart(4))
+        data.push(stats[key])
+        colors.push("hsl(" + Math.min(145, Math.max(0, stats[key] - 40)) + ", 70%, 50%)")
     }
     new Chart(
         $(this)[0],

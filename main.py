@@ -1,7 +1,6 @@
 """Handles routing, serving, and preparing pages."""
 import os
 import functools
-import re
 
 from botocore.exceptions import ClientError
 from flask import (Flask, render_template, request,
@@ -12,6 +11,7 @@ import analyze
 import display as d
 import update
 import corefinder
+import dex
 from file_constants import *
 
 app = Flask(__name__)
@@ -41,10 +41,10 @@ def get_md(dataset):
     except (FileNotFoundError, ClientError):
         abort(404)
 
-@functools.lru_cache(maxsize=64, typed=False)
-def get_gen(dataset):  # TODO consider moving this elsewhere. Preprocessing, maybe?
-    """Get generation number for a format."""
-    return re.match("^gen([0-9]*)", dataset).group(1)
+@functools.lru_cache(maxsize=12, typed=False)
+def get_dex(gen):
+    """Get generation appropriate dex for a format."""
+    return dex.Dex(DATA_DIR + DEX_PREFIX + gen + DEX_SUFFIX)
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
@@ -88,6 +88,7 @@ def display_pokemon(dataset, poke):
                    key=lambda kv: -kv[1])
     abilities = sorted([(a[0], a[1]/count) for a in md.pokemon[poke]["Abilities"].items()],
                    key=lambda kv: -kv[1])
+    d = get_dex(md.gen)
 
     return render_template("PokemonInfo.html",
                            poke=poke, dataset=dataset,
@@ -95,7 +96,9 @@ def display_pokemon(dataset, poke):
                            counters=counters,
                            teammates=teammates, items=items,
                            moves=moves, abilities=abilities,
-                           gen=get_gen(dataset))
+                           gen=md.gen,
+                           base_stats=d["pokemon"][poke]["base_stats"],
+                           types=d["pokemon"][poke]["types"])
 
 
 @app.route("/pokemon/<dataset>/")
