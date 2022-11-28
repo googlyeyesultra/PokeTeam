@@ -171,7 +171,9 @@ def prepare_files(json_file, threat_file, teammate_file):
         items.update(pokemon[poke]["Items"].keys())
     data["items"] = dict.fromkeys(sorted(list(items)), {})
 
-    data["info"]["gen"] = re.match("^gen([0-9]*)", data["info"]["metagame"]).group(1)
+    # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
+    # Supports through gen 19.
+    data["info"]["gen"] = re.match("^gen(1?[0-9]?)", data["info"]["metagame"]).group(1)
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)
@@ -231,7 +233,7 @@ def _p_x_given_not_y(pokemon, x, y, total_pairs):  # TODO try using this other w
     """Calculate probability that x appears on a slot if y does not.
 
     Args:
-        x (str): Name of a Pokemon.
+        x (str): Nam^gen(1?[0-9]?)e of a Pokemon.
 
         y (str): Name of a Pokemon.
 

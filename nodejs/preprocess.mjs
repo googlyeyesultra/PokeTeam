@@ -1,7 +1,7 @@
 import * as dex from '@pkmn/dex';
 import * as fs from "fs";
 
-const data_dir = "./datasets/";
+const data_dir = "./datasets_temp/";
 
 fs.readdirSync(data_dir).forEach(file => {
 	if (file.slice(-5) == ".json") {
