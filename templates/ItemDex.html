@@ -12,7 +12,7 @@
     {% for item in items %}
         <tr>
             <td>{{ lb.item_link(item, dataset) }}</td>
-            <td class="item-desc" data-item="{{item}}" data-gen="{{gen}}"></td>
+            <td>{{dex.items[item]["desc"]}}</td>
         </tr>
     {% endfor %}
     </tbody>

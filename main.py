@@ -88,7 +88,6 @@ def display_pokemon(dataset, poke):
                    key=lambda kv: -kv[1])
     abilities = sorted([(a[0], a[1]/count) for a in md.pokemon[poke]["Abilities"].items()],
                    key=lambda kv: -kv[1])
-    d = get_dex(md.gen)
 
     return render_template("PokemonInfo.html",
                            poke=poke, dataset=dataset,
@@ -97,8 +96,7 @@ def display_pokemon(dataset, poke):
                            teammates=teammates, items=items,
                            moves=moves, abilities=abilities,
                            gen=md.gen,
-                           base_stats=d["pokemon"][poke]["base_stats"],
-                           types=d["pokemon"][poke]["types"])
+                           dex=get_dex(md.gen))
 
 
 @app.route("/pokemon/<dataset>/")
@@ -106,7 +104,7 @@ def pokedex(dataset):
     """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
     pokemon = sorted([(x, md.pokemon[x]["usage"]) for x in md.pokemon.keys()], key=lambda pair: -pair[1])
-    return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset, gen=get_gen(dataset))
+    return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset, gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/items/<dataset>/<item>/")
@@ -127,24 +125,16 @@ def display_item(dataset, item):
 
     return render_template("ItemInfo.html",
                            item=item, dataset=dataset, holders=holders,
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/items/<dataset>/")
 def item_dex(dataset):
     """Page for listing all items in a format."""
     md = get_md(dataset)
-
-    items = set()
-    for poke in md.pokemon:
-        top_items = sorted(
-            md.pokemon[poke]["Items"].items(), key=lambda kv: -kv[1])[:5]
-        for item in top_items:
-            items.add(item[0])
-
     return render_template("ItemDex.html",
-                           items=sorted(list(items)), dataset=dataset,
-                           gen=get_gen(dataset))
+                           items=md.items, dataset=dataset,
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/moves/<dataset>/<move>/")
@@ -166,25 +156,16 @@ def display_move(dataset, move):
 
     return render_template("MoveInfo.html",
                            move=move, dataset=dataset, move_users=users,
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/moves/<dataset>/")
 def move_dex(dataset):
     """Page that lists all moves in a format."""
     md = get_md(dataset)
-
-    moves = set()
-    for poke in md.pokemon:
-        top_moves = sorted(
-            md.pokemon[poke]["Moves"].items(), key=lambda kv: -kv[1])[:10]
-        for move in top_moves:
-            moves.add(move[0])
-
-    display_moves = sorted(list(moves), key=str.lower)
     return render_template("MoveDex.html",
-                           moves=display_moves, dataset=dataset,
-                           gen=get_gen(dataset))
+                           moves=md.moves, dataset=dataset,
+                           gen=md.gen, dex=get_dex(md.gen))
 
 @app.route("/abilities/<dataset>/<abil>/")
 def display_ability(dataset, abil):
@@ -206,24 +187,16 @@ def display_ability(dataset, abil):
 
     return render_template("AbilityInfo.html",
                            abil=abil, dataset=dataset, abil_users=users,
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/abilities/<dataset>/")
 def ability_dex(dataset):
     """Page that lists all abilities in a format."""
     md = get_md(dataset)
-
-    abils = set()
-    for poke in md.pokemon:
-        for abil in md.pokemon[poke]["Abilities"].items():
-            if abil[1] / md.count_pokemon(poke) > .06:
-                abils.add(abil[0])
-
-    display_abils = [a for a in sorted(list(abils)) if a]
     return render_template("AbilityDex.html",
-                           abilities=display_abils, dataset=dataset,
-                           gen=get_gen(dataset))
+                           abilities=md.abilities, dataset=dataset,
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/analysis/<dataset>/")
@@ -241,7 +214,7 @@ def analysis(dataset):
             selector.choices = [("", "None")] + selector.choices
 
     return render_template('TeamBuilder.html', form=form, dataset=dataset,
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
@@ -270,15 +243,14 @@ def output_analysis(dataset):
                            suggested_team=suggested_team,
                            swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
                            add_links=(len(my_pokes) < 6),
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/cores/<dataset>/")
 def cores(dataset):
     """Page for finding cores in a format."""
     return render_template("CoreFinder.html",
-                           dataset=dataset, form=d.CoreFinderForm(),
-                           gen=get_gen(dataset))
+                           dataset=dataset, form=d.CoreFinderForm())
 
 
 @app.route("/cores/<dataset>/find_cores", methods=['POST'])
@@ -291,7 +263,7 @@ def find_cores(dataset):
     cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
 
     return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
-                           gen=get_gen(dataset))
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/update/<key>/")

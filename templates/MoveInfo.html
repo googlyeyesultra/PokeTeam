@@ -2,30 +2,29 @@
 {% block title %}{{ move }}{% endblock %}
 {% block below_navbar %}
   <div class="info-box">
-  <span class="move-name info-title" data-move="{{move}}">{{ move }}</span>
-    <table class="info-table">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Category</th>
-          <th>Power</th>
-          <th>Accuracy</th>
-          <th>PP</th>
-          <th>Priority</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
-          <td class="move-category" data-move="{{move}}" data-gen="{{gen}}"></td>
-          <td class="move-power" data-move="{{move}}" data-gen="{{gen}}"></td>
-          <td class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></td>
-          <td class="move-pp" data-move="{{move}}" data-gen="{{gen}}"></td>
-          <td class="move-priority" data-move="{{move}}" data-gen="{{gen}}"></td>
-        </tr>
-      </tbody>
-    </table>
-  <div class="move-full-desc" data-move="{{move}}" data-gen="{{gen}}"></div>
+    <span class="move-name info-title" data-move="{{move}}">{{ move }}</span>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Power</th>
+            <th>Accuracy</th>
+            <th>PP</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{dex.moves[move]["category"]}}</td>
+            <td>{{dex.moves[move]["power"]}}</td>
+            <td>{{dex.moves[move]["accuracy"]}}</td>
+            <td>{{dex.moves[move]["pp"]}}</td>
+            <td>{{dex.moves[move]["priority"]}}</td>
+          </tr>
+        </tbody>
+      </table>
+    <div>{{dex.moves[move]["full_desc"]}}</div>
   </div>
   {% include "MoveUsersTable.html" %}
 {% endblock %}

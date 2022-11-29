@@ -70,6 +70,9 @@ class MetagameData:
             self._num_teams = data["info"]["num_teams"]
             self._total_pairs = data["info"]["total_pairs"]
             self.gen = data["info"]["gen"]
+            self.items = data["items"]
+            self.abilities = data["abilities"]
+            self.moves = data["moves"]
 
         with open(threat_file, "rb") as file:
             self._threat_matrix = np.load(file)

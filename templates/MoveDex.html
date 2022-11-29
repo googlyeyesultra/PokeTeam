@@ -17,10 +17,10 @@
         <tr>
             <td>{{ lb.move_link(move, dataset) }}</td>
             <td class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
-            <td class="move-category" data-move="{{move}}" data-gen="{{gen}}"></td>
-            <td class="move-power" data-move="{{move}}" data-gen="{{gen}}"></td>
-            <td class="move-accuracy" data-move="{{move}}" data-gen="{{gen}}"></td>
-            <td class="move-short-desc" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td>{{dex.moves[move]["category"]}}</td>
+            <td>{{dex.moves[move]["power"]}}</td>
+            <td>{{dex.moves[move]["accuracy"]}}</td>
+            <td>{{dex.moves[move]["short_desc"]}}</td>
         </tr>
     {% endfor %}
     </tbody>

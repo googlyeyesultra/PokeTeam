@@ -3,7 +3,7 @@
 {% block below_navbar %}
   <div class="info-box">
     <span class="info-title">{{lb.item_title(item, dataset)}}</span>
-    <div class="item-desc" data-item="{{item}}" data-gen="{{gen}}"></div>
+    <div>{{dex.items[item]["desc"]}}</div>
   </div>
   {% include "ItemHoldersTable.html" %}
 {% endblock %}

@@ -2,8 +2,8 @@
 {% block title %}{{ abil }}{% endblock %}
 {% block below_navbar %}
   <div class="info-box">
-  <span class="abil-name info-title" data-abil="{{ abil }}">{{ abil }}</span>
-  <div class="abil-full-desc" data-abil="{{abil}}" data-gen="{{gen}}"></div>
+    <span class="info-title">{{ abil }}</span>
+    <div>{{dex.abilities[abil]["full_desc"]}}</div>
   </div>
   {% include "AbilityUsersTable.html" %}
 {% endblock %}

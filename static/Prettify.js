@@ -19,76 +19,6 @@ $(".item-icon").each(function() {
 $(".poke-sprite").each(function() {
 $(this).attr("src", pkmn.img.Sprites.getPokemon($(this).data("poke"), {gen: $(this).data("gen")}).url)})
 
-$(".abil-name").each(function () {
-$(this).text(pkmn.dex.Dex.abilities.get($(this).data("abil")).name)})
-
-$(".item-name").each(function () {
-    if($(this).data("item") == "nothing") {
-        $(this).text("Nothing")
-    } else {
-        $(this).text(pkmn.dex.Dex.items.get($(this).data("item")).name)
-    }
-})
-
-$(".move-name").each(function () {
-    if ($(this).data("move") != "No Move") {
-        $(this).text(pkmn.dex.Dex.moves.get($(this).data("move")).name)
-    }
-})
-
-$(".move-category").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("—")
-    } else {
-        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).category)
-    }
-})
-
-$(".move-power").each(function () {
-var power = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).basePower
-    if (power == 0 || $(this).data("move") == "No Move") {
-        $(this).text("—")
-        $(this).attr("data-order", 0)
-    } else {
-        $(this).text(power)
-        $(this).attr("data-order", power)
-    }
-})
-
-$(".move-accuracy").each(function () {
-    var accuracy = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).accuracy
-    if (typeof accuracy != "number") {
-        $(this).text("—")
-        $(this).attr("data-order", 0)
-    } else {
-        $(this).text(accuracy + "%")
-        $(this).attr("data-order", accuracy)
-    }
-})
-
-$(".move-pp").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("—")
-    } else {
-        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).pp)
-}})
-
-$(".move-priority").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("—")
-    } else {
-        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).priority)
-}})
-
-$(".move-type").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("—")
-    } else {
-        var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
-        $(this).html(type_display(move_type))
-        $(this).attr("data-search", move_type)
-}})
-
 $(".poke-type").each(function () {
     var types = $(this).data("types")
     var images = []
@@ -99,24 +29,13 @@ $(".poke-type").each(function () {
     $(this).attr("data-search", types.join(" "))
 })
 
-$(".move-full-desc").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("Occurs when a Pokemon doesn't have 4 moves.")
+$(".move-type").each(function () {
+    if ($(this).data("type") == "—") {
+        $(this).text("—")
     } else {
-        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).desc)
-}})
-
-$(".abil-short-desc").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).abilities.get($(this).data("abil")).shortDesc)})
-
-$(".abil-full-desc").each(function () {
-$(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).abilities.get($(this).data("abil")).desc)})
-
-$(".move-short-desc").each(function () {
-    if ($(this).data("move") == "No Move") {
-        $(this).text("Occurs when a Pokemon doesn't have 4 moves.")
-    } else {
-        $(this).text(pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).shortDesc)
+        var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
+        $(this).html(type_display(move_type))
+        $(this).attr("data-search", move_type)
 }})
 
 $(".base-stats").each(function () {
@@ -166,19 +85,6 @@ $(".base-stats").each(function () {
             }
         }
     )
-})
-
-$(".item-desc").each(function () {
-    if ($(this).data("item") == "nothing") {
-        $(this).text("No held item.")
-    } else {
-        var item_def = pkmn.dex.Dex.forGen($(this).data("gen")).items.get($(this).data("item"))
-        if (item_def.shortDesc) {
-            $(this).text(item_def.shortDesc)
-        } else {
-            $(this).text(item_def.desc)
-        }
-    }
 })
 
 $(".sortable").each(function () {

@@ -12,7 +12,7 @@
     {% for abil in abilities %}
         <tr>
             <td>{{ lb.abil_link(abil, dataset) }}</td>
-            <td class="abil-short-desc" data-abil="{{abil}}" data-gen="{{gen}}"></td>
+            <td>{{dex.abilities[abil]["short_desc"]}}</td>
         </tr>
     {% endfor %}
     </tbody>

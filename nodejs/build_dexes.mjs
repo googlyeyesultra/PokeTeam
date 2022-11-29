@@ -15,6 +15,30 @@ fs.readdirSync(data_dir).forEach(file => {
 		}
 		var this_dex = dex.Dex.forGen(gen);
 		for(let poke in json_data["pokemon"]) {
+			var moves = {};
+			for(let move in json_data["pokemon"][poke]["Moves"]) {
+				if(move == "nomove") {
+					var move_name = "No Move";
+				} else {
+					var move_name = this_dex.moves.get(move).name;
+				}
+				moves[move_name] = json_data["pokemon"][poke]["Moves"][move];
+			}
+			json_data["pokemon"][poke]["Moves"] = moves;
+			
+			var abils = {};
+			for(let abil in json_data["pokemon"][poke]["Abilities"]) {
+				abils[this_dex.abilities.get(abil).name] = json_data["pokemon"][poke]["Abilities"][abil];
+			}
+			json_data["pokemon"][poke]["Abilities"] = abils;
+			
+			var items = {};
+			for(let item in json_data["pokemon"][poke]["Items"]) {
+				if(item == "nothing") items["Nothing"] = json_data["pokemon"][poke]["Items"][item];
+				else items[this_dex.items.get(item).name] = json_data["pokemon"][poke]["Items"][item];
+			}
+			json_data["pokemon"][poke]["Items"] = items;
+			
 			if (poke in generations[gen]["pokemon"]) continue;
 			generations[gen]["pokemon"][poke] = {};
 			var base_stats = this_dex.species.get(poke).baseStats;
@@ -27,60 +51,78 @@ fs.readdirSync(data_dir).forEach(file => {
 			}
 			generations[gen]["pokemon"][poke]["types"] = this_dex.species.get(poke).types
 		}
+		
+		var moves_list = [];
 		for(let move of json_data["moves"]) {
-			if (move in generations[gen]["moves"]) continue;
-			generations[gen]["moves"][move] = {};
+			var move_data = this_dex.moves.get(move);
 			if(move == "nomove") {
-				generations[gen]["moves"][move]["name"] = "No Move";
-				generations[gen]["moves"][move]["short_desc"] = "Occurs when a Pokemon has an empty moveslot.";
-				generations[gen]["moves"][move]["full_desc"] = "Occurs when a Pokemon has an empty moveslot.";
-				generations[gen]["moves"][move]["category"] = "—";
-				generations[gen]["moves"][move]["accuracy"] = "—";
-				generations[gen]["moves"][move]["pp"] = "—";
-				generations[gen]["moves"][move]["power"] = "—";
-				generations[gen]["moves"][move]["type"] = "—";
-				generations[gen]["moves"][move]["priority"] = "—";
+				var move_name = "No Move";
 			} else {
-				var move_data = this_dex.moves.get(move);
-				generations[gen]["moves"][move]["name"] = move_data.name;
-				generations[gen]["moves"][move]["short_desc"] = move_data.shortDesc;
-				generations[gen]["moves"][move]["full_desc"] = move_data.desc;
-				generations[gen]["moves"][move]["category"] = move_data.category;
+				var move_name = move_data.name;
+			}
+			moves_list.push(move_name)
+			if (move_name in generations[gen]["moves"]) continue;
+			generations[gen]["moves"][move_name] = {};
+			if(move == "nomove") {
+				generations[gen]["moves"][move_name]["short_desc"] = "Occurs when a Pokemon has an empty moveslot.";
+				generations[gen]["moves"][move_name]["full_desc"] = "Occurs when a Pokemon has an empty moveslot.";
+				generations[gen]["moves"][move_name]["category"] = "—";
+				generations[gen]["moves"][move_name]["accuracy"] = "—";
+				generations[gen]["moves"][move_name]["pp"] = "—";
+				generations[gen]["moves"][move_name]["power"] = "—";
+				generations[gen]["moves"][move_name]["type"] = "—";
+				generations[gen]["moves"][move_name]["priority"] = "—";
+			} else {
+				generations[gen]["moves"][move_name]["short_desc"] = move_data.shortDesc;
+				generations[gen]["moves"][move_name]["full_desc"] = move_data.desc;
+				generations[gen]["moves"][move_name]["category"] = move_data.category;
 				if (typeof move_data.accuracy != "number") {
-					generations[gen]["moves"][move]["accuracy"] = "—";
+					generations[gen]["moves"][move_name]["accuracy"] = "—";
 				} else {
-					generations[gen]["moves"][move]["accuracy"] = move_data.accuracy;
+					generations[gen]["moves"][move_name]["accuracy"] = move_data.accuracy;
 				}
-				generations[gen]["moves"][move]["pp"] = move_data.pp;
-				generations[gen]["moves"][move]["power"] = move_data.basePower;
-				generations[gen]["moves"][move]["type"] = move_data.type;
-				generations[gen]["moves"][move]["priority"] = move_data.priority;
+				generations[gen]["moves"][move_name]["pp"] = move_data.pp;
+				generations[gen]["moves"][move_name]["power"] = move_data.basePower;
+				generations[gen]["moves"][move_name]["type"] = move_data.type;
+				generations[gen]["moves"][move_name]["priority"] = move_data.priority;
 			}
 		}
+		json_data["moves"] = moves_list;
+		
+		var abils_list = [];
 		for(let abil of json_data["abilities"]) {
-			if (abil in generations[gen]["abilities"]) continue;
-			generations[gen]["abilities"][abil] = {};
 			var abil_data = this_dex.abilities.get(abil);
-			generations[gen]["abilities"][abil]["name"] = abil_data.name;
-			generations[gen]["abilities"][abil]["short_desc"] = abil_data.shortDesc;
-			generations[gen]["abilities"][abil]["full_desc"] = abil_data.desc;
+			abils_list.push(abil_data.name);
+			if (abil in generations[gen]["abilities"]) continue;
+			generations[gen]["abilities"][abil_data.name] = {};
+			generations[gen]["abilities"][abil_data.name]["short_desc"] = abil_data.shortDesc;
+			generations[gen]["abilities"][abil_data.name]["full_desc"] = abil_data.desc;
 		}
+		json_data["abilities"] = abils_list;
+		
+		var items_list = [];
 		for(let item of json_data["items"]) {
-			if (item in generations[gen]["items"]) continue;
-			generations[gen]["items"][item] = {};
-			if(item == "nothing") {
-				generations[gen]["items"][item]["name"] = "Nothing";
-				generations[gen]["items"][item]["desc"] = "No held item.";
-			} else {
+			if(item == "nothing") var item_name = "Nothing";
+			else {
 				var item_data = this_dex.items.get(item);
-				generations[gen]["items"][item]["name"] = item_data.name;
+				var item_name = item_data.name;
+			}
+			items_list.push(item_name);
+			if (item_name in generations[gen]["items"]) continue;
+			generations[gen]["items"][item_name] = {};
+			if(item_name == "Nothing") {
+				generations[gen]["items"][item_name]["desc"] = "No held item.";
+			} else {
 				if (item_data.shortDesc) {
-					generations[gen]["items"][item]["desc"] = item_data.shortDesc;
+					generations[gen]["items"][item_name]["desc"] = item_data.shortDesc;
 				} else {
-					generations[gen]["items"][item]["desc"] = item_data.desc;
+					generations[gen]["items"][item_name]["desc"] = item_data.desc;
 				}
 			}
 		}
+		json_data["items"] = items_list;
+		
+		fs.writeFile(data_dir + file, JSON.stringify(json_data), (err) => {if (err) throw err;})
 }})
 	
 for(let gen in generations) {
