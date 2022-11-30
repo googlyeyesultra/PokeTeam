@@ -43,6 +43,7 @@ fs.readdirSync(data_dir).forEach(file => {
 			generations[gen]["pokemon"][poke] = {};
 			var base_stats = this_dex.species.get(poke).baseStats;
 			generations[gen]["pokemon"][poke]["base_stats"] = {};
+
 			for(let key in this_dex.stats.names) {
 				var stat_name = this_dex.stats.names[key];
 				if (stat_name[0] != "[") { // Special defense in gen 1.
@@ -50,6 +51,10 @@ fs.readdirSync(data_dir).forEach(file => {
 				}
 			}
 			generations[gen]["pokemon"][poke]["types"] = this_dex.species.get(poke).types;
+		}
+
+		if (!("base_stats_short" in generations[gen])) {
+            generations[gen]["base_stats_short"] = Object.values(this_dex.stats.shortNames);
 		}
 		
 		var moves_list = [];

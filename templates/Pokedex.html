@@ -8,6 +8,9 @@
             <th class="searchable">Pokemon</th>
             <th class="unsortable searchable">Type</th>
             <th class="sort_desc">Usage</th>
+            {% for stat in dex.base_stats_short %}
+            <th>{{stat}}</th>
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
@@ -15,7 +18,10 @@
         <tr>
             <td>{{ lb.poke_link(poke[0], dataset) }}</td>
             <td class="poke-type" data-types='{{dex.pokemon[poke[0]].types|tojson}}'></td>
-            <td>{{ "{:.2%}".format(poke[1]) }}</td>
+            <td class="r-align">{{ "{:.2%}".format(poke[1]) }}</td>
+            {% for stat in dex.pokemon[poke[0]].base_stats %}
+            <td class="r-align">{{dex.pokemon[poke[0]].base_stats[stat]}}</td>
+            {% endfor %}
         </tr>
     {% endfor %}
     </tbody>
