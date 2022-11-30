@@ -44,7 +44,13 @@ def get_md(dataset):
 @functools.lru_cache(maxsize=12, typed=False)
 def get_dex(gen):
     """Get generation appropriate dex for a format."""
-    return dex.Dex(DATA_DIR + DEX_PREFIX + gen + DEX_SUFFIX)
+    dex_file = DEX_PREFIX + gen + DEX_SUFFIX
+    try:
+        if not os.path.exists(DATA_DIR + dex_file):
+            s3_bucket.download_file(dex_file, DATA_DIR + dex_file)
+        return dex.Dex(DATA_DIR + dex_file)
+    except (FileNotFoundError, ClientError):
+        abort(500)
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
