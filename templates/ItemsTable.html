@@ -1,7 +1,7 @@
 <table class="data-table">
     <thead><tr><th>Item</th><th>Usage</th></tr></thead>
     <tbody>
-    {% for item in items[:5] %}
+    {% for item in items[:10] %}
         <tr>
             <td>{{ lb.item_link(item[0], dataset) }}</td>
             <td class="r-align">{{ "{:.0%}".format(item[1]) }}</td>
