@@ -33,9 +33,8 @@ $(".move-type").each(function () {
     if ($(this).data("type") == "—") {
         $(this).text("—")
     } else {
-        var move_type = pkmn.dex.Dex.forGen($(this).data("gen")).moves.get($(this).data("move")).type
-        $(this).html(type_display(move_type))
-        $(this).attr("data-search", move_type)
+        $(this).html(type_display($(this).data("type")))
+        $(this).attr("data-search", $(this).data("type"))
 }})
 
 $(".base-stats").each(function () {
@@ -107,6 +106,7 @@ $(".sortable").each(function () {
     columnDefs: [
         {targets: "searchable", searchable: true},
         {targets: "unsortable", orderable: false},
+        {targets: "force_num", novalue: "—", type: "setlow"},
         {targets: "_all", searchable: false}
     ],
     order: sort_order,

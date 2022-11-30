@@ -42,14 +42,14 @@ fs.readdirSync(data_dir).forEach(file => {
 			if (poke in generations[gen]["pokemon"]) continue;
 			generations[gen]["pokemon"][poke] = {};
 			var base_stats = this_dex.species.get(poke).baseStats;
-			generations[gen]["pokemon"][poke]["base_stats"] = {}
+			generations[gen]["pokemon"][poke]["base_stats"] = {};
 			for(let key in this_dex.stats.names) {
 				var stat_name = this_dex.stats.names[key];
 				if (stat_name[0] != "[") { // Special defense in gen 1.
-					generations[gen]["pokemon"][poke]["base_stats"][stat_name] = base_stats[key]
+					generations[gen]["pokemon"][poke]["base_stats"][stat_name] = base_stats[key];
 				}
 			}
-			generations[gen]["pokemon"][poke]["types"] = this_dex.species.get(poke).types
+			generations[gen]["pokemon"][poke]["types"] = this_dex.species.get(poke).types;
 		}
 		
 		var moves_list = [];
@@ -73,8 +73,16 @@ fs.readdirSync(data_dir).forEach(file => {
 				generations[gen]["moves"][move_name]["type"] = "—";
 				generations[gen]["moves"][move_name]["priority"] = "—";
 			} else {
-				generations[gen]["moves"][move_name]["short_desc"] = move_data.shortDesc;
-				generations[gen]["moves"][move_name]["full_desc"] = move_data.desc;
+				if (move_name.startsWith("Hidden Power ")) { // Hidden Power Fire, etc. are missing descriptions.
+					var hp_data = this_dex.moves.get("Hidden Power");
+					generations[gen]["moves"][move_name]["short_desc"] = hp_data.shortDesc;
+					generations[gen]["moves"][move_name]["full_desc"] = hp_data.desc;
+				} else {
+					generations[gen]["moves"][move_name]["short_desc"] = move_data.shortDesc;
+					generations[gen]["moves"][move_name]["full_desc"] = move_data.desc;	
+				}
+				
+				generations[gen]["moves"][move_name]["priority"] = move_data.priority;
 				generations[gen]["moves"][move_name]["category"] = move_data.category;
 				if (typeof move_data.accuracy != "number") {
 					generations[gen]["moves"][move_name]["accuracy"] = "—";
@@ -82,9 +90,9 @@ fs.readdirSync(data_dir).forEach(file => {
 					generations[gen]["moves"][move_name]["accuracy"] = move_data.accuracy;
 				}
 				generations[gen]["moves"][move_name]["pp"] = move_data.pp;
-				generations[gen]["moves"][move_name]["power"] = move_data.basePower;
+				if (move_data.basePower) generations[gen]["moves"][move_name]["power"] = move_data.basePower;
+				else generations[gen]["moves"][move_name]["power"] = "—";
 				generations[gen]["moves"][move_name]["type"] = move_data.type;
-				generations[gen]["moves"][move_name]["priority"] = move_data.priority;
 			}
 		}
 		json_data["moves"] = moves_list;

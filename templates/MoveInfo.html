@@ -3,6 +3,7 @@
 {% block below_navbar %}
   <div class="info-box">
     <span class="move-name info-title" data-move="{{move}}">{{ move }}</span>
+    <div class="info-description">{{dex.moves[move]["full_desc"]}}</div>
       <table class="info-table">
         <thead>
           <tr>
@@ -16,6 +17,7 @@
         </thead>
         <tbody>
           <tr>
+            <td class="move-type" data-type='{{dex.moves[move]["type"]}}'></td>
             <td>{{dex.moves[move]["category"]}}</td>
             <td>{{dex.moves[move]["power"]}}</td>
             <td>{{dex.moves[move]["accuracy"]}}</td>
@@ -24,7 +26,6 @@
           </tr>
         </tbody>
       </table>
-    <div>{{dex.moves[move]["full_desc"]}}</div>
   </div>
   {% include "MoveUsersTable.html" %}
 {% endblock %}

@@ -68,6 +68,10 @@ input[type=number] {
   font-family: Sans-Serif;
 }
 
+.info-description {
+  margin-left: .5em;
+}
+
 .info-table {
     border-collapse: collapse;
     text-align: center;

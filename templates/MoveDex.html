@@ -7,8 +7,8 @@
             <th class="searchable sort_asc">Move</th>
             <th class="searchable unsortable">Type</th>
             <th class="searchable unsortable">Category</th>
-            <th>Power</th>
-            <th>Accuracy</th>
+            <th class="force_num">Power</th>
+            <th class="force_num">Accuracy</th>
             <th class="searchable unsortable">Description</th>
         </tr>
     </thead>
@@ -16,7 +16,7 @@
     {% for move in moves %}
         <tr>
             <td>{{ lb.move_link(move, dataset) }}</td>
-            <td class="move-type" data-move="{{move}}" data-gen="{{gen}}"></td>
+            <td class="move-type" data-type={{dex.moves[move]["type"]}}></td>
             <td>{{dex.moves[move]["category"]}}</td>
             <td>{{dex.moves[move]["power"]}}</td>
             <td>{{dex.moves[move]["accuracy"]}}</td>
