@@ -70,6 +70,7 @@ input[type=number] {
 
 .info-description {
   margin-left: .5em;
+  margin-bottom: 5px;
 }
 
 .info-table {
