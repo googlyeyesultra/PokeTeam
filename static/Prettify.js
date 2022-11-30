@@ -10,7 +10,7 @@ $(this).attr("style", pkmn.img.Icons.getPokemon($(this).data("poke")).style)})
 
 $(".item-icon").each(function() {
     $(this).attr("style", pkmn.img.Icons.getItem($(this).data("item")).style)
-    if ($(this).data("item") == "nothing") {
+    if ($(this).data("item") == "Nothing") {
         $(this).css("background", "transparent url(/static/icons/no_item.png)")
         $(this).css("background-size", "100% 100%")
     }
