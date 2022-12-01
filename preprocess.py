@@ -71,21 +71,6 @@ def prepare_files(json_file, threat_file, teammate_file):
             if "" in pokemon[poke]["Moves"]:
                 pokemon[poke]["Moves"]["nomove"] = pokemon[poke]["Moves"].pop("")
 
-        # Round values to reduce size of files.
-        for poke in pokemon:
-            pokemon[poke]["Moves"] = \
-                {m: round(data, 3) for (m, data)
-                 in pokemon[poke]["Moves"].items()}
-            pokemon[poke]["Abilities"] = \
-                {a: round(data, 3) for (a, data)
-                 in pokemon[poke]["Abilities"].items()}
-            pokemon[poke]["Items"] = \
-                {i: round(data, 3) for (i, data)
-                 in pokemon[poke]["Items"].items()}
-            for c in pokemon[poke]["Checks and Counters"]:
-                pokemon[poke]["Checks and Counters"][c] = \
-                    tuple(round(x, 2) for x in pokemon[poke]["Checks and Counters"][c])
-
         # Calculate average pokemon per team. Typically a little less than 6.
         # Smaller in some formats like 1v1.
         # Can't just use number of battles since that isn't weighted by rating.
@@ -99,6 +84,20 @@ def prepare_files(json_file, threat_file, teammate_file):
         data["info"]["total_pokes"] = round(total_pokes, 3)
         data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, 3)
         data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], 3)
+
+        # Round values to reduce size of files.
+        # Also convert to percentages.
+        for poke in pokemon:
+            pokemon[poke]["usage"] = round(pokemon[poke]["usage"], 3)
+            pokemon[poke]["Moves"] = \
+                {m: round(data/pokemon[poke]["count"], 3) for (m, data)
+                 in pokemon[poke]["Moves"].items()}
+            pokemon[poke]["Abilities"] = \
+                {a: round(data/pokemon[poke]["count"], 3) for (a, data)
+                 in pokemon[poke]["Abilities"].items()}
+            pokemon[poke]["Items"] = \
+                {i: round(data/pokemon[poke]["count"], 3) for (i, data)
+                 in pokemon[poke]["Items"].items()}
 
         total_pairs = 0
         for poke in pokemon:

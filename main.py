@@ -83,17 +83,13 @@ def display_pokemon(dataset, poke):
     if poke not in md.pokemon:
         abort(404)
 
-    usage = f'{md.pokemon[poke]["usage"]:.1%}'  # TODO MOVE THIS FORMATTING TO FRONTEND
+    usage = md.pokemon[poke]["usage"]
 
     counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
     teammates = sorted(md.partner_scores(poke).items(), key=lambda kv: -kv[1])
-    count = md.count_pokemon(poke)
-    items = sorted([(item[0], item[1]/count) for item in md.pokemon[poke]["Items"].items()],
-                   key=lambda kv: -kv[1])
-    moves = sorted([(m[0], m[1]/count) for m in md.pokemon[poke]["Moves"].items()],
-                   key=lambda kv: -kv[1])
-    abilities = sorted([(a[0], a[1]/count) for a in md.pokemon[poke]["Abilities"].items()],
-                   key=lambda kv: -kv[1])
+    items = list(md.pokemon[poke]["Items"].items())
+    moves = list(md.pokemon[poke]["Moves"].items())
+    abilities = list(md.pokemon[poke]["Abilities"].items())
 
     return render_template("PokemonInfo.html",
                            poke=poke, dataset=dataset,

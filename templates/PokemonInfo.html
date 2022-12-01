@@ -17,7 +17,7 @@
       <tbody>
         <tr>
           <td class="poke-type" data-types='{{dex.pokemon[poke].types|tojson}}'></td>
-          <td>{{usage}}</td>
+          <td>{{"{:.1%}".format(usage)}}</td>
         </tr>
       </tbody>
     </table>
