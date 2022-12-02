@@ -57,15 +57,15 @@ fs.readdirSync(data_dir).forEach(file => {
             generations[gen]["base_stats_short"] = Object.values(this_dex.stats.shortNames);
 		}
 		
-		var moves_list = [];
-		for(let move of json_data["moves"]) {
+		var moves = {};
+		for(let move in json_data["moves"]) {
 			var move_data = this_dex.moves.get(move);
 			if(move == "nomove") {
 				var move_name = "No Move";
 			} else {
 				var move_name = move_data.name;
 			}
-			moves_list.push(move_name)
+			moves[move_name] = json_data["moves"][move];
 			if (move_name in generations[gen]["moves"]) continue;
 			generations[gen]["moves"][move_name] = {};
 			if(move == "nomove") {
@@ -100,27 +100,27 @@ fs.readdirSync(data_dir).forEach(file => {
 				generations[gen]["moves"][move_name]["type"] = move_data.type;
 			}
 		}
-		json_data["moves"] = moves_list;
+		json_data["moves"] = moves;
 		
-		var abils_list = [];
-		for(let abil of json_data["abilities"]) {
+		var abils = {};
+		for(let abil in json_data["abilities"]) {
 			var abil_data = this_dex.abilities.get(abil);
-			abils_list.push(abil_data.name);
+			abils[abil_data.name] = json_data["abilities"][abil];
 			if (abil in generations[gen]["abilities"]) continue;
 			generations[gen]["abilities"][abil_data.name] = {};
 			generations[gen]["abilities"][abil_data.name]["short_desc"] = abil_data.shortDesc;
 			generations[gen]["abilities"][abil_data.name]["full_desc"] = abil_data.desc;
 		}
-		json_data["abilities"] = abils_list;
+		json_data["abilities"] = abils;
 		
-		var items_list = [];
-		for(let item of json_data["items"]) {
+		var items = {};
+		for(let item in json_data["items"]) {
 			if(item == "nothing") var item_name = "Nothing";
 			else {
 				var item_data = this_dex.items.get(item);
 				var item_name = item_data.name;
 			}
-			items_list.push(item_name);
+			items[item_name] = json_data["items"][item];
 			if (item_name in generations[gen]["items"]) continue;
 			generations[gen]["items"][item_name] = {};
 			if(item_name == "Nothing") {
@@ -133,11 +133,13 @@ fs.readdirSync(data_dir).forEach(file => {
 				}
 			}
 		}
-		json_data["items"] = items_list;
-		
+		json_data["items"] = items;
+
 		fs.writeFile(data_dir + file, JSON.stringify(json_data), (err) => {if (err) throw err;})
 }})
 	
 for(let gen in generations) {
 	fs.writeFile(data_dir + "gen" + gen + ".dex", JSON.stringify(generations[gen]), (err) => {if (err) throw err;})
 }
+
+// TODO do we need to wait until all files are done writing?

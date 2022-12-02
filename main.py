@@ -114,19 +114,11 @@ def display_item(dataset, item):
     """Page for displaying information about an item."""
     md = get_md(dataset)
 
-    holders = []
-    for poke in md.pokemon:
-        if item in md.pokemon[poke]["Items"]:
-            hold = md.pokemon[poke]["Items"][item] / md.count_pokemon(poke)
-            usage = md.pokemon[poke]["usage"]
-            holders.append((poke, hold * usage, hold, usage))
-
-    holders.sort(key=lambda h: -h[1])
-    if not holders:
+    if not item in md.items:
         abort(404)
 
     return render_template("ItemInfo.html",
-                           item=item, dataset=dataset, holders=holders,
+                           item=item, dataset=dataset, holders=md.items[item],
                            gen=md.gen, dex=get_dex(md.gen))
 
 
@@ -144,20 +136,11 @@ def display_move(dataset, move):
     """Page for information about a specific move."""
     md = get_md(dataset)
 
-    users = []
-    for poke in md.pokemon:
-        if move in md.pokemon[poke]["Moves"]:
-            use = md.pokemon[poke]["Moves"][move] / md.count_pokemon(poke)
-            usage = md.pokemon[poke]["usage"]
-            users.append((poke, use * usage, use, usage))
-
-    users.sort(key=lambda u: -u[1])
-
-    if not users:
+    if not move in md.moves:
         abort(404)
 
     return render_template("MoveInfo.html",
-                           move=move, dataset=dataset, move_users=users,
+                           move=move, dataset=dataset, move_users=md.moves[move],
                            gen=md.gen, dex=get_dex(md.gen))
 
 
@@ -174,21 +157,11 @@ def display_ability(dataset, abil):
     """Page for details about a specific ability."""
     md = get_md(dataset)
 
-    users = []
-    for poke in md.pokemon:  # TODO move some of this into analyze?
-        if abil in md.pokemon[poke]["Abilities"]:
-            use = (md.pokemon[poke]["Abilities"][abil] /
-                   md.count_pokemon(poke))
-            usage = md.pokemon[poke]["usage"]
-            users.append((poke, use * usage, use, usage))
-
-    users.sort(key=lambda u: -u[1])
-
-    if not users:
+    if abil not in md.abilities:
         abort(404)
 
     return render_template("AbilityInfo.html",
-                           abil=abil, dataset=dataset, abil_users=users,
+                           abil=abil, dataset=dataset, abil_users=md.abilities[abil],
                            gen=md.gen, dex=get_dex(md.gen))
 
 

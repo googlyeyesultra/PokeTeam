@@ -149,26 +149,56 @@ def prepare_files(json_file, threat_file, teammate_file):
 
     data["pokemon"] = pokemon
 
-    abils = set()
+    abils = {}
     for poke in pokemon:
         sorted_abils = sorted(pokemon[poke]["Abilities"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Abilities"] = dict([a for a in sorted_abils if a[1] > .05])
-        abils.update(pokemon[poke]["Abilities"].keys())
-    data["abilities"] = sorted(list(abils))
+        usage = pokemon[poke]["usage"]
+        for k in pokemon[poke]["Abilities"]:
+            use = pokemon[poke]["Abilities"][k]
+            entry = (poke, round(usage * use, 3), use, usage)
+            if k in abils:
+                abils[k].append(entry)
+            else:
+                abils[k] = [entry]
 
-    moves = set()
+    for abil in abils:
+        abils[abil] = sorted(abils[abil], key=lambda t: -t[1])[:10]
+    data["abilities"] = dict(sorted(abils.items()))
+
+    moves = {}
     for poke in pokemon:
         sorted_moves = sorted(pokemon[poke]["Moves"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Moves"] = dict([m for m in sorted_moves if m[1] > .05])
-        moves.update(pokemon[poke]["Moves"].keys())
-    data["moves"] = sorted(list(moves))
+        usage = pokemon[poke]["usage"]
+        for k in pokemon[poke]["Moves"]:
+            use = pokemon[poke]["Moves"][k]
+            entry = (poke, round(usage * use, 3), use, usage)
+            if k in moves:
+                moves[k].append(entry)
+            else:
+                moves[k] = [entry]
 
-    items = set()
+    for move in moves:
+        moves[move] = sorted(moves[move], key=lambda t: -t[1])[:10]
+    data["moves"] = dict(sorted(moves.items()))
+
+    items = {}
     for poke in pokemon:
         sorted_items = sorted(pokemon[poke]["Items"].items(), key=lambda i: -i[1])[:10]
         pokemon[poke]["Items"] = dict([i for i in sorted_items if i[1] > .05])
-        items.update(pokemon[poke]["Items"].keys())
-    data["items"] = sorted(list(items))
+        usage = pokemon[poke]["usage"]
+        for k in pokemon[poke]["Items"]:
+            use = pokemon[poke]["Items"][k]
+            entry = (poke, round(usage * use, 3), use, usage)
+            if k in items:
+                items[k].append(entry)
+            else:
+                items[k] = [entry]
+
+    for item in items:
+        items[item] = sorted(items[item], key=lambda t: -t[1])[:10]
+    data["items"] = dict(sorted(items.items()))
 
     # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
     # Supports through gen 19.
