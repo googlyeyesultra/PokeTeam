@@ -4,7 +4,7 @@
     {% for threat in threats[:10] %}
         <tr>
             <td>{{ lb.poke_link(threat[0], dataset) }}</td>
-            <td class="r-align">{{ "{:.2f}".format(threat[1]) }}</td>
+            <td class="dt-body-right">{{ "{:.2f}".format(threat[1]) }}</td>
         </tr>
     {% endfor %}
     </tbody>

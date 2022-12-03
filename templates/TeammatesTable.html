@@ -4,7 +4,7 @@
         {% for teammate in teammates[:10] %}
             <tr>
                 <td>{{ lb.poke_link(teammate[0], dataset) }}</td>
-                <td class="r-align">{{ "{:.2f}".format(teammate[1]) }}</td>
+                <td class="dt-body-right">{{ "{:.2f}".format(teammate[1]) }}</td>
             </tr>
         {% endfor %}
     </tbody>

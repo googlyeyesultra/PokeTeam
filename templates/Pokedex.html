@@ -18,9 +18,9 @@
         <tr>
             <td>{{ lb.poke_link(poke[0], dataset) }}</td>
             <td class="poke-type" data-types='{{dex.pokemon[poke[0]].types|tojson}}'></td>
-            <td class="r-align">{{ "{:.1%}".format(poke[1]) }}</td>
+            <td class="dt-body-right">{{ "{:.1%}".format(poke[1]) }}</td>
             {% for stat in dex.pokemon[poke[0]].base_stats %}
-            <td class="r-align">{{dex.pokemon[poke[0]].base_stats[stat]}}</td>
+            <td class="dt-body-right">{{dex.pokemon[poke[0]].base_stats[stat]}}</td>
             {% endfor %}
         </tr>
     {% endfor %}

@@ -257,6 +257,11 @@ body {
     text-align: right;
 }
 
+.dt-body-right {
+    text-align: right;
+    padding-right: 1.6em;
+}
+
 figure {
     float: left;
 }

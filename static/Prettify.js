@@ -106,7 +106,7 @@ $(".sortable").each(function () {
     columnDefs: [
         {targets: "searchable", searchable: true},
         {targets: "unsortable", orderable: false},
-        {targets: "force_num", novalue: "—", type: "setlow"},
+        {targets: "force_num", novalue: "—", type: "setlow", className: "dt-body-right"},
         {targets: "_all", searchable: false}
     ],
     order: sort_order,

@@ -18,8 +18,8 @@
             <td>{{ lb.move_link(move, dataset) }}</td>
             <td class="move-type" data-type={{dex.moves[move]["type"]}}></td>
             <td>{{dex.moves[move]["category"]}}</td>
-            <td>{{dex.moves[move]["power"]}}</td>
-            <td>{{dex.moves[move]["accuracy"]}}</td>
+            <td class="dt-body-right">{{dex.moves[move]["power"]}}</td>
+            <td class="dt-body-right">{{dex.moves[move]["accuracy"]}}</td>
             <td>{{dex.moves[move]["short_desc"]}}</td>
         </tr>
     {% endfor %}
