@@ -1,11 +1,11 @@
 {% extends "NavBar.html" %}
-{% block title %}Pokedex{% endblock %}
+{% block title %}Pokédex{% endblock %}
 {% block below_navbar %}
 
 <table id="pokedex" class="data-table sortable">
     <thead>
         <tr>
-            <th class="searchable">Pokemon</th>
+            <th class="searchable">Pokémon</th>
             <th class="unsortable searchable">Type</th>
             <th class="sort_desc">Usage</th>
             {% for stat in dex.base_stats_short %}
