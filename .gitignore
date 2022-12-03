@@ -3,3 +3,6 @@ datasets/*
 dump/*
 .spyproject/*
 /datasets_temp/
+/node_modules/
+/package.json
+/package-lock.json

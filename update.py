@@ -13,6 +13,9 @@ import preprocess
 from file_constants import *
 import subprocess
 
+PREPROCESS_UPDATE_CMD = "npm"
+PREPROCESS_UPDATE_ARGS = ["install", "@pkmn/dex"]
+
 PREPROCESS_CMD = "node"
 PREPROCESS_ARGS = ["./nodejs/build_dexes.mjs"]
 
@@ -62,7 +65,8 @@ def update():
             top_formats_fd.write(line)
 
     print("Running script preprocessing.")
-    subprocess.call([PREPROCESS_CMD] + PREPROCESS_ARGS)
+    subprocess.run([PREPROCESS_UPDATE_CMD] + PREPROCESS_UPDATE_ARGS, shell=True).check_returncode()
+    subprocess.run([PREPROCESS_CMD] + PREPROCESS_ARGS).check_returncode()
 
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):

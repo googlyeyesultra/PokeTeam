@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@pkmn/data": "^0.7.3",
-    "@pkmn/dex": "^0.7.3"
-  }
-}
