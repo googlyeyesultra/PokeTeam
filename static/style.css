@@ -279,6 +279,10 @@ dl {
   padding: 0;
 }
 
+.poke-type {
+  text-align: center;
+}
+
 .dataTables_filter {
     padding: 5px;
 }
