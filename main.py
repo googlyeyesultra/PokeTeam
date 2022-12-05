@@ -58,10 +58,8 @@ def select_data():
     if request.method == 'POST':
         return redirect(url_for("analysis", dataset=request.form["selector"]))
 
-    form = d.DataSelectForm(request.form)
-    datasets = [obj.key[:-5] for obj in s3_bucket.objects.all()
-                if ".json" in obj.key]
-    form.selector.choices = sorted(datasets)
+    datasets = sorted([obj.key[:-5] for obj in s3_bucket.objects.all()  # TODO this is probably unnecessarily slow.
+                if ".json" in obj.key])  # We should store this in a file we have to pull only once.
 
     if not os.path.exists(DATA_DIR + TOP_FORMATS_FILE):
         s3_bucket.download_file(TOP_FORMATS_FILE, DATA_DIR + TOP_FORMATS_FILE)
@@ -73,7 +71,7 @@ def select_data():
             format_name, ratings = metagame.split(" ")
             formats.append((format_name, ratings.split(",")))
 
-    return render_template("DataSelector.html", form=form, top=formats)
+    return render_template("DataSelector.html", datasets=datasets, top=formats)
 
 
 @app.route("/pokemon/<dataset>/<poke>/")
