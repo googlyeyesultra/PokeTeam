@@ -3,7 +3,7 @@
   <div class="format-name">
     {{ dataset }}
   </div>
-  <div class="topnav">
+  <header class="topnav">
     <div class="topnav-links">
       <a href="{{ url_for('select_data') }}">Data Selector</a>
       <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
@@ -13,7 +13,7 @@
       <a href="{{ url_for('move_dex', dataset=dataset) }}">Move Dex</a>
       <a href="{{ url_for('ability_dex', dataset=dataset) }}">Ability Dex</a>
     </div>
-  </div>
+  </header>
   <div class="content">
   {% block below_navbar %}
   {% endblock %}
