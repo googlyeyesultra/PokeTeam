@@ -13,7 +13,7 @@ $("#analyze").submit(function(e) {
 
 function handleAddPoke(poke) {
   // Find and set first empty selector. 0 can't be empty.
-  for(let i = 1; i <= 5; i++) {
+  for(let i = 0; i <= 5; i++) {
     id = "#selectors-" + i;
     if(!$(id).val()) {
       $(id).val(poke);
@@ -44,4 +44,3 @@ function tryTeam(team) {
 
   $("#analyze").submit()
 }
-

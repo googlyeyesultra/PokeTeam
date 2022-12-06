@@ -1,7 +1,9 @@
 {% import "link_builder.html" as lb %}
 <div class="tables-wrapper">
 {% include "RecommendationsTable.html" %}
+{% if threats %}
 {% include "ThreatsTable.html" %}
+{% endif %}
 
 {% if suggested_team %}
     <div>

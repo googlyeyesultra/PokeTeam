@@ -180,11 +180,11 @@ def analysis(dataset):
     sorted_pokemon = sorted(md.pokemon)
     first = True
     for selector in form.selectors:
-        selector.choices = [(x, x) for x in sorted_pokemon]
-        if first:
-            first = False
-        else:
-            selector.choices = [("", "None")] + selector.choices
+        selector.choices = [("", "None")] + [(x, x) for x in sorted_pokemon]
+        #if first:
+        #    first = False
+        #else:
+        #    selector.choices = [("", "None")] + selector.choices
 
     return render_template('TeamBuilder.html', form=form, dataset=dataset,
                            gen=md.gen, dex=get_dex(md.gen))

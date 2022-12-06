@@ -143,8 +143,11 @@ class MetagameData:
         # Geometric mean of the P(X|Y)/P(X|not Y) ratio
         # Where x is the mon we're considering adding.
         # Log form required.
+
+        if not team:
+            return 0
+
         log_sum = 0
-        sum_usage_factor = 0
         for mon in team:
             # P(X|not Y) is 0 if X doesn't occur without Y.
             # So Y needs to be on team.
@@ -280,14 +283,22 @@ class MetagameData:
         t_scores = []
         u_scores = []
         for poke in self.pokemon:
-            c_scores.append(self._get_counter_score(threats, len(team), poke))
-            t_scores.append(self._get_team_score(team, poke))
+            if team:
+                c_scores.append(self._get_counter_score(threats, len(team), poke))
+                t_scores.append(self._get_team_score(team, poke))
+            else:
+                c_scores.append(0)
+                t_scores.append(0)
+
             u_scores.append(self._get_usage_score(poke))
 
         scores = []
         for index, poke in enumerate(self.pokemon):
-            combined = self._get_combined_score(
-                c_scores[index], t_scores[index], u_scores[index], weights)
+            if team:
+                combined = self._get_combined_score(
+                    c_scores[index], t_scores[index], u_scores[index], weights)
+            else:
+                combined = u_scores[index]
 
             scores.append((poke, combined, c_scores[index],
                 t_scores[index], u_scores[index]))
@@ -379,7 +390,6 @@ class MetagameData:
                 my_team[most_improvement[2]] = most_improvement[0]
                 sorted_team = tuple(sorted(my_team))
                 if sorted_team in teams:  # Break cycles.
-                    change_made = False
                     break
 
                 teams.add(sorted_team)
@@ -438,7 +448,10 @@ class MetagameData:
         my_team = self._build_full(team, best, weights)
         swaps = self._suggest_swaps(team, weights)
 
-        threats_dict = self._threats_to_dict(threats, len(team))
+        if team:
+            threats_dict = self._threats_to_dict(threats, len(team))
+        else:
+            threats_dict = {}
         return threats_dict, scores, my_team, swaps
 
     def find_counters(self, poke):
