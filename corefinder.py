@@ -7,7 +7,7 @@ from networkx.algorithms import clique
 from networkx import Graph
 import numpy
 
-SCORE_REQUIREMENT_DEFAULT = 6
+SCORE_REQUIREMENT_DEFAULT = 3
 USAGE_THRESHOLD_DEFAULT = 1
 
 

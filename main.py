@@ -8,7 +8,6 @@ from flask import (Flask, render_template, request,
 import boto3
 from waitress import serve
 import analyze
-import display as d
 import update
 import corefinder
 import dex
@@ -225,21 +224,30 @@ def output_analysis(dataset):
 @app.route("/cores/<dataset>/")
 def cores(dataset):
     """Page for finding cores in a format."""
-    return render_template("CoreFinder.html",
-                           dataset=dataset, form=d.CoreFinderForm())
+    usage_threshold = corefinder.USAGE_THRESHOLD_DEFAULT
+    score_requirement = corefinder.SCORE_REQUIREMENT_DEFAULT
+    cores = build_cores(dataset, usage_threshold / 100, score_requirement)
+    return render_template("CoreFinder.html", cores=cores,
+                           usage_threshold=usage_threshold,
+                           score_requirement=score_requirement,
+                           dataset=dataset)
+
+
+def build_cores(dataset, usage_threshold, score_requirement):
+    md = get_md(dataset)
+    cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
+
+    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
+                           gen=md.gen)
 
 
 @app.route("/cores/<dataset>/find_cores", methods=['POST'])
 def find_cores(dataset):
     """Part of page responsible for displaying cores in format."""
-    md = get_md(dataset)
 
     usage_threshold = float(request.form["usage_threshold"]) / 100
     score_requirement = float(request.form["score_requirement"])
-    cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
-
-    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
-                           gen=md.gen, dex=get_dex(md.gen))
+    return build_cores(dataset, usage_threshold, score_requirement)
 
 
 @app.route("/update/<key>/")
