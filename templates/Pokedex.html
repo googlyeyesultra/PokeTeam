@@ -7,9 +7,9 @@
         <tr>
             <th class="searchable">Pokémon</th>
             <th class="unsortable searchable">Type</th>
-            <th class="sort_desc">Usage</th>
+            <th class="sort_desc default_desc">Usage</th>
             {% for stat in dex.base_stats_short %}
-            <th>{{stat}}</th>
+            <th class="default_desc">{{stat}}</th>
             {% endfor %}
         </tr>
     </thead>

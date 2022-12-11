@@ -112,6 +112,7 @@ function do_prettify() {
             {targets: "searchable", searchable: true},
             {targets: "unsortable", orderable: false},
             {targets: "force_num", novalue: "—", type: "setlow", className: "dt-body-right"},
+            {targets: "default_desc", orderSequence: ['desc', 'asc']},
             {targets: "_all", searchable: false}
         ],
         order: sort_order,

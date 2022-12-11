@@ -26,7 +26,13 @@ input[type=number] {
 
 .advanced-options {
     cursor: pointer;
-    margin: 5px;
+    border-radius: 2px;
+    padding: 5px;
+    margin-top: 2px;
+}
+
+.advanced-options[open] {
+    background: var(--checker-color-1);
 }
 
 .dataTables_wrapper {
