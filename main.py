@@ -103,6 +103,7 @@ def display_pokemon(dataset, poke):
 def pokedex(dataset):
     """Page for listing all Pokemon in a format."""
     md = get_md(dataset)
+    # TODO sort the pokemon in the json so we don't have to sort here?
     pokemon = sorted([(x, md.pokemon[x]["usage"]) for x in md.pokemon.keys()], key=lambda pair: -pair[1])
     return render_template("Pokedex.html", pokemon=pokemon, dataset=dataset, gen=md.gen, dex=get_dex(md.gen))
 
@@ -112,7 +113,7 @@ def display_item(dataset, item):
     """Page for displaying information about an item."""
     md = get_md(dataset)
 
-    if not item in md.items:
+    if item not in md.items:
         abort(404)
 
     return render_template("ItemInfo.html",
@@ -134,7 +135,7 @@ def display_move(dataset, move):
     """Page for information about a specific move."""
     md = get_md(dataset)
 
-    if not move in md.moves:
+    if move not in md.moves:
         abort(404)
 
     return render_template("MoveInfo.html",
@@ -175,35 +176,21 @@ def ability_dex(dataset):
 @app.route("/analysis/<dataset>/")
 def analysis(dataset):
     """Page that contains the main team builder."""
-    form = d.PokemonForm(request.form)
-    md = get_md(dataset)
-    sorted_pokemon = sorted(md.pokemon)
-    first = True
-    for selector in form.selectors:
-        selector.choices = [("", "None")] + [(x, x) for x in sorted_pokemon]
-        #if first:
-        #    first = False
-        #else:
-        #    selector.choices = [("", "None")] + selector.choices
-
-    return render_template('TeamBuilder.html', form=form, dataset=dataset,
-                           gen=md.gen, dex=get_dex(md.gen))
-
-
-@app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
-def output_analysis(dataset):
-    """Part of page responsible for displaying team building results."""
     md = get_md(dataset)
 
-    my_pokes = []
-    usage_setting = float(request.form["usage_setting"])
-    counter_setting = float(request.form["counter_setting"])
-    team_setting = float(request.form["team_setting"])
+    analysis = build_analysis(dataset, [], analyze.USAGE_WEIGHT_DEFAULT,
+                                           analyze.COUNTER_WEIGHT_DEFAULT,
+                                           analyze.TEAM_WEIGHT_DEFAULT)
 
-    for selector in request.form.items():
-        if selector[1] and "selector" in selector[0]:
-            my_pokes.append(selector[1])
+    return render_template('TeamBuilder.html', dataset=dataset,
+                           gen=md.gen, dex=get_dex(md.gen), analysis=analysis,
+                           usage_setting=analyze.USAGE_WEIGHT_DEFAULT,
+                           counter_setting=analyze.COUNTER_WEIGHT_DEFAULT,
+                           team_setting=analyze.TEAM_WEIGHT_DEFAULT)
 
+
+def build_analysis(dataset, my_pokes, usage_setting, counter_setting, team_setting):
+    md = get_md(dataset)
     weights = analyze.Weights(counter_setting, team_setting, usage_setting)
     threats, bundled, suggested_team, swaps = md.analyze(my_pokes, weights)
 
@@ -217,6 +204,22 @@ def output_analysis(dataset):
                            swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
                            add_links=(len(my_pokes) < 6),
                            gen=md.gen, dex=get_dex(md.gen))
+
+@app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
+def output_analysis(dataset):
+    """Part of page responsible for displaying team building results."""
+
+
+    if "pokemon" in request.form:
+        my_pokes = request.form.getlist("pokemon")
+    else:
+        my_pokes = []
+
+    usage_setting = float(request.form["usage_weight"])
+    counter_setting = float(request.form["counter_weight"])
+    team_setting = float(request.form["team_weight"])
+
+    return build_analysis(dataset, my_pokes, usage_setting, counter_setting, team_setting)
 
 
 @app.route("/cores/<dataset>/")

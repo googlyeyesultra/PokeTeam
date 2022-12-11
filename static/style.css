@@ -7,6 +7,8 @@
   --accent-color: #115511;
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
+  --disabled-text-color: #777777;
+  --light-border-color: #777777;
 }
 
 body {
@@ -22,6 +24,56 @@ input[type=number] {
   width: 5em;
 }
 
+.advanced-options {
+    cursor: pointer;
+    margin: 5px;
+}
+
+.dataTables_wrapper {
+    display: inline-block;
+}
+
+.input_pokemon {
+    display: grid;
+    grid-template-columns: max-content max-content max-content;
+    grid-template-rows: max-content max-content;
+    gap: 2px 2px;
+    min-width: 472px;
+    min-height: 110px;
+}
+
+.remove_button {
+    color: #8B0000;
+    cursor: pointer;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: .8em;
+}
+
+.team_image {
+    margin: 2px;
+    text-align: center;
+    display: block !important;
+    margin: auto;
+}
+
+.team_link {
+    text-align: center;
+    display: block;
+}
+
+.team_member {
+    background: var(--checker-color-1);
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 2px;
+    border-color: var(--light-border-color);
+    padding: 2px;
+    position: relative;
+    min-width: 150px;
+}
+
 .tooltip {
   visibility: hidden;
   background-color: var(--checker-color-1);
@@ -31,7 +83,7 @@ input[type=number] {
   z-index: 1;
   border-radius: 6px;
   border-style: solid;
-  border-width: 2px;
+  border-width: 1px;
   display: block;
   transform: translateY(-50%);
   left: 120%;
@@ -283,8 +335,42 @@ dl {
   text-align: center;
 }
 
-.dataTables_filter {
+.dataTables_paginate {
+    display: flex;
+    justify-content: space-around;
+}
+
+.dataTables_paginate .paginate_button {
+    cursor: pointer;
     padding: 5px;
+    margin: 1px;
+}
+
+.dataTables_paginate .paginate_button:hover:not(.disabled) {
+    background: var(--checker-color-1);
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 1px;
+    margin: 0px;
+}
+
+.dataTables_paginate .disabled {
+    color: var(--disabled-text-color);
+}
+
+
+.dataTable_controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.align-help {
+    margin-top: 31px;
+}
+
+.align-help .dataTable_controls {
+    margin-top: -31px;
 }
 
 .dataTables_filter label::before {
@@ -300,6 +386,19 @@ dl {
 
 .dataTables_filter label input {
     padding-left: 1.5em;
+}
+
+.dataTables_filter {
+    padding: 5px;
+}
+
+.dataTables_info {
+    font-size: .8em;
+    padding: 5px;
+}
+
+.pagedPoke {
+    min-width: 13em;
 }
 
 /* Table sort controls - code from datatables default styling. */

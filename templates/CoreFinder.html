@@ -19,8 +19,10 @@ This identifies common cores. Subsets of cores are also cores.
   </table>
 </fieldset>
 <input type="submit" value="Find Cores">
-<script src="{{ url_for('static', filename='CoreFinderScript.js') }}"></script>
 </form>
 <div id="cores_location"></div>
+{% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='CoreFinderScript.js') }}"></script>
 {% endblock %}

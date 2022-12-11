@@ -5,14 +5,6 @@ from wtforms.fields import DecimalField
 import analyze
 import corefinder
 
-
-class PokemonForm(Form):
-    """Form containing Pokemon selectors and weightings for analysis."""
-    selectors = FieldList(SelectField(), min_entries=6)
-    usage_setting = DecimalField(default=analyze.USAGE_WEIGHT_DEFAULT)
-    counter_setting = DecimalField(default=analyze.COUNTER_WEIGHT_DEFAULT)
-    team_setting = DecimalField(default=analyze.TEAM_WEIGHT_DEFAULT)
-
 class CoreFinderForm(Form):
     """Form to select settings for core finding."""
     usage_threshold = DecimalField(default=corefinder.USAGE_THRESHOLD_DEFAULT, places=1)

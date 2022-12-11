@@ -9,6 +9,7 @@
     <!--Sortable tables-->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="{{ url_for('static', filename='novalue.js') }}"></script>
+
     <!--Charts-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -28,5 +29,7 @@
 {% block content %}
 {% endblock %}
 {% include "RenderIcons.html" %}
+{% block scripts %}
+{% endblock %}
 </body>
 </html>

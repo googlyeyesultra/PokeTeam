@@ -1,18 +1,18 @@
-<table class="data-table">
+<table id="recommendations_table" class="data-table sortable paged">
     <thead>
         <tr>
-            <th>Recommendation</th>
-            <th>Overall Score</th>
-            <th>Counter Score</th>
-            <th>Team Score</th>
-            <th>Usage Score</th>
+            <th class="searchable unsortable pagedPoke">Recommendation</th>
+            <th class="unsortable">Overall Score</th>
+            <th class="unsortable">Counter Score</th>
+            <th class="unsortable">Team Score</th>
+            <th class="unsortable">Usage Score</th>
             {% if add_links %}
-                    <th>&#10010</th>
+                    <th class="unsortable">&#10010</th>
             {% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for reco in recommendations[:10] %}
+        {% for reco in recommendations %}
             <tr>
                 <td>{{ lb.poke_link(reco[0], dataset) }}</td>
                 <td class="r-align">{{ "{:.2f}".format(reco[1]) }}</td>

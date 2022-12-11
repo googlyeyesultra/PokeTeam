@@ -3,32 +3,32 @@
 {% block below_navbar %}
 Enter anywhere from 1-6 Pokémon for analysis and suggestions.
 <form id=analyze>
-<div class="input pokemon">
- 	{% for selector in form.selectors %}
-   {{selector}}
-  {% endfor %}
+<div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon" class="input_pokemon">
+
 </div>
-<fieldset class="advanced">
-  <legend>Advanced Options</legend>
+<details class="advanced-options">
+  <summary>Advanced Options</summary>
   <table class="alignment-table">
     <tbody>
       <tr><td>Counter Weighting:</td>
-        <td>{{ form.counter_setting(min='0', required='true') }}</td>
+        <td><input type="number" name="counter_weight" min=0 value={{counter_setting}} required="true" step=".1"></td>
         <td><span class="fas fa-question-circle"><span class="tooltip">The counter score encompasses how good a given Pokémon is against Pokémon that are threatening to the team.</span></span></td>
       </tr>
       <tr><td>Team Weighting:</td>
-        <td>{{ form.team_setting(min='0', required='true') }}</td>
+        <td><input type="number" name="team_weight" min=0 value={{team_setting}} required="true" step=".1"></td>
         <td><span class="fas fa-question-circle"><span class="tooltip">The team score encompasses how much more or less often Pokémon are played together.</span></span></td>
       </tr>
       <tr><td>Usage Weighting:</td>
-        <td>{{ form.usage_setting(min='0', required='true') }}</td>
+        <td><input type="number" name="usage_weight" min=0 value={{usage_setting}} required="true" step=".1"></td>
         <td><span class="fas fa-question-circle"><span class="tooltip">The usage score encompasses how often a Pokémon is played in the format.</span></span></td>
       </tr>
     </tbody>
   </table>
-</fieldset>
-<input type="submit" value="Analyze">
-<script src="{{ url_for('static', filename='TeamBuilderScript.js') }}"></script>
+  <input type="submit" value="Analyze">
+</details>
 </form>
-<div id="analysis_location"></div>
+<div id="analysis_location">{{analysis|safe}}</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='TeamBuilderScript.js') }}"></script>
 {% endblock %}
