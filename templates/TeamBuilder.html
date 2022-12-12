@@ -1,11 +1,8 @@
 {% extends "NavBar.html" %}
 {% block title %}Pokémon Team Builder{% endblock %}
 {% block below_navbar %}
-Enter anywhere from 1-6 Pokémon for analysis and suggestions.
 <form id=analyze>
-<div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon" class="input_pokemon">
-
-</div>
+<div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon"></div>
 <details class="advanced-options">
   <summary>Advanced Options</summary>
   <table class="alignment-table">

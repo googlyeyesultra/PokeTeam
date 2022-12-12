@@ -62,7 +62,7 @@ function handleSwapPoke(original, new_poke) {
 }
 
 function tryTeam(team) {
-  $("#input_pokemon").html("");
+  $(".team_member").remove();
   for(poke of team) {
     handleAddPoke(poke, false);
   }

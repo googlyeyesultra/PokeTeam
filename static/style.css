@@ -5,6 +5,8 @@
   --navbar-color: #333;
   --navbar-hover-color: #ccc;
   --accent-color: #115511;
+  --block-color: #f0f0fc;
+  --outer-block-color: #333;
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
   --disabled-text-color: #777777;
@@ -21,7 +23,7 @@ input[type=submit] {
 }
 
 input[type=number] {
-  width: 5em;
+  width: 4em;
 }
 
 .advanced-options {
@@ -29,32 +31,52 @@ input[type=number] {
     border-radius: 2px;
     padding: 5px;
     margin-top: 2px;
+    display: inline-block
 }
 
 .advanced-options[open] {
-    background: var(--checker-color-1);
+    background: var(--block-color);
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--light-border-color);
 }
 
 .dataTables_wrapper {
     display: inline-block;
 }
 
-.input_pokemon {
+#input_pokemon {
     display: grid;
     grid-template-columns: max-content max-content max-content;
     grid-template-rows: max-content max-content;
     gap: 2px 2px;
-    min-width: 472px;
+    width: 472px;
     min-height: 110px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--light-border-color);
+    padding: 2px;
+    background: var(--outer-block-color);
+}
+
+#input_pokemon:empty::after {
+    content: "Try adding Pokémon below. You can also type one in and hit enter.";
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: inherit;
+    justify-content: center;
+    min-height: inherit;
+    color: var(--light-text-color)
 }
 
 .remove_button {
     color: #8B0000;
     cursor: pointer;
     position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: .8em;
+    top: 0px;
+    right: 3px;
 }
 
 .team_image {
@@ -70,7 +92,7 @@ input[type=number] {
 }
 
 .team_member {
-    background: var(--checker-color-1);
+    background: var(--block-color);
     border-width: 1px;
     border-style: solid;
     border-radius: 2px;
@@ -82,7 +104,7 @@ input[type=number] {
 
 .tooltip {
   visibility: hidden;
-  background-color: var(--checker-color-1);
+  background-color: var(--block-color);
   color: var(--text-color);
   padding: 5px;
   position: absolute;
@@ -114,6 +136,7 @@ input[type=number] {
   color: var(--accent-color);
   position: relative;
   display: inline-block;
+  cursor: help;
 }
 
 .fa-question-circle:hover .tooltip {
@@ -353,7 +376,7 @@ dl {
 }
 
 .dataTables_paginate .paginate_button:hover:not(.disabled) {
-    background: var(--checker-color-1);
+    background: var(--block-color);
     border-radius: 6px;
     border-style: solid;
     border-width: 1px;
