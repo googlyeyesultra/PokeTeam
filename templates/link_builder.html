@@ -23,7 +23,7 @@
 {%- endmacro %}
 
 {% macro add_link(poke) -%}
-<a href="javascript:handleAddPoke('{{poke}}')" class="add_link" id="{{poke}}"><span class="fas fa-plus-square"></span></a>
+<a href='javascript:handleAddPoke("{{poke}}")' class="add_link" id="{{poke}}"><span class="fas fa-plus-square"></span></a>
 {%- endmacro %}
 
 {% macro try_team_link(suggested_team) -%}
