@@ -10,6 +10,7 @@ import numpy
 SCORE_REQUIREMENT_DEFAULT = 3
 USAGE_THRESHOLD_DEFAULT = 1
 
+# TODO THIS IS BROKEN WITH REMOVAL OF _get_team_score
 
 class CoreFinder:
     """Responsible for finding cores within a metagame."""

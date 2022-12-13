@@ -8,6 +8,7 @@ import math
 from dataclasses import dataclass
 import ujson as json
 import numpy as np
+from scipy.stats.mstats import gmean
 
 
 COUNTER_WEIGHT_DEFAULT = 2
@@ -109,135 +110,6 @@ class MetagameData:
         """
         return self.pokemon[poke]["count"]
 
-    def _get_counter_score(self, threats, team_size, poke):
-        """Generate a score based on how good a Pokemon \
-            is at countering threats to a team.
-
-        Args:
-            threats (1d numpy array): Each index contains how threatening
-            the Pokemon with that index is to the team.
-
-            team_size (int): Number of Pokemon on team so far.
-
-            poke (str): Name of Pokemon being considered.
-
-        Returns:
-            float >= 0: High score corresponds to being strong against threats.
-        """
-        new_threats = threats + self._threat_matrix[self._indices[poke]]
-        return 100 ** (-(new_threats[new_threats > 0].sum() / (team_size + 1)))
-
-    def _get_team_score(self, team, poke):
-        """Generate a score based on how well a Pokemon \
-            works with given teammates.
-
-        Args:
-            team (list of str): List of Pokemon on team already.
-
-            poke (str): Name of Pokemon being considered.
-
-        Returns:
-            float >= 0: High score corresponds to going well with teammates.
-        """
-
-        # Geometric mean of the P(X|Y)/P(X|not Y) ratio
-        # Where x is the mon we're considering adding.
-        # Log form required.
-
-        if not team:
-            return 0
-
-        log_sum = 0
-        for mon in team:
-            # P(X|not Y) is 0 if X doesn't occur without Y.
-            # So Y needs to be on team.
-            # On the flip side, if P(X|Y) is 0, we need to not put Y on the team.
-            # This is common where X and Y are the same mon.
-
-            ratio = self._team_matrix[self._indices[mon], self._indices[poke]]
-            if ratio == 0:
-                # This behaves the same way multiplying by 0 would in the non-log form.
-                log_sum = -math.inf
-                break
-            else:
-                log_sum += math.log10(ratio)
-
-        return 10 ** (log_sum / len(team))
-
-    def _get_usage_score(self, poke):
-        """Generate a score based on often a Pokemon is used.
-
-        Args:
-            poke (str): Name of Pokemon being considered.
-
-        Returns:
-            float >= 0: High score corresponds to high usage.
-        """
-        return self.pokemon[poke]["usage"]
-
-    @staticmethod
-    def _mean_func(val):
-        """Calculate a quasi-arithmetic mean.
-
-        Compute the (unweighted) quasi-arithmetic mean of a, b, c by taking
-        _mean_inverse_func(_mean_func(a) + _mean_func(b) + _mean_func(c))
-
-        Args:
-            val (float): Number to include in average.
-
-        Returns:
-            float: Processed number to include in mean.
-        """
-        return math.log(val, 10)
-
-    @staticmethod
-    def _mean_inverse_func(mean_sum):
-        """Calculate a quasi-arithmetic mean.
-
-        Compute the (unweighted) quasi-arithmetic mean of a, b, c by taking
-        _mean_inverse_func(_mean_func(a) + _mean_func(b) + _mean_func(c))
-
-        Args:
-            mean_sum (float): Sum of processed values.
-
-        Returns:
-            float: Final result of quasi-arithmetic mean.
-        """
-        return 10 ** mean_sum
-
-    def _get_combined_score(self,
-                            counter_score, team_score, usage_score, weights):
-        """Generate a combined score based on the three partial scores.
-
-        Combines the counter, team, and usage scores, along with their weights,
-        to come up with an overall fitness rating.
-
-        Args:
-            counter_score (float >= 0):
-                How good the Pokemon is at beating counters to the team.
-            team_score (float >= 0):
-                How well the Pokemon works with the rest of the team.
-            usage_score (float >= 0):
-                How often the Pokemon is used in general.
-            weights (Weights):
-                How much we care about each of the scores.
-
-        Returns:
-            float >= 0: Overall fitness score. Higher values are better.
-        """
-        assert team_score >= 0, "Team score < 0: " + str(team_score)
-        assert usage_score >= 0, "Usage score < 0: " + str(usage_score)
-        assert counter_score >= 0, "Counter score < 0: " + str(counter_score)
-
-        if team_score == 0 or usage_score == 0 or counter_score == 0:
-            return 0
-
-        mean = (MetagameData._mean_func(counter_score) * weights.counter
-                + MetagameData._mean_func(team_score) * weights.team
-                + MetagameData._mean_func(usage_score) * weights.usage)
-        mean /= weights.total
-        mean = MetagameData._mean_inverse_func(mean)
-        return mean
 
     def _threats_to_dict(self, threats, team_length):
         """Convert threats to a dict of name -> threat rating.
@@ -279,29 +151,23 @@ class MetagameData:
             Each value is a float >= 0.
             In order by index of Pokemon.
         """
-        c_scores = []
-        t_scores = []
-        u_scores = []
-        for poke in self.pokemon:
-            if team:
-                c_scores.append(self._get_counter_score(threats, len(team), poke))
-                t_scores.append(self._get_team_score(team, poke))
-            else:
-                c_scores.append(0)
-                t_scores.append(0)
+        u_scores = [self.pokemon[p]["usage"] for p in self.pokemon]
+        team_indices = [self._indices[t] for t in team]
+        if team:
+            t_scores = gmean(self._team_matrix[team_indices], 0)
+            new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
+            sum_pos = np.nansum(np.where(new_threats>0, new_threats, np.nan), 1)
+            c_scores = 100 ** (-sum_pos / (len(team) + 1))
+        else:
+            t_scores = np.ones((len(self.pokemon,)))
+            c_scores = np.ones((len(self.pokemon,)))
 
-            u_scores.append(self._get_usage_score(poke))
+        stacked = np.stack((c_scores, t_scores, u_scores))
 
-        scores = []
-        for index, poke in enumerate(self.pokemon):
-            if team:
-                combined = self._get_combined_score(
-                    c_scores[index], t_scores[index], u_scores[index], weights)
-            else:
-                combined = u_scores[index]
-
-            scores.append((poke, combined, c_scores[index],
-                t_scores[index], u_scores[index]))
+        combined_scores = gmean(stacked, axis=0, weights=[[weights.counter],
+                                                          [weights.team],
+                                                          [weights.usage]])
+        scores = list(zip(self._indices.keys(), combined_scores, c_scores, t_scores, u_scores))
 
         # TODO consider refactoring to return a dictionary.
         # Maybe dict (name -> a scores object)
@@ -320,7 +186,7 @@ class MetagameData:
         Returns:
             str: Name of best Pokemon to add.
         """
-        if not scores:
+        if scores is None:
             threats = self._find_threats(team)
             scores = self._scores(team, threats, weights)
         return sorted(scores, key=lambda kv: -kv[1])[0][0]
@@ -466,7 +332,7 @@ class MetagameData:
         """
         return self._threats_to_dict(self._find_threats([poke]), 1)
 
-    def partner_scores(self, poke):
+    def partner_scores(self, poke): # TODO this is broken now
         """Find how well each possible partner goes with poke.
 
         For display purposes only - this bakes in usage score.
