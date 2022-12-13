@@ -332,7 +332,7 @@ class MetagameData:
         """
         return self._threats_to_dict(self._find_threats([poke]), 1)
 
-    def partner_scores(self, poke): # TODO this is broken now
+    def partner_scores(self, poke):
         """Find how well each possible partner goes with poke.
 
         For display purposes only - this bakes in usage score.
@@ -344,8 +344,9 @@ class MetagameData:
             dict str->float: How good each Pokemon is as a partner.
         """
         teammates = {}
+
+        sliced = self._team_matrix[self._indices[poke]]
         for partner in self.pokemon:
-            teammates[partner] = (self._get_team_score([poke], partner)
-                                  * self._get_usage_score(partner))
+            teammates[partner] = sliced[self._indices[partner]] * self.pokemon[partner]["usage"]
 
         return teammates
