@@ -5,12 +5,11 @@ Cores are groups of 2 or more Pokemon that are commonly used together.
 
 from networkx.algorithms import clique
 from networkx import Graph
-import numpy
+import numpy as np
 
 SCORE_REQUIREMENT_DEFAULT = 3
 USAGE_THRESHOLD_DEFAULT = 1
 
-# TODO THIS IS BROKEN WITH REMOVAL OF _get_team_score
 
 class CoreFinder:
     """Responsible for finding cores within a metagame."""
@@ -31,19 +30,19 @@ class CoreFinder:
             score_requirement (float): How closely linked two Pokemon need
             to be to be considered to be in a core together.
         """
-        self.keys = [x for x in md.pokemon.keys() if md.pokemon[x]
-                     ["usage"] >= usage_threshold]
+        self.pokemon_names = []
+        usage_indices = []
+        for index, name in enumerate(md.pokemon):
+            if md.pokemon[name]["usage"] > usage_threshold:
+                self.pokemon_names.append(name)
+                usage_indices.append(index)
 
-        data = numpy.empty((len(self.keys), len(self.keys)), dtype=bool)
-        for poke_index, poke in enumerate(self.keys):
-            for team_poke_index, team_poke in enumerate(self.keys):
-                if poke_index == team_poke_index:
-                    data[poke_index, team_poke_index] = True
-                else:
-                    symmetric_score = (md._get_team_score([poke], team_poke) * md._get_team_score([team_poke], poke)) ** .5
-                    data[poke_index, team_poke_index] = (symmetric_score > score_requirement)
+        core_matrix = np.array(md._team_matrix)[usage_indices, :][:, usage_indices]
+        np.fill_diagonal(core_matrix, 1)
+        core_matrix *= core_matrix.transpose()
+        core_matrix = core_matrix > score_requirement
 
-        self.graph = Graph(data)
+        self.graph = Graph(core_matrix)
 
     def find_cores(self):
         """Find cores.
@@ -62,7 +61,7 @@ class CoreFinder:
                 return None
             # One mon is not a core.
             if len(x) >= 2:
-                cores.append([self.keys[y] for y in x])
+                cores.append([self.pokemon_names[y] for y in x])
 
         cores.sort(key=lambda x: len(x))
         return cores
