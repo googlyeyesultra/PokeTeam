@@ -338,6 +338,10 @@ body {
     margin-right: 4px;
 }
 
+.icon-left {
+    float: left;
+}
+
 .tables-wrapper {
     display: flex;
     flex-flow: row wrap;
