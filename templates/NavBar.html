@@ -4,6 +4,8 @@
     {{ dataset }}
   </div>
   <header class="topnav">
+    <label id="hamburger_icon" for="navbar_hamburger"></label>
+    <input type="checkbox" id="navbar_hamburger">
     <div class="topnav-links">
       <a href="{{ url_for('select_data') }}">Data Selector</a>
       <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>

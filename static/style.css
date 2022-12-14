@@ -192,27 +192,6 @@ input[type=number] {
   border-collapse: collapse;
 }
 
-.data-table th, td {
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.data-table td {
-  padding-bottom: 2px;
-}
-
-.data-table th {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  background-color: var(--accent-color);
-  color: var(--light-text-color);
-}
-
-.data-table tbody tr {
-  vertical-align: bottom;
-  height: 40px;
-}
-
 .data-table tr:nth-child(odd) {
   background-color: var(--checker-color-1);
 }
@@ -230,47 +209,129 @@ form {
   width: fit-content;
 }
 
-.topnav {
-  background-color: var(--navbar-color);
-  overflow: hidden;
-  font-family: Sans-Serif;
+
+#navbar_hamburger {
+    display: none;
 }
 
-.topnav a {
-  float: left;
+.data-table th, td {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.data-table td {
+    padding-bottom: 2px;
+}
+
+.data-table th {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: var(--accent-color);
   color: var(--light-text-color);
-  text-align: center;
-  padding: 5px 16px;
-  text-decoration: none;
-  font-size: 1.2rem;
 }
 
-.topnav a:hover {
-  background-color: var(--navbar-hover-color);
-  color: var(--text-color);
+.data-table tbody tr {
+  vertical-align: bottom;
+  height: 40px;
 }
 
-.topnav-links {
-  margin-left: auto;
-  margin-right: auto;
-  display: table;
+@media (min-width: 900px) {
+    .content {
+        margin: 8px;
+    }
+
+    .topnav {
+      background-color: var(--navbar-color);
+      overflow: hidden;
+      font-family: Sans-Serif;
+    }
+
+    .topnav a {
+      float: left;
+      color: var(--light-text-color);
+      text-align: center;
+      padding: 5px 16px;
+      text-decoration: none;
+      font-size: 1.2rem;
+    }
+
+    .topnav a:hover {
+      background-color: var(--navbar-hover-color);
+      color: var(--text-color);
+    }
+
+    .topnav-links {
+      margin-left: auto;
+      margin-right: auto;
+      display: table;
+    }
+
+    #hamburger_icon {
+        display: none;
+    }
+}
+
+@media (max-width: 899px) {
+    .content {
+        margin: 0px;
+    }
+
+    #hamburger_icon {
+        position: absolute;
+        top: 0px;
+        right: 5px;
+        cursor: pointer;
+        color: var(--light-text-color);
+    }
+
+    #hamburger_icon::after {
+        content: "☰";
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    .topnav-links > a {
+        background: var(--navbar-color);
+        color: var(--light-text-color);
+        padding: 5px;
+        text-align: center;
+        font-size: 1.5em;
+        text-decoration: none;
+    }
+
+    .topnav-links > a:hover {
+        background-color: var(--navbar-hover-color);
+        color: var(--text-color);
+    }
+
+    .topnav-links {
+        z-index: 1;
+        position: fixed;
+        right: 0px;
+    }
+
+    #navbar_hamburger:checked + .topnav-links {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #navbar_hamburger:not(:checked) + .topnav-links {
+        display: none;
+    }
 }
 
 .format-name {
   background-color: var(--navbar-color);
   overflow: hidden;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.5em;
   font-family: Sans-Serif;
   color: var(--light-text-color);
+  padding: 4px;
 }
 
 body {
     margin: 0px;
-}
-
-.content {
-    margin: 8px;
 }
 
 .item-icon, .poke-icon {
