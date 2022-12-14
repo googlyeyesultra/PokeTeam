@@ -17,6 +17,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.jinja_env.trim_blocks = True
 app.jinja_env.lstrip_blocks = True
+app.jinja_env.policies['json.dumps_kwargs'] = {'sort_keys': False, 'ensure_ascii': False}
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
 s3_session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
