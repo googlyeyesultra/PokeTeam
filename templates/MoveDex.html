@@ -9,7 +9,7 @@
             <th class="searchable unsortable hide_mobile">Category</th>
             <th class="force_num default_desc">Power</th>
             <th class="force_num default_desc hide_mobile">Accuracy</th>
-            <th class="searchable unsortable">Description</th>
+            <th class="searchable unsortable hide_mobile">Description</th>
         </tr>
     </thead>
     <tbody>
@@ -20,7 +20,7 @@
             <td class="hide_mobile">{{dex.moves[move]["category"]}}</td>
             <td class="dt-body-right">{{dex.moves[move]["power"]}}</td>
             <td class="dt-body-right hide_mobile">{{dex.moves[move]["accuracy"]}}</td>
-            <td>{{dex.moves[move]["short_desc"]}}</td>
+            <td class="hide_mobile">{{dex.moves[move]["short_desc"]}}</td>
         </tr>
     {% endfor %}
     </tbody>
