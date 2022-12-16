@@ -264,8 +264,8 @@ form {
 
 @media (max-width: 375px) {
     .data-table th, td {
-        padding-left: 4px;
-        padding-right: 4px;
+        padding-left: 2px;
+        padding-right: 2px;
     }
 }
 
@@ -393,6 +393,7 @@ body {
     column-gap: 10px;
     row-gap: 5px;
     align-items: flex-start;
+    justify-content: center;
 }
 
 .side-by-side {
