@@ -45,10 +45,11 @@ function do_prettify() {
         var colors = []
         var stats = $(this).data("stats")
         for(key in stats) {
-            labels.push(key + ": " + stats[key].toString().padStart(4))
+            labels.push(key + ": " + stats[key].toString().padStart(3))
             data.push(stats[key])
             colors.push("hsl(" + Math.min(145, Math.max(0, stats[key] - 40)) + ", 70%, 50%)")
         }
+        Chart.defaults.font.family = "monospace";
         new Chart(
             $(this)[0],
             {

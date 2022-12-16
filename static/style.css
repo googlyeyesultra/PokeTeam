@@ -192,6 +192,7 @@ input[type=number] {
 .info-table {
     border-collapse: collapse;
     text-align: center;
+    margin: auto;
 }
 
 .info-table th {
