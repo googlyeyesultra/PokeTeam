@@ -46,29 +46,63 @@ input[type=number] {
 }
 
 #input_pokemon {
+    position: relative;
     display: grid;
-    grid-template-columns: max-content max-content max-content;
-    grid-template-rows: max-content max-content;
     gap: 2px 2px;
-    width: 472px;
-    min-height: 110px;
     border-style: solid;
     border-width: 1px;
     border-color: var(--light-border-color);
     padding: 2px;
     background: var(--outer-block-color);
+
+    grid-template-columns: repeat(2, 156px);
+    grid-template-rows: repeat(3, 54px);
 }
 
-#input_pokemon:empty::after {
-    content: "Try adding Pokémon below. You can also type one in and hit enter.";
-    position: absolute;
+@media (max-width: 579px) {
+    .hide_mobile {
+        display: none;
+    }
+
+    .dataTables_info{
+        display: none;
+    }
+
+    .data-table {
+        width: 100%;
+    }
+
+    .dataTables_wrapper {
+        width: 100%;
+    }
+}
+
+@media (min-width: 480px) {
+    #input_pokemon {
+        grid-template-columns: repeat(3, 156px);
+        grid-template-rows: repeat(2, 54px);
+    }
+}
+
+@media (min-width: 965px) {
+    #input_pokemon {
+        grid-template-columns: repeat(6, 156px);
+        grid-template-rows: repeat(1, 54px);
+    }
+}
+
+#poke-wrapper {
     display: flex;
-    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
-    width: inherit;
-    justify-content: center;
-    min-height: inherit;
-    color: var(--light-text-color)
+    text-align: center;
+}
+
+#poke-wrapper:has(> #input_pokemon:empty)::before {
+    content: "Try adding Pokémon below. You can also type one in and hit enter.";
+    color: var(--light-text-color);
+    position: absolute;
+    z-index: 1;
 }
 
 .remove_button {
@@ -108,7 +142,7 @@ input[type=number] {
   color: var(--text-color);
   padding: 5px;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   border-radius: 6px;
   border-style: solid;
   border-width: 1px;
@@ -167,6 +201,14 @@ input[type=number] {
     padding-top: 2px;
 }
 
+@media (max-width: 375px) {
+    .info-table th {
+        padding-left: 4px;
+        padding-right: 4px;
+        padding-top: 2px;
+    }
+}
+
 .info-table td {
     padding-top: 2px;
     padding-bottom: 2px;
@@ -219,6 +261,13 @@ form {
     padding-right: 8px;
 }
 
+@media (max-width: 375px) {
+    .data-table th, td {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+}
+
 .data-table td {
     padding-bottom: 2px;
 }
@@ -235,53 +284,52 @@ form {
   height: 40px;
 }
 
-@media (min-width: 900px) {
-    .content {
-        margin: 8px;
-    }
+.content {
+    display: flex;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .topnav {
-      background-color: var(--navbar-color);
-      overflow: hidden;
-      font-family: Sans-Serif;
-    }
+.topnav {
+  background-color: var(--navbar-color);
+  overflow: hidden;
+  font-family: Sans-Serif;
+}
 
-    .topnav a {
-      float: left;
-      color: var(--light-text-color);
-      text-align: center;
-      padding: 5px 16px;
-      text-decoration: none;
-      font-size: 1.2rem;
-    }
+.topnav a {
+  float: left;
+  color: var(--light-text-color);
+  text-align: center;
+  padding: 5px 16px;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
 
-    .topnav a:hover {
-      background-color: var(--navbar-hover-color);
-      color: var(--text-color);
-    }
+.topnav a:hover {
+  background-color: var(--navbar-hover-color);
+  color: var(--text-color);
+}
 
-    .topnav-links {
-      margin-left: auto;
-      margin-right: auto;
-      display: table;
-    }
+.topnav-links {
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+}
 
-    #hamburger_icon {
-        display: none;
-    }
+#hamburger_icon {
+    display: none;
 }
 
 @media (max-width: 899px) {
-    .content {
-        margin: 0px;
-    }
-
     #hamburger_icon {
         position: absolute;
         top: 0px;
         right: 5px;
         cursor: pointer;
         color: var(--light-text-color);
+        display: block;
     }
 
     #hamburger_icon::after {
@@ -305,7 +353,7 @@ form {
     }
 
     .topnav-links {
-        z-index: 1;
+        z-index: 3;
         position: fixed;
         right: 0px;
     }
@@ -347,16 +395,18 @@ body {
 }
 
 .side-by-side {
-    display: table;
-    vertical-align: middle;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.poke-sprite-wrapper {
+    min-width: 150px;
     text-align: center;
 }
 
-.side-by-side > * {
-    align-self: center;
-    display: table-cell;
-    vertical-align: middle;
-    min-width: 150px;
+.base-stats-wrapper {
+    width: 300px;
 }
 
 .align-box {
@@ -395,7 +445,7 @@ body {
     margin: 0;
 }
 
-.alignment-table td, tr {
+.alignment-table td {
     padding-right: 4px;
 }
 

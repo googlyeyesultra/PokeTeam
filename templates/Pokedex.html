@@ -9,7 +9,7 @@
             <th class="unsortable searchable">Type</th>
             <th class="sort_desc default_desc">Usage</th>
             {% for stat in dex.base_stats_short %}
-            <th class="default_desc">{{stat}}</th>
+            <th class="default_desc hide_mobile">{{stat}}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -20,7 +20,7 @@
             <td class="poke-type" data-types='{{dex.pokemon[poke[0]].types|tojson}}'></td>
             <td class="dt-body-right">{{ "{:.1%}".format(poke[1]) }}</td>
             {% for stat in dex.pokemon[poke[0]].base_stats %}
-            <td class="dt-body-right">{{dex.pokemon[poke[0]].base_stats[stat]}}</td>
+            <td class="dt-body-right hide_mobile">{{dex.pokemon[poke[0]].base_stats[stat]}}</td>
             {% endfor %}
         </tr>
     {% endfor %}

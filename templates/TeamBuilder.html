@@ -2,7 +2,9 @@
 {% block title %}Pokémon Team Builder{% endblock %}
 {% block below_navbar %}
 <form id=analyze>
-<div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon"></div>
+<div id="poke-wrapper">
+  <div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon"></div>
+</div>
 <details class="advanced-options">
   <summary>Advanced Options</summary>
   <table class="alignment-table">

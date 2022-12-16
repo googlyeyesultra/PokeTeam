@@ -6,9 +6,9 @@
         <tr>
             <th class="searchable sort_asc">Move</th>
             <th class="searchable unsortable">Type</th>
-            <th class="searchable unsortable">Category</th>
+            <th class="searchable unsortable hide_mobile">Category</th>
             <th class="force_num default_desc">Power</th>
-            <th class="force_num default_desc">Accuracy</th>
+            <th class="force_num default_desc hide_mobile">Accuracy</th>
             <th class="searchable unsortable">Description</th>
         </tr>
     </thead>
@@ -17,9 +17,9 @@
         <tr>
             <td>{{ lb.move_link(move, dataset) }}</td>
             <td class="move-type" data-type={{dex.moves[move]["type"]}}></td>
-            <td>{{dex.moves[move]["category"]}}</td>
+            <td class="hide_mobile">{{dex.moves[move]["category"]}}</td>
             <td class="dt-body-right">{{dex.moves[move]["power"]}}</td>
-            <td class="dt-body-right">{{dex.moves[move]["accuracy"]}}</td>
+            <td class="dt-body-right hide_mobile">{{dex.moves[move]["accuracy"]}}</td>
             <td>{{dex.moves[move]["short_desc"]}}</td>
         </tr>
     {% endfor %}

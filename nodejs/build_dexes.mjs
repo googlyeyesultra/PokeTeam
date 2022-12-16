@@ -54,7 +54,12 @@ fs.readdirSync(data_dir).forEach(file => {
 		}
 
 		if (!("base_stats_short" in generations[gen])) {
-            generations[gen]["base_stats_short"] = Object.values(this_dex.stats.shortNames);
+            generations[gen]["base_stats_short"] = []
+            for(let stat_name of this_dex.stats.shortNames) {
+                if (stat_name[0] != "[") { // Special defense in gen 1.
+					generations[gen]["base_stats_short"].push(stat_name);
+				}
+            }
 		}
 		
 		var moves = {};
