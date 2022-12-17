@@ -13,13 +13,13 @@ This identifies common cores. Subsets of cores are also cores.
         <td>
             <input type="number" name="usage_threshold" min=0 value={{usage_threshold}} required step=".1">%
         </td>
-      <td><span class="fas fa-question-circle"><span class="tooltip">Excludes Pokémon with usage below the threshold. Note that some Pokémon with exceptionally low usage are already excluded.</span></span>
+      <td class="hide_mobile"><span class="fas fa-question-circle"><span class="tooltip">Excludes Pokémon with usage below the threshold. Note that some Pokémon with exceptionally low usage are already excluded.</span></span>
     </td></tr>
     <tr><td>Score Requirement:</td>
         <td>
             <input type="number" name="score_requirement" min=0.1 value={{score_requirement}} required step=".1">
         </td>
-    <td><span class="fas fa-question-circle"><span class="tooltip">The score requirement determines how much Pokémon need to be used together in order to be considered part of the same core. A high value will tend to result in few, small cores.</span></span>
+    <td class="hide_mobile"><span class="fas fa-question-circle"><span class="tooltip">The score requirement determines how much Pokémon need to be used together in order to be considered part of the same core. A high value will tend to result in few, small cores.</span></span>
     </td></tr>
     </tbody>
   </table>
