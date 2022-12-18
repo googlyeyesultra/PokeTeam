@@ -283,6 +283,8 @@ form {
   padding-bottom: 5px;
   background-color: var(--accent-color);
   color: var(--light-text-color);
+  height: 31px;
+  box-sizing: border-box;
 }
 
 .data-table tbody tr {

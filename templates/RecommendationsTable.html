@@ -2,10 +2,10 @@
     <thead>
         <tr>
             <th class="searchable unsortable pagedPoke">Recommendation</th>
-            <th class="default_desc sort_desc"><span class="hide_mobile">Overall </span>Score</th>
-            <th class="default_desc hide_mobile">Counter Score</th>
-            <th class="default_desc hide_mobile">Team Score</th>
-            <th class="default_desc hide_mobile">Usage Score</th>
+            <th class="default_desc sort_desc">Overall</th>
+            <th class="default_desc hide_mobile">Counter</th>
+            <th class="default_desc hide_mobile">Team</th>
+            <th class="default_desc hide_mobile">Usage</th>
             {% if add_links %}
                     <th class="unsortable">&#10010</th>
             {% endif %}
@@ -15,10 +15,10 @@
         {% for reco in recommendations %}
             <tr>
                 <td>{{ lb.poke_link(reco[0], dataset) }}</td>
-                <td class="r-align">{{ "{:.2f}".format(reco[1]) }}</td>
-                <td class="r-align hide_mobile">{{ "{:.2f}".format(reco[2]) }}</td>
-                <td class="r-align hide_mobile">{{ "{:.2f}".format(reco[3]) }}</td>
-                <td class="r-align hide_mobile">{{ "{:.2f}".format(reco[4]) }}</td>
+                <td class="dt-body-right">{{ "{:.2f}".format(reco[1]) }}</td>
+                <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[2]) }}</td>
+                <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[3]) }}</td>
+                <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[4]) }}</td>
                 {% if add_links %}
                     <td class="add_link_cell">{{ lb.add_link(reco[0]) }}</td>
                 {% endif %}
