@@ -1,5 +1,5 @@
 :root {
-  --bg-color: #111;
+  --bg-color: #1a1414;
   --text-color: #FAF9F6;
   --navbar-color: var(--off-accent-color);
   --navbar-hover-color: var(--bg-color);
@@ -202,7 +202,6 @@ input[type=number] {
 .info-table {
     border-collapse: collapse;
     text-align: center;
-    margin: auto;
 }
 
 .info-table th {
