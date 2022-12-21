@@ -5,8 +5,8 @@
   --navbar-hover-color: var(--bg-color);
   --accent-color: #990000;
   --off-accent-color: #660000;
-  --block-color: #252222;
-  --outer-block-color: #333;
+  --block-color-1: #373131;
+  --block-color-2: #534f4f;
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
   --disabled-text-color: #444;
@@ -46,7 +46,7 @@ input[type=number] {
 }
 
 .advanced-options[open] {
-    background: var(--block-color);
+    background: var(--block-color-1);
     border-style: solid;
     border-width: 1px;
     border-color: var(--light-border-color);
@@ -65,7 +65,7 @@ input[type=number] {
     border-color: var(--light-border-color);
     border-radius: 2px;
     padding: 2px;
-    background: var(--outer-block-color);
+    background: var(--block-color-1);
 
     grid-template-columns: repeat(2, 156px);
     grid-template-rows: repeat(3, 54px);
@@ -137,7 +137,7 @@ input[type=number] {
 }
 
 .team_member {
-    background: var(--block-color);
+    background: var(--block-color-2);
     border-width: 1px;
     border-style: solid;
     border-radius: 2px;
@@ -149,7 +149,7 @@ input[type=number] {
 
 .tooltip {
   visibility: hidden;
-  background-color: var(--block-color);
+  background-color: var(--block-color-2);
   color: var(--text-color);
   padding: 5px;
   position: absolute;
