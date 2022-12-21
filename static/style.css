@@ -516,7 +516,7 @@ dl {
 }
 
 .dataTables_paginate .paginate_button:hover:not(.disabled) {
-    background: var(--outer-block-color);
+    background: var(--block-color-1);
 }
 
 .dataTables_paginate .disabled {
