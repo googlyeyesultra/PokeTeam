@@ -273,18 +273,18 @@ form {
 }
 
 .data-table tbody tr:nth-child(even) {
-    background-image: linear-gradient(90deg, var(--accent-color), var(--bg-color));
-    border-bottom: solid;
-    border-width: 2px;
-    border-color: var(--accent-color);
-    background-size: calc(100% + 1px), 100%;
+    --tr-color: var(--accent-color);
 }
 
 .data-table tbody tr:nth-child(odd) {
-    background-image: linear-gradient(90deg, var(--off-accent-color), var(--bg-color));
+    --tr-color: var(--off-accent-color);
+}
+
+.data-table tbody tr {
+    background-image: linear-gradient(90deg, var(--tr-color), var(--bg-color));
     border-bottom: solid;
     border-width: 2px;
-    border-color: var(--off-accent-color);
+    border-color: var(--tr-color);
     background-size: calc(100% + 1px), 100%;
 }
 
