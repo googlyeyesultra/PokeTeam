@@ -5,13 +5,14 @@
   --navbar-hover-color: var(--bg-color);
   --accent-color: #990000;
   --off-accent-color: #660000;
-  --block-color: #f0f0fc;
+  --block-color: #252222;
   --outer-block-color: #333;
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
-  --disabled-text-color: #777777;
+  --disabled-text-color: #444;
   --light-border-color: #777777;
   --link-color: #00BFFF;
+  --placeholder-color: #A9A9A9;
 }
 
 a {
@@ -62,6 +63,7 @@ input[type=number] {
     border-style: solid;
     border-width: 1px;
     border-color: var(--light-border-color);
+    border-radius: 2px;
     padding: 2px;
     background: var(--outer-block-color);
 
@@ -161,7 +163,7 @@ input[type=number] {
   width: 20em;
   text-align: center;
   top: 50%;
-  box-shadow: 1px 1px 2px;
+  box-shadow: 1px 1px 1px;
 }
 
 .tooltip::after {
@@ -338,7 +340,7 @@ form {
     display: none;
 }
 
-@media (max-width: 899px) {
+@media (max-width: 810px) {
     #hamburger_icon {
         position: absolute;
         top: 0px;
@@ -499,22 +501,29 @@ dl {
 
 .dataTables_paginate .paginate_button {
     cursor: pointer;
-    padding: 5px;
-    margin: 1px;
+    padding: 3px;
+    color: var(--text-color);
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+.dataTables_paginate {
+    display: flex;
+}
+
+.dataTables_paginate .paginate_button {
+    margin: 2px;
+    margin-top: 0px;
 }
 
 .dataTables_paginate .paginate_button:hover:not(.disabled) {
-    background: var(--block-color);
-    border-radius: 6px;
-    border-style: solid;
-    border-width: 1px;
-    margin: 0px;
+    background: var(--outer-block-color);
 }
 
 .dataTables_paginate .disabled {
     color: var(--disabled-text-color);
+    cursor: default;
 }
-
 
 .dataTable_controls {
     display: flex;
@@ -535,6 +544,11 @@ dl {
     position: absolute;
     margin-left: .5em;
     transform: scale(-1, 1);
+    color: var(--placeholder-color);
+}
+
+.dataTables_filter input::placeholder {
+    color: var(--placeholder-color);
 }
 
 .dataTables_filter label input {
