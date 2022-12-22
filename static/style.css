@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Open+Sans:wght@300;500&display=swap');
+
 :root {
   --bg-color: #1a1414;
   --text-color: #FAF9F6;
@@ -8,7 +10,7 @@
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
   --disabled-text-color: #444;
-  --link-color: #00BFFF;
+  --link-color: #44C5FF;
   --placeholder-color: #A9A9A9;
   --shadow-color: black;
   --red-color: #990000;
@@ -28,11 +30,14 @@
 a {
   text-decoration: none;
   color: var(--link-color);
+  font-weight: 500;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-family: "Open Sans", "sans-serif";
+  font-weight: 300;
 }
 
 input[type=submit] {
@@ -41,6 +46,11 @@ input[type=submit] {
 
 input[type=number] {
   width: 4em;
+}
+
+.data-table th, #top_wrapper,  .info-title {
+    font-family: "Comfortaa", "sans-serif";
+    font-weight: normal;
 }
 
 .add_link_cell {
@@ -195,8 +205,6 @@ input[type=number] {
 
 .info-title {
   font-size: 2rem;
-  font-weight: bold;
-  font-family: Sans-Serif;
 }
 
 .info-description {
@@ -316,7 +324,6 @@ form {
 
 .topnav {
   overflow: hidden;
-  font-family: Sans-Serif;
 }
 
 .topnav a {
@@ -386,7 +393,6 @@ form {
   overflow: hidden;
   text-align: center;
   font-size: 1.5em;
-  font-family: Sans-Serif;
   padding: 4px;
 }
 
