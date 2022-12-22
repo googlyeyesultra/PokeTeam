@@ -1,18 +1,28 @@
 :root {
   --bg-color: #1a1414;
   --text-color: #FAF9F6;
-  --navbar-color: var(--off-accent-color);
-  --navbar-hover-color: var(--bg-color);
   --accent-color: #990000;
-  --off-accent-color: #660000;
-  --block-color-1: #373131;
-  --block-color-2: #534f4f;
+  --dark-accent-color: #660000;
+  --block-color-1: #261D1D;
+  --block-color-2: #332727;
   --checker-color-1:#f0f0f0;
   --checker-color-2:#f0fff0;
   --disabled-text-color: #444;
-  --light-border-color: #777777;
   --link-color: #00BFFF;
   --placeholder-color: #A9A9A9;
+  --shadow-color: black;
+  --red-color: #990000;
+  --glow-color: var(--text-color);
+}
+
+#input_pokemon {
+  --pokemon-block-width: 156px;
+  --pokemon-block-height: 54px;
+}
+
+#top_wrapper {
+    background-image: linear-gradient(180deg, var(--accent-color), var(--dark-accent-color));
+    box-shadow: 0px 1px 2px var(--dark-accent-color);
 }
 
 a {
@@ -47,9 +57,7 @@ input[type=number] {
 
 .advanced-options[open] {
     background: var(--block-color-1);
-    border-style: solid;
-    border-width: 1px;
-    border-color: var(--light-border-color);
+    box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .dataTables_wrapper {
@@ -59,16 +67,13 @@ input[type=number] {
 #input_pokemon {
     position: relative;
     display: grid;
-    gap: 2px 2px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: var(--light-border-color);
-    border-radius: 2px;
-    padding: 2px;
+    gap: 3px 3px;
+    box-shadow: 1px 1px 2px var(--shadow-color);
+    padding: 3px;
     background: var(--block-color-1);
 
-    grid-template-columns: repeat(2, 156px);
-    grid-template-rows: repeat(3, 54px);
+    grid-template-columns: repeat(2, var(--pokemon-block-width));
+    grid-template-rows: repeat(3, var(--pokemon-block-height));
 }
 
 @media (max-width: 579px) {
@@ -89,17 +94,17 @@ input[type=number] {
     }
 }
 
-@media (min-width: 480px) {
+@media (min-width: 500px) {
     #input_pokemon {
-        grid-template-columns: repeat(3, 156px);
-        grid-template-rows: repeat(2, 54px);
+        grid-template-columns: repeat(3, var(--pokemon-block-width));
+        grid-template-rows: repeat(2, var(--pokemon-block-height));
     }
 }
 
 @media (min-width: 965px) {
     #input_pokemon {
-        grid-template-columns: repeat(6, 156px);
-        grid-template-rows: repeat(1, 54px);
+        grid-template-columns: repeat(6, var(--pokemon-block-width));
+        grid-template-rows: repeat(1, var(--pokemon-block-height));
     }
 }
 
@@ -118,11 +123,12 @@ input[type=number] {
 }
 
 .remove_button {
-    color: #8B0000;
+    color: var(--red-color);
     cursor: pointer;
     position: absolute;
     top: 0px;
     right: 3px;
+    text-shadow: 1px 1px 1px var(--shadow-color);
 }
 
 .team_image {
@@ -138,13 +144,10 @@ input[type=number] {
 
 .team_member {
     background: var(--block-color-2);
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 2px;
-    border-color: var(--light-border-color);
     padding: 2px;
     position: relative;
     min-width: 150px;
+    box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .tooltip {
@@ -163,7 +166,7 @@ input[type=number] {
   width: 20em;
   text-align: center;
   top: 50%;
-  box-shadow: 1px 1px 1px;
+  box-shadow: 1px 1px 2px var(--shadow-color);
 }
 
 .tooltip::after {
@@ -277,7 +280,7 @@ form {
 }
 
 .data-table tbody tr:nth-child(odd) {
-    --tr-color: var(--off-accent-color);
+    --tr-color: var(--dark-accent-color);
 }
 
 .data-table tbody tr {
@@ -310,7 +313,6 @@ form {
 }
 
 .topnav {
-  background-color: var(--navbar-color);
   overflow: hidden;
   font-family: Sans-Serif;
 }
@@ -325,8 +327,9 @@ form {
 }
 
 .topnav a:hover {
-  background-color: var(--navbar-hover-color);
-  color: var(--text-color);
+  text-shadow: 0px 0px 2px var(--glow-color);
+  box-shadow: 0px 0px 4px var(--shadow-color);
+  z-index: 1;
 }
 
 .topnav-links {
@@ -355,16 +358,11 @@ form {
     }
 
     .topnav-links > a {
-        background: var(--navbar-color);
+        background: var(--dark-accent-color);
         padding: 5px;
         text-align: center;
         font-size: 1.5em;
         text-decoration: none;
-    }
-
-    .topnav-links > a:hover {
-        background-color: var(--navbar-hover-color);
-        color: var(--text-color);
     }
 
     .topnav-links {
@@ -384,7 +382,6 @@ form {
 }
 
 .format-name {
-  background-color: var(--navbar-color);
   overflow: hidden;
   text-align: center;
   font-size: 1.5em;
@@ -401,7 +398,7 @@ body {
 }
 
 .poke-sprite, .item-icon, .poke-icon, .team-image {
-    filter: drop-shadow(0px 0px 1px black);
+    filter: drop-shadow(0px 0px 1px var(--shadow-color));
 }
 
 .tables-wrapper {
