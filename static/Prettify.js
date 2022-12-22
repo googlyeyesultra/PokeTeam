@@ -50,6 +50,8 @@ function do_prettify() {
             colors.push("hsl(" + Math.min(145, Math.max(0, stats[key] - 40)) + ", 70%, 50%)")
         }
         Chart.defaults.font.family = "monospace";
+        var color = getComputedStyle(document.body).getPropertyValue("--text-color");
+        Chart.defaults.color = color;
         new Chart(
             $(this)[0],
             {
@@ -71,6 +73,11 @@ function do_prettify() {
                             display: false,
                             suggestedMin: 0,
                             suggestedMax: 256
+                        },
+                        y: {
+                            grid: {
+                                display: false,
+                            }
                         }
                     }
                 },
