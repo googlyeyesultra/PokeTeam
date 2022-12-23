@@ -442,6 +442,7 @@ body {
     box-shadow: 1px 1px 1px var(--shadow-color);
     height: 15px;
     border-radius: 0px 4px 4px 0px;
+    background-color: hsl(var(--bar-hue), 85%, 50%);
 }
 
 .bst-stat-name, .bst-stat-value {
