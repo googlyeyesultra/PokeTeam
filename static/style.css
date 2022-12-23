@@ -91,6 +91,16 @@ input[type=number] {
     grid-template-rows: repeat(3, var(--pokemon-block-height));
 }
 
+@media (min-width: 580px) {
+    .data-table th:first-child {
+        border-radius: 5px 0px 0px 0px;
+    }
+
+    .data-table th:last-child {
+        border-radius: 0px 5px 0px 0px;
+    }
+}
+
 @media (max-width: 579px) {
     .hide_mobile {
         display: none;
