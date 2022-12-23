@@ -470,7 +470,7 @@ body {
 .bst-stat-bar {
     box-shadow: 1px 1px 1px var(--shadow-color);
     height: 15px;
-    border-radius: 0px 8px 8px 0px;
+    border-radius: 0px 4px 4px 0px;
 }
 
 .bst-stat-name, .bst-stat-value {
