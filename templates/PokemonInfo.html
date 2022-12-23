@@ -4,8 +4,8 @@
   <div class="info-box">
     <div class="info-title">{{poke}}</div>
     <div class="side-by-side">
-      <span class="poke-sprite-wrapper"><img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}"></span>
-      <span class="base-stats-wrapper">{% include "BaseStats.html" %}</span>
+      <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
+      {% include "BaseStats.html" %}
     </div>
     <table class="info-table">
       <thead>
