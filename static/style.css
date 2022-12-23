@@ -494,6 +494,10 @@ dl {
   text-align: center;
 }
 
+.dataTables_empty {
+    vertical-align: bottom;
+}
+
 .dataTables_paginate {
     display: flex;
     justify-content: space-around;
