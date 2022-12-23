@@ -5,7 +5,7 @@
     <div class="info-title">{{poke}}</div>
     <div class="side-by-side">
       <span class="poke-sprite-wrapper"><img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}"></span>
-      <span class="base-stats-wrapper"><canvas class="base-stats" data-stats='{{dex.pokemon[poke].base_stats|tojson}}'></canvas></span>
+      <span class="base-stats-wrapper">{% include "BaseStats.html" %}</span>
     </div>
     <table class="info-table">
       <thead>

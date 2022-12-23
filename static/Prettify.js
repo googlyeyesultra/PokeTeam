@@ -37,65 +37,7 @@ function do_prettify() {
         } else {
             $(this).html(type_display($(this).data("type")))
             $(this).attr("data-search", $(this).data("type"))
-    }})
-
-    $(".base-stats").each(function () {
-        var labels = []
-        var data = []
-        var colors = []
-        var stats = $(this).data("stats")
-        for(key in stats) {
-            labels.push(key + ": " + stats[key].toString().padStart(3))
-            data.push(stats[key])
-            colors.push("hsl(" + Math.min(145, Math.max(0, stats[key] - 40)) + ", 70%, 50%)")
-        }
-        Chart.defaults.font.family = "monospace";
-        var color = getComputedStyle(document.body).getPropertyValue("--text-color");
-        Chart.defaults.color = color;
-        Chart.defaults.borderColor = "#00000000";
-        new Chart(
-            $(this)[0],
-            {
-                type: "bar",
-                options: {
-                    events: [],
-                    animation: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: false
-                        },
-                    },
-                    indexAxis: "y",
-                    scales: {
-                        x: {
-                            display: false,
-                            suggestedMin: 0,
-                            suggestedMax: 256
-                        },
-                        y: {
-                            grid: {
-                                display: false,
-                            }
-                        }
-                    }
-                },
-
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            backgroundColor: colors,
-                            label: "Stat",
-                            data: data
-                        }
-                        ]
-                }
-            }
-        )
-    });
+    }});
 
     $(".sortable").each(function () { //TODO rename this class - we're using it on an unsortable table.
         sort_th = $("th.sort_desc")

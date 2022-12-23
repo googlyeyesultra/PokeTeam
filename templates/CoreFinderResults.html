@@ -4,12 +4,10 @@ The core finder generated uselessly large cores. Try raising the score requireme
 {% elif cores %}
 <div class="color-align-box">
       {% for core in cores %}
-        <div>
-            <div class="color-align-inner">
-            {% for poke in core %}
-              {{lb.poke_link(poke, dataset)}}<br>
-            {% endfor %}
-            </div>
+        <div class="color-align-inner">
+        {% for poke in core %}
+          {{lb.poke_link(poke, dataset)}}<br>
+        {% endfor %}
         </div>
       {% endfor %}
 </div>

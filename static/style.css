@@ -7,8 +7,8 @@
   --dark-accent-color: #660000;
   --block-color-1: #261D1D;
   --block-color-2: #332727;
-  --checker-color-1:#f0f0f0;
-  --checker-color-2:#f0fff0;
+  --checker-color-1: var(--accent-color);
+  --checker-color-2: var(--dark-accent-color);
   --disabled-text-color: #444;
   --link-color: #44C5FF;
   --placeholder-color: #A9A9A9;
@@ -20,6 +20,10 @@
 #input_pokemon {
   --pokemon-block-width: 156px;
   --pokemon-block-height: 54px;
+}
+
+#cores_location {
+    width: 100%;
 }
 
 #top_wrapper {
@@ -61,13 +65,14 @@ input[type=number] {
     cursor: pointer;
     border-radius: 2px;
     padding: 5px;
-    margin-top: 2px;
     display: inline-block
 }
 
 .advanced-options[open] {
     background: var(--block-color-1);
     box-shadow: 1px 1px 2px var(--shadow-color);
+    margin-top: 5px;
+    margin-bottom: 6px;
 }
 
 .dataTables_wrapper {
@@ -273,13 +278,13 @@ form {
     display: none;
 }
 
-.data-table th, td {
+.data-table th, .data-table td {
     padding-left: 8px;
     padding-right: 8px;
 }
 
 @media (max-width: 375px) {
-    .data-table th, td {
+    .data-table th, .datatable td {
         padding-left: 2px;
         padding-right: 2px;
     }
@@ -350,7 +355,7 @@ form {
     display: none;
 }
 
-@media (max-width: 810px) {
+@media (max-width: 900px) {
     #hamburger_icon {
         position: absolute;
         top: 0px;
@@ -442,7 +447,8 @@ body {
 .color-align-box {
     display: grid;
     grid-template-columns: repeat(auto-fill, 220px);
-    gap: 0;
+    gap: 4px;
+    justify-content: center;
 }
 
 .color-align-box > div:nth-child(even) {
@@ -455,9 +461,23 @@ body {
 
 .color-align-inner {
   padding: 4px;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  box-shadow: 2px 2px 1px var(--shadow-color);
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bst-stat-bar {
+    box-shadow: 1px 1px 1px var(--shadow-color);
+    height: 15px;
+    border-radius: 0px 8px 8px 0px;
+}
+
+.bst-stat-name, .bst-stat-value {
+    font-size: .8em;
+    padding-right: 2px;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .alignment-table {
