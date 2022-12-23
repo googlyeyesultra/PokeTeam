@@ -139,9 +139,10 @@ input[type=number] {
 }
 
 #poke-wrapper:has(> #input_pokemon:empty)::before {
-    content: "Try adding Pokémon below. You can also type one in and hit enter.";
+    content: "Try adding Pokémon below. You can also search and hit enter.";
     position: absolute;
     z-index: 1;
+    width: 90%;
 }
 
 .remove_button {
