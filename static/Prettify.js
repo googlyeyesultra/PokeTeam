@@ -52,6 +52,7 @@ function do_prettify() {
         Chart.defaults.font.family = "monospace";
         var color = getComputedStyle(document.body).getPropertyValue("--text-color");
         Chart.defaults.color = color;
+        Chart.defaults.borderColor = "#00000000";
         new Chart(
             $(this)[0],
             {
