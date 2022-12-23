@@ -13,6 +13,7 @@
   --shadow-color: black;
   --red-color: #990000;
   --glow-color: var(--text-color);
+  --width-for-poke: 13em;
 }
 
 #input_pokemon {
@@ -443,15 +444,9 @@ body {
     text-align: center;
 }
 
-.align-box {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 220px);
-    gap: 0;
-}
-
 .color-align-box {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 220px);
+    grid-template-columns: repeat(auto-fill, var(--width-for-poke));
     gap: 4px;
     justify-content: center;
 }
@@ -600,7 +595,7 @@ dl {
 }
 
 .pagedPoke {
-    min-width: 13em;
+    min-width: var(--width-for-poke);
 }
 
 /* Table sort controls - code from datatables default styling. */
