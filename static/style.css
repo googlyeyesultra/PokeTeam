@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Open+Sans:wght@300;500&display=swap');
-
 :root {
   --bg-color: #1a1414;
   --text-color: #FAF9F6;
@@ -34,14 +32,12 @@
 a {
   text-decoration: none;
   color: var(--link-color);
-  font-weight: 500;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: "Open Sans", "sans-serif";
-  font-weight: 300;
+  font-family: "Roboto", "sans-serif";
 }
 
 input[type=submit] {
@@ -484,9 +480,12 @@ body {
 
 .bst-stat-name, .bst-stat-value {
     font-size: .8em;
-    padding-right: 2px;
     text-align: right;
     white-space: nowrap;
+}
+
+.bst-stat-name {
+    padding-right: 1em;
 }
 
 .alignment-table {
@@ -494,6 +493,10 @@ body {
     border-collapse: collapse;
     padding: 0;
     margin: 0;
+}
+
+.alignment-table th {
+    font-weight: normal;
 }
 
 .alignment-table td {
