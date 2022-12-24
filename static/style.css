@@ -63,10 +63,13 @@ input[type=number] {
 }
 
 .advanced-options {
-    cursor: pointer;
     border-radius: 2px;
     padding: 5px;
-    display: inline-block
+    display: inline-block;
+}
+
+.advanced-options summary {
+    cursor: pointer;
 }
 
 .advanced-options[open] {
