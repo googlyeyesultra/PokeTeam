@@ -7,14 +7,14 @@ from networkx.algorithms import clique
 from networkx import Graph
 import numpy as np
 
-SCORE_REQUIREMENT_DEFAULT = 3
-USAGE_THRESHOLD_DEFAULT = 1
+TARGET_EDGES_DEFAULT = 200
+USAGE_WEIGHT_DEFAULT = 1
 
 
 class CoreFinder:
     """Responsible for finding cores within a metagame."""
 
-    def __init__(self, md, usage_threshold, score_requirement):
+    def __init__(self, md, usage_weight, target_edges):
         """Load metagame data and preferences.
 
         Construct a graph with edges where a score based on
@@ -30,17 +30,16 @@ class CoreFinder:
             score_requirement (float): How closely linked two Pokemon need
             to be to be considered to be in a core together.
         """
-        self.pokemon_names = []
-        usage_indices = []
-        for index, name in enumerate(md.pokemon):
-            if md.pokemon[name]["usage"] > usage_threshold:
-                self.pokemon_names.append(name)
-                usage_indices.append(index)
+        self.pokemon_names = list(md.pokemon.keys())
+        usages = [md.pokemon[poke]["usage"] ** usage_weight for poke in md.pokemon]
 
-        core_matrix = np.array(md._team_matrix)[usage_indices, :][:, usage_indices]
-        np.fill_diagonal(core_matrix, 1)
+        core_matrix = np.array(md._team_matrix)
+        core_matrix *= usages
+        np.fill_diagonal(core_matrix, 0)
         core_matrix *= core_matrix.transpose()
-        core_matrix = core_matrix > score_requirement
+
+        num_edges = len(md.pokemon) ** 2
+        core_matrix = core_matrix > np.quantile(core_matrix, max(.5, 1 - target_edges / num_edges))
 
         self.graph = Graph(core_matrix)
 
@@ -56,9 +55,6 @@ class CoreFinder:
         """
         cores = []
         for x in clique.find_cliques(self.graph):
-            if len(x) > 20:
-                # Lumping the whole metagame together is not useful.
-                return None
             # One mon is not a core.
             if len(x) >= 2:
                 cores.append([self.pokemon_names[y] for y in x])

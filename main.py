@@ -225,18 +225,18 @@ def output_analysis(dataset):
 @app.route("/cores/<dataset>/")
 def cores(dataset):
     """Page for finding cores in a format."""
-    usage_threshold = corefinder.USAGE_THRESHOLD_DEFAULT
-    score_requirement = corefinder.SCORE_REQUIREMENT_DEFAULT
-    cores = build_cores(dataset, usage_threshold / 100, score_requirement)
+    usage_weight = corefinder.USAGE_WEIGHT_DEFAULT
+    target_edges = corefinder.TARGET_EDGES_DEFAULT
+    cores = build_cores(dataset, usage_weight, target_edges)
     return render_template("CoreFinder.html", cores=cores,
-                           usage_threshold=usage_threshold,
-                           score_requirement=score_requirement,
+                           usage_weight=usage_weight,
+                           target_edges=target_edges,
                            dataset=dataset)
 
 
-def build_cores(dataset, usage_threshold, score_requirement):
+def build_cores(dataset, usage_weight, target_edges):
     md = get_md(dataset)
-    cf = corefinder.CoreFinder(md, usage_threshold, score_requirement)
+    cf = corefinder.CoreFinder(md, usage_weight, target_edges)
 
     return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
                            gen=md.gen)
@@ -246,9 +246,9 @@ def build_cores(dataset, usage_threshold, score_requirement):
 def find_cores(dataset):
     """Part of page responsible for displaying cores in format."""
 
-    usage_threshold = float(request.form["usage_threshold"]) / 100
-    score_requirement = float(request.form["score_requirement"])
-    return build_cores(dataset, usage_threshold, score_requirement)
+    usage_weight = float(request.form["usage_weight"])
+    target_edges = float(request.form["target_edges"])
+    return build_cores(dataset, usage_weight, target_edges)
 
 
 @app.route("/update/<key>/")

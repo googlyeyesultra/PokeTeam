@@ -9,14 +9,14 @@ This identifies common cores. Subsets of cores are also cores.
   <summary>Advanced Options</summary>
   <table class="alignment-table">
     <tbody>
-    <tr title="Removes Pokémon with low usage."><td>Usage Threshold:</td>
+    <tr title="Favors Pokémon with high overall usage."><td>Usage Weight:</td>
         <td>
-            <input type="number" name="usage_threshold" min=0 value={{usage_threshold}} required step=".1">%
+            <input type="number" name="usage_weight" min=0 value={{usage_weight}} required step=".1">
         </td>
     </tr>
-    <tr title="How much Pokémon need to be used together."><td>Score Requirement:</td>
+    <tr title="Larger means more and larger cores."><td>Target Edges:</td>
         <td>
-            <input type="number" name="score_requirement" min=0.1 value={{score_requirement}} required step=".1">
+            <input type="number" name="target_edges" min=5 max=2000 value={{target_edges}} required step="1">
         </td>
     </tr>
     </tbody>
