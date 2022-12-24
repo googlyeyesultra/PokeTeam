@@ -180,8 +180,6 @@ input[type=number] {
 }
 
 .info-description {
-  margin-left: .5em;
-  margin-bottom: 5px;
   max-width: 80%;
 }
 
@@ -225,7 +223,7 @@ input[type=number] {
   padding-top: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-left: 8px;
   row-gap: 10px;
 }
 
