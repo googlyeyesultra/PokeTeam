@@ -1,7 +1,5 @@
 {% import "link_builder.html" as lb %}
-{% if cores is none %}
-The core finder generated uselessly large cores. Try raising the score requirement.
-{% elif cores %}
+{% if cores %}
 <div class="color-align-box">
       {% for core in cores %}
         <div class="color-align-inner">

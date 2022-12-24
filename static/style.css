@@ -13,7 +13,7 @@
   --shadow-color: black;
   --red-color: #990000;
   --glow-color: var(--text-color);
-  --width-for-poke: 13em;
+  --width-for-poke: 12.5em;
 }
 
 #input_pokemon {
@@ -58,6 +58,10 @@ input[type=number] {
     text-align: center;
 }
 
+.swap_link {
+    font-size: 1.5em;
+}
+
 .advanced-options {
     cursor: pointer;
     border-radius: 2px;
@@ -70,6 +74,10 @@ input[type=number] {
     box-shadow: 1px 1px 2px var(--shadow-color);
     margin-top: 5px;
     margin-bottom: 6px;
+}
+
+.advanced-options tr td:first-child {
+    text-align: right;
 }
 
 .dataTables_wrapper {
@@ -99,6 +107,11 @@ input[type=number] {
 }
 
 @media (max-width: 579px) {
+    .content {
+        margin-left: 0px !important;
+        margin-right: 0px !important;
+    }
+
     .hide_mobile {
         display: none;
     }
@@ -223,7 +236,7 @@ input[type=number] {
   padding-top: 10px;
   display: flex;
   flex-direction: column;
-  margin-left: 8px;
+  align-items: center;
   row-gap: 10px;
 }
 
@@ -289,8 +302,7 @@ form {
 
 .content {
     display: flex;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin: 8px;
     flex-direction: column;
     align-items: center;
 }
