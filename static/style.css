@@ -149,9 +149,11 @@ input[type=number] {
     color: var(--red-color);
     cursor: pointer;
     position: absolute;
-    top: 0px;
-    right: 3px;
+    top: -0.5rem;
+    right: 1px;
     text-shadow: 1px 1px 1px var(--shadow-color);
+    font-weight: bold;
+    font-size: 1.8em;
 }
 
 .team_image {
@@ -171,18 +173,6 @@ input[type=number] {
     position: relative;
     min-width: 150px;
     box-shadow: 1px 1px 2px var(--shadow-color);
-}
-
-.fa-question-circle {
-  color: var(--accent-color);
-  position: relative;
-  display: inline-block;
-  cursor: help;
-  text-shadow: 1px 1px 2px var(--shadow-color);
-}
-
-.fa-question-circle:hover .tooltip {
-  visibility: visible;
 }
 
 .info-title {
@@ -243,16 +233,16 @@ input[type=number] {
   border-collapse: collapse;
 }
 
-
 .add_link {
-  text-decoration: none;
-  color: var(--accent-color);
+    text-decoration: none;
+    color: var(--accent-color);
+    font-weight: bold;
+    text-shadow: 1px 1px 1px var(--shadow-color);
 }
 
 form {
   width: fit-content;
 }
-
 
 #navbar_hamburger {
     display: none;

@@ -39,7 +39,7 @@ function teamMemberDisplay(poke) {
     var link = $("<a class='team_link'></a>").attr("href", link_url).text(poke);
     // TODO this is code duplication from Prettify.
     var image = ($("<span class='team_image'></span>").attr("style", pkmn.img.Icons.getPokemon(poke).style))
-    var remove_button = $("<a href='javascript:void(0)' class='remove_button fas fa-times' tabindex=0></a>")
+    var remove_button = $("<a href='javascript:void(0)' class='remove_button'>⨯</a>")
     var form_field = $("<input type='hidden' name='pokemon'>").attr("value", poke);
     remove_button.attr("onclick", "removePoke(this)");
     return $("<div class='team_member'></div>").data("pokemon", poke).append(image, remove_button, link, form_field);
