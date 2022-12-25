@@ -4,10 +4,13 @@ Cores are groups of 2 or more Pokemon that are commonly used together.
 """
 
 from networkx.algorithms import clique
+from networkx.algorithms.approximation import traveling_salesman_problem as tsp
 from networkx import Graph
 import numpy as np
+from collections import Counter
+from itertools import combinations
 
-TARGET_EDGES_DEFAULT = 200
+TARGET_EDGES_DEFAULT = 100
 USAGE_WEIGHT_DEFAULT = 1
 
 
@@ -39,7 +42,7 @@ class CoreFinder:
         core_matrix *= core_matrix.transpose()
 
         num_edges = len(md.pokemon) ** 2
-        core_matrix = core_matrix > np.quantile(core_matrix, max(.5, 1 - target_edges / num_edges))
+        core_matrix = core_matrix > np.quantile(core_matrix, max(.5, 1 - target_edges * 2 / num_edges))
 
         self.graph = Graph(core_matrix)
 
@@ -57,7 +60,14 @@ class CoreFinder:
         for x in clique.find_cliques(self.graph):
             # One mon is not a core.
             if len(x) >= 2:
-                cores.append([self.pokemon_names[y] for y in x])
+                cores.append(Counter([self.pokemon_names[y] for y in x]))
 
-        cores.sort(key=lambda x: len(x))
-        return cores
+        cores_graph = Graph()
+        for index1, core1 in enumerate(cores):
+            for index2, core2 in enumerate(cores[:index1]):
+                weight = (core1 - core2).total() + (core2 - core1).total()
+                cores_graph.add_edge(index1, index2, weight=weight)
+
+        ordered_indices = tsp(cores_graph, cycle=False)
+        assert len(ordered_indices) == len(cores)
+        return [sorted(cores[i].elements()) for i in ordered_indices]

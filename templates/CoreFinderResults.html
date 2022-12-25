@@ -1,11 +1,11 @@
 {% import "link_builder.html" as lb %}
 {% if cores %}
-<div class="color-align-box">
+<div class="core-outer">
       {% for core in cores %}
-        <div class="color-align-inner">
-        {% for poke in core %}
-          {{lb.poke_link(poke, dataset)}}<br>
-        {% endfor %}
+        <div class="core-inner">
+            {% for poke in core %}
+                {{lb.poke_sprite_only(poke, dataset)}}
+            {% endfor %}
         </div>
       {% endfor %}
 </div>

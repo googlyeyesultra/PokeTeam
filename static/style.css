@@ -13,7 +13,7 @@
   --shadow-color: black;
   --red-color: #990000;
   --glow-color: var(--text-color);
-  --width-for-poke: 12.5em;
+  --pokemon-width: 12.5em;
 }
 
 #input_pokemon {
@@ -418,27 +418,30 @@ body {
     text-align: center;
 }
 
-.color-align-box {
+.core-outer {
     display: grid;
-    grid-template-columns: repeat(auto-fill, var(--width-for-poke));
-    gap: 4px;
-    justify-content: center;
+    grid-template-columns: 100px repeat(auto-fit, 100px 100px);
 }
 
-.color-align-box > div:nth-child(even) {
+.core-outer > .core-inner:nth-child(even) {
   background-color: var(--checker-color-1);
 }
 
-.color-align-box > div:nth-child(odd) {
+.core-outer > .core-inner:nth-child(odd) {
   background-color: var(--checker-color-2);
 }
 
-.color-align-inner {
-  padding: 4px;
-  box-shadow: 2px 2px 1px var(--shadow-color);
-  height: 100%;
-  width: 100%;
-  box-sizing: border-box;
+.core-inner {
+    padding: 2px;
+    margin: 4px;
+    box-shadow: 2px 2px 1px var(--shadow-color);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.core-inner .poke-icon {
+    margin: 0px;
 }
 
 .bst-stat-bar {
@@ -574,7 +577,7 @@ dl {
 }
 
 .pagedPoke {
-    min-width: var(--width-for-poke);
+    min-width: var(--pokemon-width);
 }
 
 /* Table sort controls - code from datatables default styling. */

@@ -2,6 +2,10 @@
 <a href="{{url_for('display_pokemon', dataset=dataset, poke=poke)}}"><span class="poke-icon" data-poke="{{poke}}"></span>{{poke}}</a>
 {%- endmacro %}
 
+{% macro poke_sprite_only(poke, dataset) -%}
+<a href="{{url_for('display_pokemon', dataset=dataset, poke=poke)}}" class="poke-icon" data-poke="{{poke}}" title="{{poke}}"></a>
+{%- endmacro %}
+
 {% macro item_link(item, dataset) -%}
 <a href="{{url_for('display_item', dataset=dataset, item=item)}}"><span class="item-icon" data-item="{{item}}"></span><span class="item-name" data-item="{{item}}">{{item}}</span></a>
 {%- endmacro %}
