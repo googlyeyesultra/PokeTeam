@@ -10,3 +10,25 @@ $("#find_cores").submit(function(e) {
   });
   return false;
 });
+
+function filterCores() {
+    keywords = $("#filter_cores").val().toLowerCase().split(" ");
+    $(".core-inner").each(function() {
+        pokemon = $(this).data("pokes");
+        for(word of keywords) {
+            found = false;
+            for(poke of pokemon) {
+                if(poke.toLowerCase().includes(word)) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) {
+                $(this).hide();
+                return;
+            }
+        }
+
+        $(this).show();
+    });
+}

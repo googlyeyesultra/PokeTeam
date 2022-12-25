@@ -421,6 +421,7 @@ body {
 .core-outer {
     display: grid;
     grid-template-columns: 100px repeat(auto-fit, 100px 100px);
+    justify-content: center;
 }
 
 .core-outer > .core-inner:nth-child(even) {
