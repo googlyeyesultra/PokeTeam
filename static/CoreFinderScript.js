@@ -1,5 +1,6 @@
 $("#find_cores").submit(function(e) {
   e.preventDefault()
+  $("#filter_cores").val("").focus();
   $.post({
     url: "./find_cores",
     data: $(this).serialize(),
