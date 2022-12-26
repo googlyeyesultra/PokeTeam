@@ -2,7 +2,7 @@
 {% if cores %}
 <div class="core-outer">
       {% for core in cores %}
-        <div class="core-inner" data-pokes='{{core|tojson}}'>
+        <div class="core-inner" data-pokes='{{core|tojson|lower}}'>
             {% for poke in core %}
                 {{lb.poke_sprite_only(poke, dataset)}}
             {% endfor %}

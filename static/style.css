@@ -419,6 +419,7 @@ body {
 }
 
 .core-outer {
+    margin-top: 5px;
     display: grid;
     grid-template-columns: 100px repeat(auto-fit, 100px 100px);
     justify-content: center;
@@ -433,6 +434,7 @@ body {
 }
 
 .core-inner {
+    border-radius: 4px;
     padding: 2px;
     margin: 4px;
     box-shadow: 2px 2px 1px var(--shadow-color);

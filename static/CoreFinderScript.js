@@ -18,7 +18,7 @@ function filterCores() {
         for(word of keywords) {
             found = false;
             for(poke of pokemon) {
-                if(poke.toLowerCase().includes(word)) {
+                if(poke.includes(word)) {
                     found = true;
                     break;
                 }

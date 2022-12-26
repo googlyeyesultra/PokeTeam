@@ -4,11 +4,10 @@ Cores are groups of 2 or more Pokemon that are commonly used together.
 """
 
 from networkx.algorithms import clique
-from networkx.algorithms.approximation import traveling_salesman_problem as tsp
+from networkx.algorithms.approximation import greedy_tsp as tsp
 from networkx import Graph
 import numpy as np
 from collections import Counter
-from itertools import combinations
 
 TARGET_EDGES_DEFAULT = 100
 USAGE_WEIGHT_DEFAULT = 1
@@ -68,6 +67,6 @@ class CoreFinder:
                 weight = (core1 - core2).total() + (core2 - core1).total()
                 cores_graph.add_edge(index1, index2, weight=weight)
 
-        ordered_indices = tsp(cores_graph, cycle=False)
+        ordered_indices = tsp(cores_graph)[:-1]  # Break cycle by slicing. Not optimal, but fast and simple.
         assert len(ordered_indices) == len(cores)
         return [sorted(cores[i].elements()) for i in ordered_indices]
