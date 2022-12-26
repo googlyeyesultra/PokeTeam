@@ -5,8 +5,6 @@
   --dark-accent-color: #660000;
   --block-color-1: #261D1D;
   --block-color-2: #332727;
-  --checker-color-1: var(--accent-color);
-  --checker-color-2: var(--dark-accent-color);
   --disabled-text-color: #444;
   --link-color: #44C5FF;
   --placeholder-color: #A9A9A9;
@@ -94,7 +92,6 @@ input[type=number] {
     box-shadow: 1px 1px 2px var(--shadow-color);
     padding: 3px;
     background: var(--block-color-1);
-
     grid-template-columns: repeat(2, var(--pokemon-block-width));
     grid-template-rows: repeat(3, var(--pokemon-block-height));
 }
@@ -421,16 +418,8 @@ body {
 .core-outer {
     margin-top: 5px;
     display: grid;
-    grid-template-columns: 100px repeat(auto-fit, 100px 100px);
+    grid-template-columns: repeat(auto-fit, 150px);
     justify-content: center;
-}
-
-.core-outer > .core-inner:nth-child(even) {
-  background-color: var(--checker-color-1);
-}
-
-.core-outer > .core-inner:nth-child(odd) {
-  background-color: var(--checker-color-2);
 }
 
 .core-inner {
@@ -441,6 +430,8 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+    align-items: center;
+    background-color: var(--accent-color);
 }
 
 .core-inner .poke-icon {
