@@ -107,7 +107,7 @@ input[type=number] {
     }
 }
 
-@media (max-width: 579px) {
+@media (max-width: 645px) {
     .content {
         margin-left: 0px !important;
         margin-right: 0px !important;
