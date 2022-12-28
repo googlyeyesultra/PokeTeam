@@ -478,7 +478,7 @@ body {
 
 .dt-body-right {
     text-align: right;
-    padding-right: 1.6em;
+    padding-right: 26px !important;
 }
 
 figure {
