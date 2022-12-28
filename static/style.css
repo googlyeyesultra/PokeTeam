@@ -21,6 +21,7 @@
 
 #cores_location {
     width: 100%;
+    text-align: center;
 }
 
 #top_wrapper {
@@ -432,6 +433,7 @@ body {
     justify-content: space-around;
     align-items: center;
     background-color: var(--accent-color);
+    min-height: 60px;
 }
 
 .core-inner .poke-icon {
