@@ -22,7 +22,7 @@ SOFTWARE.
 
 ---
 
-This project includes code from DataTables (a small amount of CSS) and from a plugin for DataTables (novalue).
+This project includes code from DataTables (a small amount of CSS) and from a plugin for datatables (novalue).
 
 Their licenses are reproduced below.
 
