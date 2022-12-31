@@ -1,0 +1,10 @@
+<table class="data-table">
+    <thead>
+    <tr><th>Recommended Team {{lb.try_team_link(suggested_team)}}</th></tr>
+    </thead>
+    <tbody>
+        {% for poke in suggested_team %}
+            <tr><td>{{lb.poke_link(poke, dataset)}}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

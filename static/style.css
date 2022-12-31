@@ -154,7 +154,7 @@ input[type=number] {
 }
 
 #poke-wrapper:has(> #input_pokemon:empty)::before {
-    content: "Try adding Pokémon below. You can also search and hit enter.";
+    content: "Try adding Pokémon below. You can also use the arrow keys and enter.";
     position: absolute;
     z-index: 1;
     width: 90%;
@@ -403,6 +403,7 @@ body {
     column-gap: 10px;
     row-gap: 5px;
     align-items: flex-start;
+    justify-content: center;
 }
 
 .side-by-side {

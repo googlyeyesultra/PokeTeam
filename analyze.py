@@ -263,7 +263,7 @@ class MetagameData:
         return my_team
 
     def _suggest_swaps(self, team, weights):
-        """Suggest swaps for a full team.
+        """Suggest swaps for a team.
 
         Args:
             team (list of str): Names of Pokemon on team.
@@ -274,14 +274,11 @@ class MetagameData:
             swaps["Aipom"] = ("Pichu", 1.2)
             means you should consider swapping Aipom with Pichu
             and that it believes that improves the team by 1.2
-            None if team is not full.
         """
-        if len(team) != 6:
-            return None
 
         swaps = {}
         # Try removing each individual Pokemon and test if anything is better.
-        for x in range(6):
+        for x in range(len(team)):
             swap = self._get_best_with_improvement(team[:x] + team[x + 1:], team[x], weights)
             if swap[0] != team[x]:
                 swaps[team[x]] = swap

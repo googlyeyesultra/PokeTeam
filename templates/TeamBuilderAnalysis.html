@@ -6,12 +6,7 @@
 {% endif %}
 
 {% if suggested_team %}
-    <div>
-    Recommended team {{lb.try_team_link(suggested_team)}}:
-    {% for poke in suggested_team %}
-        <br>{{lb.poke_link(poke, dataset)}}
-    {% endfor %}
-    </div>
+{% include "SuggestedTeam.html" %}
 {% endif %}
 
 {% if swaps %}
