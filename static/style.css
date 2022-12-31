@@ -232,6 +232,9 @@ input[type=number] {
   align-items: center;
   row-gap: 10px;
   max-width: 80%;
+}
+
+.info-description {
   text-align: justify;
 }
 
