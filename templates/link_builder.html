@@ -27,7 +27,7 @@
 {%- endmacro %}
 
 {% macro add_link(poke) -%}
-<a href='javascript:handleAddPoke("{{poke}}")' class="add_link" id="{{poke}}">✚</a>
+<a href='javascript:addPoke("{{poke}}")' class="add_link" id="{{poke}}">✚</a>
 {%- endmacro %}
 
 {% macro try_team_link(suggested_team) -%}
@@ -35,5 +35,5 @@
 {%- endmacro %}
 
 {% macro swap_link(swap) -%}
-<a href="javascript:handleSwapPoke('{{swap[0]}}', '{{swap[1][0]}}')" class="swap_link">⮂</a>
+<a href="javascript:swapPoke('{{swap[0]}}', '{{swap[1][0]}}')" class="swap_link">⮂</a>
 {%- endmacro %}

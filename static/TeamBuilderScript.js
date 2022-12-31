@@ -22,12 +22,12 @@ function attachInputHandler() {
 function enterHandler(e) {
     if(e.which == 13) {
         $("#recommendations_table tbody tr:nth-child(1) td:nth-child(1)").each(function() {
-            if(!$(this).hasClass("dataTables_empty")) handleAddPoke($(this).text());
+            if(!$(this).hasClass("dataTables_empty")) addPoke($(this).text());
         });
     }
 }
 
-function handleAddPoke(poke, analyze=true) {
+function addPoke(poke, analyze=true) {
   if ($(".team_member").length < 6) {
     $("#input_pokemon").append(teamMemberDisplay(poke));
   }
@@ -50,7 +50,7 @@ function removePoke(tag) {
     $("#analyze").submit();
 }
 
-function handleSwapPoke(original, new_poke) {
+function swapPoke(original, new_poke) {
   $(".team_member").each(function () {
     if ($(this).data("pokemon") == original) {
         $(this).replaceWith(teamMemberDisplay(new_poke));
@@ -64,7 +64,7 @@ function handleSwapPoke(original, new_poke) {
 function tryTeam(team) {
   $(".team_member").remove();
   for(poke of team) {
-    handleAddPoke(poke, false);
+    addPoke(poke, false);
   }
   $("#analyze").submit();
 }

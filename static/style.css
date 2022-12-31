@@ -99,11 +99,11 @@ input[type=number] {
 
 @media (min-width: 580px) {
     .data-table th:first-child {
-        border-radius: 5px 0px 0px 0px;
+        border-top-left-radius: 5px;
     }
 
     .data-table th:last-child {
-        border-radius: 0px 5px 0px 0px;
+        border-top-right-radius: 5px;
     }
 }
 
@@ -475,19 +475,6 @@ body {
 .dt-body-right {
     text-align: right;
     padding-right: 26px !important;
-}
-
-figure {
-    float: left;
-}
-
-figcaption {
-    text-align: center;
-}
-
-dl {
-  margin: 0;
-  padding: 0;
 }
 
 .poke-type {
