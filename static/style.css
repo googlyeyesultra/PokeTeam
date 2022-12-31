@@ -193,10 +193,6 @@ input[type=number] {
   font-size: 2rem;
 }
 
-.info-description {
-  max-width: 80%;
-}
-
 .info-table {
     border-collapse: collapse;
     text-align: center;
@@ -235,6 +231,8 @@ input[type=number] {
   flex-direction: column;
   align-items: center;
   row-gap: 10px;
+  max-width: 80%;
+  text-align: justify;
 }
 
 .data-table {
