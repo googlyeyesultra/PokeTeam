@@ -19,22 +19,32 @@ $("#analyze").submit(function(e) {
 function attachInputHandlers() {
     $("#recommendations_table_filter input").keydown(keyHandler);
     $("#recommendations_table").on("page.dt", function() {selected = -1;});
+    $("#recommendations_table").on("search.dt", function() {
+        selected = -1;
+        clearHighlights();
+    });
 }
 
 function keyHandler(e) {
-    if(e.key == "ArrowUp") {
-        selected--;
-        if(selected < 0) selected = 0;
-        highlightSelected();
-    } else if(e.key == "ArrowDown") {
-        selected++;
-        var num_rows = $("#recommendations_table tbody tr").length;
-        if(selected >= num_rows) selected = num_rows - 1;
-        highlightSelected();
-    } else if(e.key == "Enter") {
-        if(selected < 0) selected = 0;
-        var td = $("#recommendations_table tbody tr").eq(selected).children("td:first");
-        if(!td.hasClass("dataTables_empty")) addPoke(td.text());
+    var table_is_empty = $("#recommendations_table tbody tr:first td:first").hasClass("dataTables_empty");
+    if(!table_is_empty) {
+        if(e.key == "ArrowUp") {
+            selected--;
+            if(selected < 0) selected = 0;
+            highlightSelected();
+            e.preventDefault();
+        } else if(e.key == "ArrowDown") {
+            selected++;
+            var num_rows = $("#recommendations_table tbody tr").length;
+            if(selected >= num_rows) selected = num_rows - 1;
+            highlightSelected();
+            e.preventDefault();
+        } else if(e.key == "Enter") {
+            if(selected < 0) selected = 0;
+            var td = $("#recommendations_table tbody tr").eq(selected).children("td:first");
+            addPoke(td.text());
+            e.preventDefault();
+        }
     }
 }
 
