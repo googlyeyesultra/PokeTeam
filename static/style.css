@@ -12,6 +12,7 @@
   --red-color: #990000;
   --glow-color: var(--text-color);
   --pokemon-width: 12.5em;
+  --highlighted-row-color: #121212;
 }
 
 #input_pokemon {
@@ -275,6 +276,10 @@ form {
 
 .data-table tbody tr:nth-child(odd) {
     --tr-color: var(--dark-accent-color);
+}
+
+.selected-row {
+    --tr-color: var(--highlighted-row-color) !important;
 }
 
 .data-table tbody tr {

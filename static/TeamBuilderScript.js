@@ -1,5 +1,8 @@
+var selected = -1;
+
 $("#analyze").submit(function(e) {
   e.preventDefault();
+  selected = -1;
   $.post({
     url: "./run_analysis",
     data: $(this).serialize(),
@@ -7,24 +10,41 @@ $("#analyze").submit(function(e) {
     success: function(response) {
       $("#analysis_location").html(response);
       do_prettify();
-      attachInputHandler();
+      attachInputHandlers();
     },
   });
   return false;
 });
 
-function attachInputHandler() {
-    $(".dataTables_filter input").each(function() {
-        $(this).on("keypress", enterHandler);
-    });
+function attachInputHandlers() {
+    $("#recommendations_table_filter input").keydown(keyHandler);
+    $("#recommendations_table").on("page.dt", function() {selected = -1;});
 }
 
-function enterHandler(e) {
-    if(e.which == 13) {
-        $("#recommendations_table tbody tr:nth-child(1) td:nth-child(1)").each(function() {
-            if(!$(this).hasClass("dataTables_empty")) addPoke($(this).text());
-        });
+function keyHandler(e) {
+    if(e.key == "ArrowUp") {
+        selected--;
+        if(selected < 0) selected = 0;
+        highlightSelected();
+    } else if(e.key == "ArrowDown") {
+        selected++;
+        var num_rows = $("#recommendations_table tbody tr").length;
+        if(selected >= num_rows) selected = num_rows - 1;
+        highlightSelected();
+    } else if(e.key == "Enter") {
+        if(selected < 0) selected = 0;
+        var td = $("#recommendations_table tbody tr").eq(selected).children("td:first");
+        if(!td.hasClass("dataTables_empty")) addPoke(td.text());
     }
+}
+
+function clearHighlights() {
+    $("#recommendations_table tbody tr").removeClass("selected-row");
+}
+
+function highlightSelected() {
+    clearHighlights();
+    $("#recommendations_table tbody tr").eq(selected).addClass("selected-row");
 }
 
 function addPoke(poke, analyze=true) {
@@ -69,4 +89,4 @@ function tryTeam(team) {
   $("#analyze").submit();
 }
 
-attachInputHandler();
+attachInputHandlers();
