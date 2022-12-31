@@ -395,7 +395,6 @@ body {
     column-gap: 10px;
     row-gap: 5px;
     align-items: flex-start;
-    justify-content: center;
 }
 
 .side-by-side {
