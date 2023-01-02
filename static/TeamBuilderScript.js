@@ -2,6 +2,13 @@ var selected = -1;
 
 $("#analyze").submit(function(e) {
   e.preventDefault();
+
+  if(!e.target.reportValidity()) {
+    $(".advanced-options").attr("open", true);
+    e.target.reportValidity(); // We rerun this since if it was closed we couldn't display the message.
+    return false;
+  }
+
   selected = -1;
   $.post({
     url: "./run_analysis",

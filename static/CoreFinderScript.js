@@ -1,5 +1,12 @@
 $("#find_cores").submit(function(e) {
   e.preventDefault()
+
+  if(!e.target.reportValidity()) {
+    $(".advanced-options").attr("open", true);
+    e.target.reportValidity(); // We rerun this since if it was closed we couldn't display the message.
+    return false;
+  }
+
   $("#filter_cores").val("").focus();
   $.post({
     url: "./find_cores",
