@@ -40,3 +40,5 @@ function filterCores() {
         $(this).show();
     });
 }
+
+$("#find_cores").submit();

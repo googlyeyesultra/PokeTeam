@@ -178,37 +178,16 @@ def analysis(dataset):
     """Page that contains the main team builder."""
     md = get_md(dataset)
 
-    analysis = build_analysis(dataset, [], analyze.USAGE_WEIGHT_DEFAULT,
-                                           analyze.COUNTER_WEIGHT_DEFAULT,
-                                           analyze.TEAM_WEIGHT_DEFAULT)
-
     return render_template('TeamBuilder.html', dataset=dataset,
-                           gen=md.gen, dex=get_dex(md.gen), analysis=analysis,
+                           gen=md.gen, dex=get_dex(md.gen),
                            usage_setting=analyze.USAGE_WEIGHT_DEFAULT,
                            counter_setting=analyze.COUNTER_WEIGHT_DEFAULT,
                            team_setting=analyze.TEAM_WEIGHT_DEFAULT)
 
 
-def build_analysis(dataset, my_pokes, usage_setting, counter_setting, team_setting):
-    md = get_md(dataset)
-    weights = analyze.Weights(counter_setting, team_setting, usage_setting)
-    threats, bundled, suggested_team, swaps = md.analyze(my_pokes, weights)
-
-    recommendations = sorted(bundled, key=lambda p: -p[1])
-
-    return render_template("TeamBuilderAnalysis.html",
-                           dataset=dataset,
-                           threats=sorted(threats.items(), key=lambda k: -k[1]),
-                           recommendations=recommendations,
-                           suggested_team=suggested_team,
-                           swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
-                           add_links=(len(my_pokes) < 6),
-                           gen=md.gen, dex=get_dex(md.gen))
-
 @app.route("/analysis/<dataset>/run_analysis", methods=['POST'])
 def output_analysis(dataset):
     """Part of page responsible for displaying team building results."""
-
 
     if "pokemon" in request.form:
         my_pokes = request.form.getlist("pokemon")
@@ -219,7 +198,19 @@ def output_analysis(dataset):
     counter_setting = float(request.form["counter_weight"])
     team_setting = float(request.form["team_weight"])
 
-    return build_analysis(dataset, my_pokes, usage_setting, counter_setting, team_setting)
+    md = get_md(dataset)
+    weights = analyze.Weights(counter_setting, team_setting, usage_setting)
+    threats, bundled, suggested_team, swaps = md.analyze(my_pokes, weights)
+
+    recommendations = sorted(bundled, key=lambda p: -p[1])
+    return render_template("TeamBuilderAnalysis.html",
+                           dataset=dataset,
+                           threats=sorted(threats.items(), key=lambda k: -k[1]),
+                           recommendations=recommendations,
+                           suggested_team=suggested_team,
+                           swaps=(sorted(swaps.items(), key=lambda kv: -kv[1][1]) if swaps else None),
+                           add_links=(len(my_pokes) < 6),
+                           gen=md.gen, dex=get_dex(md.gen))
 
 
 @app.route("/cores/<dataset>/")
@@ -227,19 +218,10 @@ def cores(dataset):
     """Page for finding cores in a format."""
     usage_weight = corefinder.USAGE_WEIGHT_DEFAULT
     target_edges = corefinder.TARGET_EDGES_DEFAULT
-    cores = build_cores(dataset, usage_weight, target_edges)
-    return render_template("CoreFinder.html", cores=cores,
+    return render_template("CoreFinder.html",
                            usage_weight=usage_weight,
                            target_edges=target_edges,
                            dataset=dataset)
-
-
-def build_cores(dataset, usage_weight, target_edges):
-    md = get_md(dataset)
-    cf = corefinder.CoreFinder(md, usage_weight, target_edges)
-
-    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
-                           gen=md.gen)
 
 
 @app.route("/cores/<dataset>/find_cores", methods=['POST'])
@@ -248,7 +230,12 @@ def find_cores(dataset):
 
     usage_weight = float(request.form["usage_weight"])
     target_edges = float(request.form["target_edges"])
-    return build_cores(dataset, usage_weight, target_edges)
+
+    md = get_md(dataset)
+    cf = corefinder.CoreFinder(md, usage_weight, target_edges)
+
+    return render_template("CoreFinderResults.html", dataset=dataset, cores=cf.find_cores(),
+                           gen=md.gen)
 
 
 @app.route("/update/<key>/")

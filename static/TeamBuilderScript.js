@@ -107,3 +107,4 @@ function tryTeam(team) {
 }
 
 attachInputHandlers();
+$("#analyze").submit();
