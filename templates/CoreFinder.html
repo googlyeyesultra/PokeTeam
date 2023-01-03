@@ -2,29 +2,31 @@
 {% block title %}Core Finder{% endblock %}
 {% block below_navbar %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-This identifies groups of Pokémon that work well together. Subsets of cores are also cores.
-<form id=find_cores>
-<details class="advanced-options">
-  <summary>Advanced Options</summary>
-  <table class="alignment-table">
-    <tbody>
-    <tr title="Favors Pokémon with high overall usage."><td>Usage Weight:</td>
-        <td>
-            <input type="number" name="usage_weight" min=0 value={{usage_weight}} required step=".1">
-        </td>
-    </tr>
-    <tr title="Larger means more and larger cores."><td>Target Edges:</td>
-        <td>
-            <input type="number" name="target_edges" min=5 max=500 value={{target_edges}} required step="1">
-        </td>
-    </tr>
-    </tbody>
-  </table>
-  <input type="submit" value="Find Cores">
-</details>
-</form>
-<input id="filter_cores" type="text" placeholder="Filter..." oninput="javascript:filterCores()" autofocus>
-<div id="cores_location"></div>
+<div id="core-finder-wrapper">
+    This identifies groups of Pokémon that work well together. Subsets of cores are also cores.
+    <form id=find_cores>
+    <details class="advanced-options">
+      <summary>Advanced Options</summary>
+      <table class="alignment-table">
+        <tbody>
+        <tr title="Favors Pokémon with high overall usage."><td>Usage Weight:</td>
+            <td>
+                <input type="number" name="usage_weight" min=0 value={{usage_weight}} required step=".1">
+            </td>
+        </tr>
+        <tr title="Larger means more and larger cores."><td>Target Edges:</td>
+            <td>
+                <input type="number" name="target_edges" min=5 max=500 value={{target_edges}} required step="1">
+            </td>
+        </tr>
+        </tbody>
+      </table>
+      <input type="submit" value="Find Cores">
+    </details>
+    </form>
+    <input id="filter_cores" type="text" placeholder="Filter..." oninput="javascript:filterCores()" autofocus>
+    <div id="cores_location"></div>
+</div>
 {% endblock %}
 
 {% block scripts %}
