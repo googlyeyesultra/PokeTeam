@@ -1,4 +1,4 @@
-import * as dex from '@pkmn/dex';
+import * as dex from "@pkmn/dex";
 import * as fs from "fs";
 
 //const data_dir = "./datasets/";
@@ -55,7 +55,8 @@ fs.readdirSync(data_dir).forEach(file => {
 
 		if (!("base_stats_short" in generations[gen])) {
             generations[gen]["base_stats_short"] = []
-            for(let stat_name of this_dex.stats.shortNames) {
+            for(let stat_key in this_dex.stats.shortNames) {
+                var stat_name = this_dex.stats.shortNames[stat_key];
                 if (stat_name[0] != "[") { // Special defense in gen 1.
 					generations[gen]["base_stats_short"].push(stat_name);
 				}
