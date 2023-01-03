@@ -6,13 +6,12 @@
   Pick the dataset to use. Be aware that less played tiers and higher rating requirements have less data available. I would recommend using the 1500 ratings.<br>
   Also, checks and counters data are flawed for doubles formats. Doubles formats are only included due to a bug in Smogon's stat collection.<br>
   <form action="" method="post">
-  <div class="input dataset">
-  <select name="selector" onchange="this.form.submit()">
-    {% for dataset in datasets %}
-      <option value="{{dataset}}">{{dataset}}</option>
-    {% endfor %}
-  </select>
-  </div>
+    <select name="selector">
+      {% for dataset in datasets %}
+        <option value="{{dataset}}">{{dataset}}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Go</button>
   </form>
   Or choose one of the most popular formats:
   <table class="alignment-table" style="text-align:right">
