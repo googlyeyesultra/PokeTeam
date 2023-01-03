@@ -24,7 +24,9 @@
       <input type="submit" value="Find Cores">
     </details>
     </form>
-    <input id="filter_cores" type="text" placeholder="Filter..." oninput="javascript:filterCores()" autofocus>
+    <label id="filter_cores_label">
+        <input id="filter_cores" type="text" placeholder="Search..." oninput="javascript:filterCores()" autofocus>
+    </label>
     <div id="cores_location"></div>
 </div>
 {% endblock %}

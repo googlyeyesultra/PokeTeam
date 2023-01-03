@@ -76,7 +76,7 @@ input[type=number] {
     align-items: flex-start;
 }
 
-#filter_cores {
+#filter_cores_label {
     margin: auto;
 }
 
@@ -552,7 +552,7 @@ body {
     margin-top: -31px;
 }
 
-.dataTables_filter label::before {
+.dataTables_filter label::before, #filter_cores_label::before {
     content:"⌕";
     position: absolute;
     margin-left: .5em;
@@ -560,11 +560,11 @@ body {
     color: var(--placeholder-color);
 }
 
-.dataTables_filter input::placeholder {
+.dataTables_filter input::placeholder, #filter_cores::placeholder {
     color: var(--placeholder-color);
 }
 
-.dataTables_filter label input {
+.dataTables_filter label input, #filter_cores {
     padding-left: 1.5em;
 }
 
