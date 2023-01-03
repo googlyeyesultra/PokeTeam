@@ -67,6 +67,8 @@ class CoreFinder:
                 weight = (core1 - core2).total() + (core2 - core1).total()
                 cores_graph.add_edge(index1, index2, weight=weight)
 
-        ordered_indices = tsp(cores_graph)[:-1]  # Break cycle by slicing. Not optimal, but fast and simple.
+        ordered_indices = tsp(cores_graph)  # This is a cycle. We want a shortest path, so we need to break an edge.
+        longest_edge = max(range(len(ordered_indices)-1), key=lambda k: cores_graph[ordered_indices[k]][ordered_indices[k+1]]["weight"])
+        ordered_indices = ordered_indices[longest_edge+1:-1] + ordered_indices[:longest_edge+1]
         assert len(ordered_indices) == len(cores)
         return [sorted(cores[i].elements()) for i in ordered_indices]
