@@ -4,12 +4,10 @@ This module is responsible for loading data for a given metagame.
 It evaluates Pokemon and teams and makes recommendations.
 """
 
-import math
 from dataclasses import dataclass
 import ujson as json
 import numpy as np
 from scipy.stats.mstats import gmean
-
 
 COUNTER_WEIGHT_DEFAULT = 2
 TEAM_WEIGHT_DEFAULT = 5
@@ -74,9 +72,11 @@ class MetagameData:
             self.items = data["items"]
             self.abilities = data["abilities"]
             self.moves = data["moves"]
+            self.counters = data["info"]["counters"]
 
-        with open(threat_file, "rb") as file:
-            self._threat_matrix = np.load(file)
+        if self.counters:
+            with open(threat_file, "rb") as file:
+                self._threat_matrix = np.load(file)
 
         with open(team_file, "rb") as file:
             self._team_matrix = np.load(file)
@@ -92,6 +92,9 @@ class MetagameData:
             summed (1d numpy array of float): Each index contains how
             threatening the Pokemon with that index is to the team.
         """
+        if not self.counters:
+            return None
+
         team_indices = [self._indices[t] for t in team]
         summed = self._threat_matrix[team_indices].sum(0)
 
@@ -109,7 +112,6 @@ class MetagameData:
             player rating.
         """
         return self.pokemon[poke]["count"]
-
 
     def _threats_to_dict(self, threats, team_length):
         """Convert threats to a dict of name -> threat rating.
@@ -129,6 +131,9 @@ class MetagameData:
             to threat rating. Rating is scaled for display and normalized
             relative to team length.
         """
+        if not self.counters:
+            return {}
+
         threats_dict = {}
         for poke in self.pokemon:
             threats_dict[poke] = 100 * (threats[self._indices[poke]] /
@@ -154,19 +159,21 @@ class MetagameData:
         u_scores = [self.pokemon[p]["usage"] for p in self.pokemon]
         team_indices = [self._indices[t] for t in team]
         if team:
-            t_scores = gmean(self._team_matrix[team_indices], 0)
-            new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
-            sum_pos = np.nansum(np.where(new_threats>0, new_threats, np.nan), 1)
-            c_scores = 100 ** (-sum_pos / (len(team) + 1))
+            t_scores = gmean(self._team_matrix[team_indices], 0, nan_policy="raise")
         else:
             t_scores = np.ones((len(self.pokemon,)))
-            c_scores = np.ones((len(self.pokemon,)))
+
+        if self.counters and team:
+            new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
+            sum_pos = np.nansum(np.where(new_threats > 0, new_threats, np.nan), 1)
+            c_scores = 100 ** (-sum_pos / (len(team) + 1))
+        else:
+            c_scores = np.ones((len(self.pokemon,)))  # If we don't have counters data, we just use 1s.
 
         stacked = np.stack((c_scores, t_scores, u_scores))
+        weights = [[weights.counter], [weights.team], [weights.usage]]
+        combined_scores = gmean(stacked, axis=0, weights=weights, nan_policy="raise")
 
-        combined_scores = gmean(stacked, axis=0, weights=[[weights.counter],
-                                                          [weights.team],
-                                                          [weights.usage]])
         scores = list(zip(self._indices.keys(), combined_scores, c_scores, t_scores, u_scores))
 
         # TODO consider refactoring to return a dictionary.
@@ -326,7 +333,9 @@ class MetagameData:
         Returns:
             dict str->float: Dictionary of Pokemon name ->
             how good of a counter it is.
+            None if there is no counters data.
         """
+
         return self._threats_to_dict(self._find_threats([poke]), 1)
 
     def partner_scores(self, poke):

@@ -33,6 +33,7 @@ def update():
 
     format_playstats = {}
     format_ratings = {}
+    all_valid_datasets = []
 
     for file in os.scandir(TEMP_DATA_DIR):
         try:
@@ -50,19 +51,23 @@ def update():
                 format_ratings[format_name] = [rating]
             else:
                 format_ratings[format_name].append(rating)
+
+            all_valid_datasets.append(file.name[:-5])
             print(file.name + " is valid.")
-        except AssertionError as e:
+        except ValueError as e:
             os.remove(file)
             print(file.name + " failed validation: " + str(e))
 
     top_formats = sorted(format_playstats,
                          key=format_playstats.get, reverse=True)[:10]
 
-    with open(TEMP_DATA_DIR + TOP_FORMATS_FILE,
-              "w", encoding="utf-8") as top_formats_fd:
+    with open(TEMP_DATA_DIR + TOP_FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
             line = form + " " + ",".join(sorted(format_ratings[form])) + "\n"
             top_formats_fd.write(line)
+
+    with open(TEMP_DATA_DIR + ALL_DATASETS_FILE, "w", encoding="utf-8") as all_datasets_fd:
+        all_datasets_fd.write("\n".join(sorted(all_valid_datasets)))
 
     print("Running script preprocessing.")
     subprocess.run([PREPROCESS_UPDATE_CMD] + PREPROCESS_UPDATE_ARGS, shell=True).check_returncode()
@@ -84,6 +89,7 @@ def update():
         bucket.upload_file(file.path, file.name)
 
     print("Update complete!")
+
 
 def _download_data():
     """Downloads the new data from Smogon."""

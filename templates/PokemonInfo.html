@@ -23,7 +23,9 @@
     </table>
   </div>
   <div class="tables-wrapper">
-    {% include "CountersTable.html" %}
+    {% if counters %}
+      {% include "CountersTable.html" %}
+    {% endif %}
     {% include "TeammatesTable.html" %}
     {% include "MovesTable.html" %}
     {% include "ItemsTable.html" %}

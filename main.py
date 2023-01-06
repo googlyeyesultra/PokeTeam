@@ -1,17 +1,17 @@
 """Handles routing, serving, and preparing pages."""
-import os
 import functools
 
-from botocore.exceptions import ClientError
 from flask import (Flask, render_template, request,
                    redirect, abort, url_for)
-import boto3
+
 from waitress import serve
 import analyze
 import update
 import corefinder
 import dex
+import os
 from file_constants import *
+from file_loader import DataFilePath
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -20,36 +20,25 @@ app.jinja_env.lstrip_blocks = True
 app.jinja_env.policies['json.dumps_kwargs'] = {'sort_keys': False, 'ensure_ascii': False}
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
 
-s3_session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
-                                   aws_secret_access_key=os.environ["S3_SECRET_KEY"])
-s3_bucket = s3_session.resource("s3", endpoint_url=os.environ["S3_ENDPOINT"]).Bucket(os.environ["BUCKET"])
-
 
 @functools.lru_cache(maxsize=64, typed=False)
 def get_md(dataset):
     """Get MetagameData object for a format."""
     try:
-        if not os.path.exists(DATA_DIR + dataset + ".json"):
-            s3_bucket.download_file(dataset + ".json", DATA_DIR + dataset + ".json")
-        if not os.path.exists(DATA_DIR + dataset + THREAT_FILE):
-            s3_bucket.download_file(dataset + THREAT_FILE, DATA_DIR + dataset + THREAT_FILE)
-        if not os.path.exists(DATA_DIR + dataset + TEAMMATE_FILE):
-            s3_bucket.download_file(dataset + TEAMMATE_FILE, DATA_DIR + dataset + TEAMMATE_FILE)
-        return analyze.MetagameData(DATA_DIR + dataset + ".json",
-                                    DATA_DIR + dataset + THREAT_FILE,
-                                    DATA_DIR + dataset + TEAMMATE_FILE)
-    except (FileNotFoundError, ClientError):
+        metagame = DataFilePath(dataset + ".json")  # TODO maybe don't hardcode
+        threats = DataFilePath(dataset + THREAT_FILE)
+        team = DataFilePath(dataset + TEAMMATE_FILE)
+        return analyze.MetagameData(metagame, threats, team)
+    except FileNotFoundError:
         abort(404)
 
 @functools.lru_cache(maxsize=12, typed=False)
 def get_dex(gen):
     """Get generation appropriate dex for a format."""
-    dex_file = DEX_PREFIX + gen + DEX_SUFFIX
+
     try:
-        if not os.path.exists(DATA_DIR + dex_file):
-            s3_bucket.download_file(dex_file, DATA_DIR + dex_file)
-        return dex.Dex(DATA_DIR + dex_file)
-    except (FileNotFoundError, ClientError):
+        return dex.Dex(DataFilePath(DEX_PREFIX + gen + DEX_SUFFIX))
+    except (FileNotFoundError):
         abort(500)
 
 @app.route("/", methods=['GET', 'POST'])
@@ -58,13 +47,10 @@ def select_data():
     if request.method == 'POST':
         return redirect(url_for("analysis", dataset=request.form["selector"]))
 
-    datasets = sorted([obj.key[:-5] for obj in s3_bucket.objects.all()  # TODO this is probably unnecessarily slow.
-                if ".json" in obj.key])  # We should store this in a file we have to pull only once.
+    with open(DataFilePath(ALL_DATASETS_FILE), encoding="utf-8") as f:
+        datasets = f.read().splitlines()
 
-    if not os.path.exists(DATA_DIR + TOP_FORMATS_FILE):
-        s3_bucket.download_file(TOP_FORMATS_FILE, DATA_DIR + TOP_FORMATS_FILE)
-
-    with open(DATA_DIR + TOP_FORMATS_FILE, encoding="utf-8") as f:
+    with open(DataFilePath(TOP_FORMATS_FILE), encoding="utf-8") as f:
         top = f.read().splitlines()
         formats = []
         for metagame in top:
@@ -83,7 +69,11 @@ def display_pokemon(dataset, poke):
 
     usage = md.pokemon[poke]["usage"]
 
-    counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
+    if md.counters:
+        counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
+    else:
+        counters = None
+
     teammates = sorted(md.partner_scores(poke).items(), key=lambda kv: -kv[1])
     items = list(md.pokemon[poke]["Items"].items())
     moves = list(md.pokemon[poke]["Moves"].items())
@@ -177,11 +167,16 @@ def ability_dex(dataset):
 def analysis(dataset):
     """Page that contains the main team builder."""
     md = get_md(dataset)
+    if md.counters:
+        counter_weight = analyze.COUNTER_WEIGHT_DEFAULT
+    else:
+        counter_weight = 1
 
     return render_template('TeamBuilder.html', dataset=dataset,
+                           has_counters_data=md.counters,
                            gen=md.gen, dex=get_dex(md.gen),
                            usage_setting=analyze.USAGE_WEIGHT_DEFAULT,
-                           counter_setting=analyze.COUNTER_WEIGHT_DEFAULT,
+                           counter_setting=counter_weight,
                            team_setting=analyze.TEAM_WEIGHT_DEFAULT)
 
 
@@ -194,17 +189,21 @@ def output_analysis(dataset):
     else:
         my_pokes = []
 
+    md = get_md(dataset)
+
     usage_setting = float(request.form["usage_weight"])
-    counter_setting = float(request.form["counter_weight"])
+    if md.counters:
+        counter_setting = float(request.form["counter_weight"])
+    else:
+        counter_setting = 1
     team_setting = float(request.form["team_weight"])
 
-    md = get_md(dataset)
     weights = analyze.Weights(counter_setting, team_setting, usage_setting)
     threats, bundled, suggested_team, swaps = md.analyze(my_pokes, weights)
 
     recommendations = sorted(bundled, key=lambda p: -p[1])
     return render_template("TeamBuilderAnalysis.html",
-                           dataset=dataset,
+                           dataset=dataset, has_counters_data=md.counters,
                            threats=sorted(threats.items(), key=lambda k: -k[1]),
                            recommendations=recommendations,
                            suggested_team=suggested_team,

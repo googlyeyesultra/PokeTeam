@@ -3,7 +3,9 @@
         <tr>
             <th class="searchable unsortable pagedPoke">Recommendation</th>
             <th class="default_desc sort_desc">Overall</th>
+            {% if has_counters_data %}
             <th class="default_desc hide_mobile" title="How good a Pokémon is against threats to the team.">Counter</th>
+            {% endif %}
             <th class="default_desc hide_mobile" title="How good a Pokémon is with its teammates.">Team</th>
             <th class="default_desc hide_mobile" title="How often a Pokémon is used in general.">Usage</th>
             {% if add_links %}
@@ -16,7 +18,9 @@
             <tr>
                 <td>{{ lb.poke_link(reco[0], dataset) }}</td>
                 <td class="dt-body-right">{{ "{:.2f}".format(reco[1]) }}</td>
+                {% if has_counters_data %}
                 <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[2]) }}</td>
+                {% endif %}
                 <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[3]) }}</td>
                 <td class="dt-body-right hide_mobile">{{ "{:.2f}".format(reco[4]) }}</td>
                 {% if add_links %}

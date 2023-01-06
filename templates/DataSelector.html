@@ -3,8 +3,7 @@
 {% block content %}
 <div class="content">
   <img src="{{ url_for('static', filename='icons/logo.png') }}">
-  Pick the dataset to use. Be aware that less played tiers and higher rating requirements have less data available. I would recommend using the 1500 ratings.<br>
-  Also, checks and counters data are flawed for doubles formats. Doubles formats are only included due to a bug in Smogon's stat collection.<br>
+  Pick the dataset to use.
   <form action="" method="post">
     <select name="selector">
       {% for dataset in datasets %}

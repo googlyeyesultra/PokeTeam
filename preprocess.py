@@ -4,10 +4,11 @@ import ujson as json
 import numpy as np
 import math
 import re
-import subprocess
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
+# TODO define min move/item usage, maybe digits to round
+
 
 def prepare_files(json_file, threat_file, teammate_file):
     """Validate and pre-process files directly from Smogon.
@@ -37,31 +38,43 @@ def prepare_files(json_file, threat_file, teammate_file):
         int: number of battles in metagame (not filtered by rating)
     """
 
+    counters = True
+    if "doubles" in json_file.name or "vgc" in json_file.name:
+        # Doubles formats don't have good checks/counters data,
+        # but it's sometimes included in the raw data.
+        counters = False
+
     indices = {}
     with open(json_file, "r", encoding="utf-8") as file:
         data = json.load(file)
         pokemon = data.pop("data")
 
-        changes = True
-        while changes:
-            num_pokes = len(pokemon)
-            # First, get rid of any Pokemon without counters data.
-            # Also trim out some Pokemon with extraordinarily low usage.
-            pokemon = {name: info for (name, info) in pokemon.items()
-                       if (len(info["Checks and Counters"]) > 9
-                           and info["usage"] > MIN_USAGE)}
+        # First, get rid of any Pokemon without counters data.
+        # Also trim out some Pokemon with extraordinarily low usage.
+        pokemon = {name: info for (name, info) in pokemon.items()
+                   if info["usage"] > MIN_USAGE}
 
-            changes = num_pokes != len(pokemon)
-
-            # Clear out checks/counters for Pokemon we don't have.
-            for poke in pokemon:
+        has_counters_data = 0
+        for poke in pokemon:
+            pokemon[poke]["Teammates"] = {t: data for (t, data)
+                                          in pokemon[poke]["Teammates"].items()
+                                          if t in pokemon}
+            if counters:
                 pokemon[poke]["Checks and Counters"] = \
                     {c: data for (c, data)
                      in pokemon[poke]["Checks and Counters"].items()
                      if c in pokemon}
+                if pokemon[poke]["Checks and Counters"]:
+                    has_counters_data += 1
 
-        # Not enough data to even try.
-        assert len(pokemon) >= 20, "Not enough Pokemon remaining after cleanup."
+        if has_counters_data <= len(pokemon) / 2:
+            counters = False
+            
+        data["info"]["counters"] = counters
+
+        if len(pokemon) < 20:  # Not enough data to even try.
+            raise ValueError("Not enough Pokemon remaining after cleanup.")
+
         for index, mon in enumerate(pokemon):
             indices[mon] = index
         data["indices"] = indices
@@ -106,14 +119,15 @@ def prepare_files(json_file, threat_file, teammate_file):
 
         data["info"]["total_pairs"] = round(total_pairs, 3)
 
-    threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
-    for index, mon in enumerate(pokemon):
-        for column, c_mon in enumerate(pokemon):
-            threat_matrix[index, column] = \
-                _threat_for_poke(pokemon, c_mon, mon)
+    if counters:
+        threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
+        for index, mon in enumerate(pokemon):
+            for column, c_mon in enumerate(pokemon):
+                threat_matrix[index, column] = \
+                    _threat_for_poke(pokemon, c_mon, mon)
 
-    with open(threat_file, "wb") as file:
-        np.save(file, threat_matrix)
+        with open(threat_file, "wb") as file:
+            np.save(file, threat_matrix)
 
     # team score for X given Y is TODO
     # If X never appears with Y, needs to be 0.
@@ -127,7 +141,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         for column, c_mon in enumerate(pokemon):
             denom = _p_x_given_not_y(pokemon, c_mon, mon, data["info"]["total_pairs"])
             if denom == 0:
-                team_matrix[index, column] = math.inf
+                team_matrix[index, column] = np.inf
             else:
                 team_matrix[index, column] = _p_x_given_y(pokemon, c_mon, mon) / denom
 

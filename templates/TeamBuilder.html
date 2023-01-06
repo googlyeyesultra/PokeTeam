@@ -9,9 +9,11 @@
   <summary>Advanced Options</summary>
   <table class="alignment-table">
     <tbody>
+      {% if has_counters_data %}
       <tr><td>Counter Weighting:</td>
         <td><input type="number" name="counter_weight" min=0 value={{counter_setting}} required step=".1"></td>
       </tr>
+      {% endif %}
       <tr><td>Team Weighting:</td>
         <td><input type="number" name="team_weight" min=0 value={{team_setting}} required step=".1"></td>
       </tr>
