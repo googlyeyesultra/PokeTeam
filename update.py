@@ -33,13 +33,12 @@ def update():
 
     format_playstats = {}
     format_ratings = {}
-    all_valid_datasets = []
 
     for file in os.scandir(TEMP_DATA_DIR):
         try:
             threat_filename = file.path[:-5] + THREAT_FILE
             teammate_filename = file.path[:-5] + TEAMMATE_FILE
-            format_name, times_played = \
+            format_name, times_played, has_counters = \
                 preprocess.prepare_files(file, threat_filename, teammate_filename)
 
             # Files are named like gen8ou-1500.json
@@ -48,26 +47,26 @@ def update():
             if format_name not in format_playstats:
                 # Times played data is same for all ratings.
                 format_playstats[format_name] = times_played
-                format_ratings[format_name] = [rating]
+                format_ratings[format_name] = [(rating, has_counters)]
             else:
-                format_ratings[format_name].append(rating)
+                format_ratings[format_name].append((rating, has_counters))
 
-            all_valid_datasets.append(file.name[:-5])
             print(file.name + " is valid.")
         except ValueError as e:
             os.remove(file)
             print(file.name + " failed validation: " + str(e))
 
-    top_formats = sorted(format_playstats,
-                         key=format_playstats.get, reverse=True)[:10]
+    top_formats = sorted(format_playstats, key=format_playstats.get, reverse=True)
 
     with open(TEMP_DATA_DIR + TOP_FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
-            line = form + " " + ",".join(sorted(format_ratings[form])) + "\n"
-            top_formats_fd.write(line)
+            line = form + " " + str(format_playstats[form]) + " "
+            rating_strings = []
+            for rating in sorted(format_ratings[form], key=lambda k: k[0]):
+                rating_strings.append(rating[0] + ("C" if rating[1] else "N"))
 
-    with open(TEMP_DATA_DIR + ALL_DATASETS_FILE, "w", encoding="utf-8") as all_datasets_fd:
-        all_datasets_fd.write("\n".join(sorted(all_valid_datasets)))
+            line += ",".join(rating_strings) + "\n"
+            top_formats_fd.write(line)
 
     print("Running script preprocessing.")
     subprocess.run([PREPROCESS_UPDATE_CMD] + PREPROCESS_UPDATE_ARGS, shell=True).check_returncode()

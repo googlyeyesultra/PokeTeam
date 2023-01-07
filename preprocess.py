@@ -2,11 +2,11 @@
 
 import ujson as json
 import numpy as np
-import math
 import re
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
+MIN_BATTLES = 200
 # TODO define min move/item usage, maybe digits to round
 
 
@@ -47,6 +47,10 @@ def prepare_files(json_file, threat_file, teammate_file):
     indices = {}
     with open(json_file, "r", encoding="utf-8") as file:
         data = json.load(file)
+
+        if data["info"]["number of battles"] < MIN_BATTLES:
+            raise ValueError("Not enough battles.")
+
         pokemon = data.pop("data")
 
         # First, get rid of any Pokemon without counters data.
@@ -222,7 +226,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         json.dump(data, file)
 
     # Return a little info for the top format list.
-    return data["info"]["metagame"], data["info"]["number of battles"]
+    return data["info"]["metagame"], data["info"]["number of battles"], data["info"]["counters"]
 
 
 def _threat_for_poke(pokemon, threat, poke):

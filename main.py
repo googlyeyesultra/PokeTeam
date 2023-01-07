@@ -38,26 +38,23 @@ def get_dex(gen):
 
     try:
         return dex.Dex(DataFilePath(DEX_PREFIX + gen + DEX_SUFFIX))
-    except (FileNotFoundError):
+    except FileNotFoundError:
         abort(500)
+
 
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
     """Page for selecting a format."""
-    if request.method == 'POST':
-        return redirect(url_for("analysis", dataset=request.form["selector"]))
-
-    with open(DataFilePath(ALL_DATASETS_FILE), encoding="utf-8") as f:
-        datasets = f.read().splitlines()
-
     with open(DataFilePath(TOP_FORMATS_FILE), encoding="utf-8") as f:
         top = f.read().splitlines()
         formats = []
         for metagame in top:
-            format_name, ratings = metagame.split(" ")
-            formats.append((format_name, ratings.split(",")))
+            format_name, battles_played, ratings = metagame.split(" ")
+            ratings = ratings.split(",")
+            ratings = [(r[:-1], r[-1] == "C") for r in ratings]
+            formats.append((format_name, battles_played, ratings))
 
-    return render_template("DataSelector.html", datasets=datasets, top=formats)
+    return render_template("DataSelector.html", formats=formats)
 
 
 @app.route("/pokemon/<dataset>/<poke>/")

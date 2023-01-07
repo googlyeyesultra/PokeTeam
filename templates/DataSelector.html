@@ -4,23 +4,28 @@
 <div class="content">
   <img src="{{ url_for('static', filename='icons/logo.png') }}">
   Pick the dataset to use.
-  <form action="" method="post">
-    <select name="selector">
-      {% for dataset in datasets %}
-        <option value="{{dataset}}">{{dataset}}</option>
-      {% endfor %}
-    </select>
-    <button type="submit">Go</button>
-  </form>
-  Or choose one of the most popular formats:
-  <table class="alignment-table" style="text-align:right">
+
+  <table class="data-table sortable">
+    <thead>
+        <tr>
+            <th class="searchable default_desc">Format</th>
+            <th class="default_desc sort_desc">Battles</th>
+            <th class="unsortable">Ratings</th>
+        </tr>
+    </thead>
     <tbody>
-      {% for format in top %}
+      {% for format in formats %}
         <tr>
           <td>{{format[0]}}</td>
-        {% for rating in format[1] %}
-          <td>{{lb.analysis_link(format[0], rating)}}</td>
-        {% endfor %}
+          <td class="dt-body-right">{{format[1]}}</td>
+          <td class="ratings-wrapper">
+            {% for rating in format[2] %}
+              <span class="{% if rating[1]%}has_counters{% else %}no_counters{% endif %}">
+              {{lb.analysis_link(format[0], rating[0])}}
+              </span>
+            {% endfor %}
+          </td>
+
         </tr>
       {% endfor %}
     </tbody>

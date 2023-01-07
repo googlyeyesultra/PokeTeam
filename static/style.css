@@ -552,6 +552,18 @@ body {
     margin-top: -31px;
 }
 
+.ratings-wrapper > * {
+    width: 12px;
+}
+
+.has_counters::after {
+    content: "Y";
+}
+
+.no_counters::after {
+    content: "N";
+}
+
 .dataTables_filter label::before, #filter_cores_label::before {
     content:"⌕";
     position: absolute;
