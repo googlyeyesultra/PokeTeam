@@ -164,16 +164,12 @@ def ability_dex(dataset):
 def analysis(dataset):
     """Page that contains the main team builder."""
     md = get_md(dataset)
-    if md.counters:
-        counter_weight = analyze.COUNTER_WEIGHT_DEFAULT
-    else:
-        counter_weight = 1
 
     return render_template('TeamBuilder.html', dataset=dataset,
                            has_counters_data=md.counters,
                            gen=md.gen, dex=get_dex(md.gen),
                            usage_setting=analyze.USAGE_WEIGHT_DEFAULT,
-                           counter_setting=counter_weight,
+                           counter_setting=analyze.COUNTER_WEIGHT_DEFAULT,
                            team_setting=analyze.TEAM_WEIGHT_DEFAULT)
 
 
@@ -192,7 +188,7 @@ def output_analysis(dataset):
     if md.counters:
         counter_setting = float(request.form["counter_weight"])
     else:
-        counter_setting = 1
+        counter_setting = 0
     team_setting = float(request.form["team_weight"])
 
     weights = analyze.Weights(counter_setting, team_setting, usage_setting)
