@@ -553,15 +553,15 @@ body {
 }
 
 .ratings-wrapper > * {
-    width: 12px;
-}
-
-.has_counters::after {
-    content: "Y";
+    width: 5em;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .no_counters::after {
-    content: "N";
+    content: "(no counters)";
+    font-size: .6em;
 }
 
 .dataTables_filter label::before, #filter_cores_label::before {
