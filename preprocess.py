@@ -6,7 +6,7 @@ import re
 
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
-MIN_BATTLES = 200
+MIN_BATTLES = 500
 # TODO define min move/item usage, maybe digits to round
 
 
@@ -53,16 +53,17 @@ def prepare_files(json_file, threat_file, teammate_file):
 
         pokemon = data.pop("data")
 
-        # First, get rid of any Pokemon without counters data.
-        # Also trim out some Pokemon with extraordinarily low usage.
         pokemon = {name: info for (name, info) in pokemon.items()
-                   if info["usage"] > MIN_USAGE}
+                   if info["usage"] > MIN_USAGE
+                   and len(info["Teammates"]) > 1
+                   and info["Raw count"] > 100}
 
         has_counters_data = 0
         for poke in pokemon:
             pokemon[poke]["Teammates"] = {t: data for (t, data)
                                           in pokemon[poke]["Teammates"].items()
                                           if t in pokemon}
+
             if counters:
                 pokemon[poke]["Checks and Counters"] = \
                     {c: data for (c, data)
@@ -76,7 +77,7 @@ def prepare_files(json_file, threat_file, teammate_file):
             
         data["info"]["counters"] = counters
 
-        if len(pokemon) < 20:  # Not enough data to even try.
+        if len(pokemon) < 20:
             raise ValueError("Not enough Pokemon remaining after cleanup.")
 
         for index, mon in enumerate(pokemon):
@@ -144,10 +145,13 @@ def prepare_files(json_file, threat_file, teammate_file):
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
             denom = _p_x_given_not_y(pokemon, c_mon, mon, data["info"]["total_pairs"])
-            if denom == 0:
+            num = _p_x_given_y(pokemon, c_mon, mon)
+            if num == 0:
+                team_matrix[index, column] = 0
+            elif denom == 0:
                 team_matrix[index, column] = np.inf
             else:
-                team_matrix[index, column] = _p_x_given_y(pokemon, c_mon, mon) / denom
+                team_matrix[index, column] = num / denom
 
     with open(teammate_file, "wb") as file:
         np.save(file, team_matrix)
