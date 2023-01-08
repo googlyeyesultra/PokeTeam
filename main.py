@@ -243,4 +243,6 @@ def request_update(key):
 if __name__ == "__main__":
     if not os.path.exists(DATA_DIR):
         os.mkdir(DATA_DIR)
+
+    print("Server starting.")
     serve(app, host='0.0.0.0', port=int(os.environ["PORT"]))
