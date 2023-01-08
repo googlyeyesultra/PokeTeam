@@ -170,9 +170,17 @@ class MetagameData:
         else:
             c_scores = np.ones((len(self.pokemon,)))  # If we don't have counters data, we just use 1s.
 
-        stacked = np.stack((c_scores, t_scores, u_scores))
-        weights = [[weights.counter], [weights.team], [weights.usage]]
-        combined_scores = gmean(stacked, axis=0, weights=weights, nan_policy="raise")
+        # We need to filter out weights of zero since gmean doesn't handle 0**0 well.
+        all_weights = (weights.counter, weights.team, weights.usage)
+        all_scores = (c_scores, t_scores, u_scores)
+        used_weights = []
+        used_scores = []
+        for index, weight in enumerate(all_weights):
+            if weight:
+                used_weights.append([weight])
+                used_scores.append(all_scores[index])
+        stacked = np.stack(used_scores)
+        combined_scores = gmean(stacked, axis=0, weights=used_weights, nan_policy="raise")
 
         scores = list(zip(self._indices.keys(), combined_scores, c_scores, t_scores, u_scores))
 
