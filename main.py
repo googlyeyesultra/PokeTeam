@@ -45,7 +45,10 @@ def get_dex(gen):
 @app.route("/", methods=['GET', 'POST'])
 def select_data():
     """Page for selecting a format."""
-    with open(DataFilePath(TOP_FORMATS_FILE), encoding="utf-8") as f:
+    with open(DataFilePath(DATE_FILE), encoding="utf-8") as date_fd:
+        date = date_fd.read()
+
+    with open(DataFilePath(FORMATS_FILE), encoding="utf-8") as f:
         top = f.read().splitlines()
         formats = []
         for metagame in top:
@@ -54,7 +57,7 @@ def select_data():
             ratings = [(r[:-1], r[-1] == "C") for r in ratings]
             formats.append((format_name, battles_played, ratings))
 
-    return render_template("DataSelector.html", formats=formats)
+    return render_template("DataSelector.html", date=date, formats=formats)
 
 
 @app.route("/pokemon/<dataset>/<poke>/")

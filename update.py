@@ -12,6 +12,7 @@ import boto3
 import preprocess
 from file_constants import *
 import subprocess
+from datetime import datetime
 
 PREPROCESS_UPDATE_CMD = "npm"
 PREPROCESS_UPDATE_ARGS = ["install", "@pkmn/dex"]
@@ -28,7 +29,7 @@ def update():
     Delete existing files, download new ones, preprocess and validate.
     """
     print("Update started.")
-    _download_data()
+    date = _download_data()
     print("Data downloaded.")
 
     format_playstats = {}
@@ -56,9 +57,11 @@ def update():
             os.remove(file)
             print(file.name + " failed validation: " + str(e))
 
-    top_formats = sorted(format_playstats, key=format_playstats.get, reverse=True)
+    with open(TEMP_DATA_DIR + DATE_FILE, "w", encoding="utf-8") as date_fd:
+        date_fd.write(date)
 
-    with open(TEMP_DATA_DIR + TOP_FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
+    top_formats = sorted(format_playstats, key=format_playstats.get, reverse=True)
+    with open(TEMP_DATA_DIR + FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
             line = form + " " + str(format_playstats[form]) + " "
             rating_strings = []
@@ -95,7 +98,7 @@ def _download_data():
     stats_page = requests.get(STATS_URL)
 
     last_update = re.findall(r'<a href="(.*)"', stats_page.text)[-1]
-
+    last_update_date = datetime.strptime(last_update, "%Y-%m/").strftime("%B %Y")
     chaos_url = STATS_URL + last_update + "chaos/"
     chaos_page = requests.get(chaos_url)
 
@@ -111,3 +114,5 @@ def _download_data():
         with open(TEMP_DATA_DIR + metagame, "wb") as metagame_fd:
             for chunk in req.iter_content(chunk_size=128):
                 metagame_fd.write(chunk)
+
+    return last_update_date
