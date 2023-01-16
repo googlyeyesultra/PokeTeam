@@ -25,12 +25,11 @@ class CoreFinder:
         Args:
             md (MetagameData): Metagame to find cores in.
 
-            usage_threshold (float >= 0):
-            Mininum usage for a Pokemon to be included. Note that some Pokemon
-            with low usage are already excluded by MetagameData.
+            usage_weight (float >= 0):
+            Higher usage_weight makes higher usage Pokemon appear in cores more often.
 
-            score_requirement (float): How closely linked two Pokemon need
-            to be to be considered to be in a core together.
+            target_edges (int >= 1):
+            Higher target_edges makes more and larger cores (and takes longer to run).
         """
         self.pokemon_names = list(md.pokemon.keys())
         usages = [md.pokemon[poke]["usage"] ** usage_weight for poke in md.pokemon]

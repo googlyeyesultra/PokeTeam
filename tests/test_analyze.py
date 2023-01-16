@@ -63,6 +63,13 @@ class AnalyzeTestCase(unittest.TestCase):
             self.validate_number(swaps[swap][1])
             self.assertGreater(swaps[swap][1], 0)
 
+    def test_duplicate_on_team(self):
+        poke = next(iter(self.md.pokemon))
+        team = [poke, poke, poke]
+        threats, scores, _, _ = self.md.analyze(team, analyze.Weights(1, 1, 1))
+        self.validate_threats(threats)
+        self.validate_scores(scores)
+
     def validate_number(self, number):
         self.assertFalse(math.isnan(number))
         self.assertFalse(math.isinf(number))
