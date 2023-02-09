@@ -58,19 +58,33 @@ def prepare_files(json_file, threat_file, teammate_file):
                    and len(info["Teammates"]) > 1
                    and info["Raw count"] > 100}
 
-        has_counters_data = 0
-        for poke in pokemon:
-            pokemon[poke]["Teammates"] = {t: data for (t, data)
-                                          in pokemon[poke]["Teammates"].items()
-                                          if t in pokemon}
+        pokemon_to_remove = []
+        while True:
+            has_counters_data = 0
+            for poke in pokemon_to_remove:
+                del pokemon[poke]
+            pokemon_to_remove = []
 
-            if counters:
-                pokemon[poke]["Checks and Counters"] = \
-                    {c: data for (c, data)
-                     in pokemon[poke]["Checks and Counters"].items()
-                     if c in pokemon}
-                if pokemon[poke]["Checks and Counters"]:
-                    has_counters_data += 1
+            for poke in pokemon:
+                pokemon[poke]["Teammates"] = {t: data for (t, data)
+                                              in pokemon[poke]["Teammates"].items()
+                                              if t in pokemon}
+
+                # Empty teammate lists create issues, so we have to remove that mon.
+                # Then after that's gone, we need to go back and remove any references to it.
+                if len(pokemon[poke]["Teammates"]) < 5 or sum(pokemon[poke]["Teammates"].values()) == 0:
+                    pokemon_to_remove.append(poke)
+
+                if counters:
+                    pokemon[poke]["Checks and Counters"] = \
+                        {c: data for (c, data)
+                         in pokemon[poke]["Checks and Counters"].items()
+                         if c in pokemon}
+                    if pokemon[poke]["Checks and Counters"]:
+                        has_counters_data += 1
+
+            if not pokemon_to_remove:
+                break
 
         if has_counters_data <= len(pokemon) / 2:
             counters = False
@@ -170,57 +184,9 @@ def prepare_files(json_file, threat_file, teammate_file):
     del data["info"]["team type"]
 
     data["pokemon"] = pokemon
-
-    abils = {}
-    for poke in pokemon:
-        sorted_abils = sorted(pokemon[poke]["Abilities"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Abilities"] = dict([a for a in sorted_abils if a[1] > .05])
-        usage = pokemon[poke]["usage"]
-        for k in pokemon[poke]["Abilities"]:
-            use = pokemon[poke]["Abilities"][k]
-            entry = (poke, round(usage * use, 3), use, usage)
-            if k in abils:
-                abils[k].append(entry)
-            else:
-                abils[k] = [entry]
-
-    for abil in abils:
-        abils[abil] = sorted(abils[abil], key=lambda t: -t[1])[:10]
-    data["abilities"] = dict(sorted(abils.items()))
-
-    moves = {}
-    for poke in pokemon:
-        sorted_moves = sorted(pokemon[poke]["Moves"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Moves"] = dict([m for m in sorted_moves if m[1] > .05])
-        usage = pokemon[poke]["usage"]
-        for k in pokemon[poke]["Moves"]:
-            use = pokemon[poke]["Moves"][k]
-            entry = (poke, round(usage * use, 3), use, usage)
-            if k in moves:
-                moves[k].append(entry)
-            else:
-                moves[k] = [entry]
-
-    for move in moves:
-        moves[move] = sorted(moves[move], key=lambda t: -t[1])[:10]
-    data["moves"] = dict(sorted(moves.items()))
-
-    items = {}
-    for poke in pokemon:
-        sorted_items = sorted(pokemon[poke]["Items"].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke]["Items"] = dict([i for i in sorted_items if i[1] > .05])
-        usage = pokemon[poke]["usage"]
-        for k in pokemon[poke]["Items"]:
-            use = pokemon[poke]["Items"][k]
-            entry = (poke, round(usage * use, 3), use, usage)
-            if k in items:
-                items[k].append(entry)
-            else:
-                items[k] = [entry]
-
-    for item in items:
-        items[item] = sorted(items[item], key=lambda t: -t[1])[:10]
-    data["items"] = dict(sorted(items.items()))
+    data["abilities"] = _users(pokemon, "Abilities")
+    data["moves"] = _users(pokemon, "Moves")
+    data["items"] = _users(pokemon, "Items")
 
     # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
     # Supports through gen 19.
@@ -231,6 +197,26 @@ def prepare_files(json_file, threat_file, teammate_file):
 
     # Return a little info for the top format list.
     return data["info"]["metagame"], data["info"]["number of battles"], data["info"]["counters"]
+
+
+def _users(pokemon, key):  # Creates data for how often a move/ability/item is used by different Pokemon.
+    items = {}
+    for poke in pokemon:
+        sorted_items = sorted(pokemon[poke][key].items(), key=lambda i: -i[1])[:10]
+        pokemon[poke][key] = dict([i for i in sorted_items if i[1] > .05])
+        usage = pokemon[poke]["usage"]
+        for k in pokemon[poke][key]:
+            use = pokemon[poke][key][k]
+            entry = (poke, round(usage * use, 3), use, usage)
+            if k in items:
+                items[k].append(entry)
+            else:
+                items[k] = [entry]
+
+    for item in items:
+        items[item] = sorted(items[item], key=lambda t: -t[1])[:10]
+
+    return dict(sorted(items.items()))
 
 
 def _threat_for_poke(pokemon, threat, poke):
