@@ -14,12 +14,6 @@ from file_constants import *
 import subprocess
 from datetime import datetime
 
-PREPROCESS_UPDATE_CMD = "npm"
-PREPROCESS_UPDATE_ARGS = ["install", "@pkmn/dex"]
-
-PREPROCESS_CMD = "node"
-PREPROCESS_ARGS = ["./nodejs/build_dexes.mjs"]
-
 STATS_URL = "https://www.smogon.com/stats/"
 
 
@@ -71,9 +65,9 @@ def update():
             line += ",".join(rating_strings) + "\n"
             top_formats_fd.write(line)
 
-    print("Running script preprocessing.")
-    subprocess.run([PREPROCESS_UPDATE_CMD] + PREPROCESS_UPDATE_ARGS, shell=True).check_returncode()
-    subprocess.run([PREPROCESS_CMD] + PREPROCESS_ARGS).check_returncode()
+    print("Building dexes.")
+    subprocess.run(["npm", "install", "@pkmn/dex"], shell=True).check_returncode()
+    subprocess.run(["node", "./nodejs/build_dexes.mjs"]).check_returncode()
 
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):
