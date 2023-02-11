@@ -3,7 +3,7 @@
     <tbody>
     {% for move in moves[:10] %}
         <tr>
-            <td>{{ lb.move_link(move[0], dataset) }}</td>
+            <td>{{ lb.move_link(move[0], dataset, dex) }}</td>
             <td class="r-align">{{ "{:.0%}".format(move[1]) }}</td>
         </tr>
     {% endfor %}

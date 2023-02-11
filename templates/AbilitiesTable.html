@@ -3,7 +3,7 @@
     <tbody>
     {% for abil in abilities[:10] %}
         <tr>
-            <td>{{ lb.abil_link(abil[0], dataset) }}</td>
+            <td>{{ lb.abil_link(abil[0], dataset, dex) }}</td>
             <td class="r-align">{{ "{:.0%}".format(abil[1]) }}</td>
         </tr>
     {% endfor %}
