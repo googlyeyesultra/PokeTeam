@@ -67,7 +67,6 @@ class MetagameData:
             self._total_pokes = data["info"]["total_pokes"]
             self._pokes_per_team = data["info"]["pokes_per_team"]
             self._num_teams = data["info"]["num_teams"]
-            self._total_pairs = data["info"]["total_pairs"]
             self.gen = data["info"]["gen"]
             self.items = data["items"]
             self.abilities = data["abilities"]
@@ -161,14 +160,14 @@ class MetagameData:
         if team:
             t_scores = gmean(self._team_matrix[team_indices], 0, nan_policy="raise")
         else:
-            t_scores = np.ones((len(self.pokemon,)))
+            t_scores = np.ones(len(self.pokemon))
 
         if self.counters and team:
             new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
             sum_pos = np.nansum(np.where(new_threats > 0, new_threats, np.nan), 1)
             c_scores = 100 ** (-sum_pos / (len(team) + 1))
         else:
-            c_scores = np.ones((len(self.pokemon,)))  # If we don't have counters data, we just use 1s.
+            c_scores = np.ones(len(self.pokemon))
 
         # We need to filter out weights of zero since gmean doesn't handle 0**0 well.
         all_weights = (weights.counter, weights.team, weights.usage)
