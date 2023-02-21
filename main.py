@@ -233,6 +233,15 @@ def find_cores(dataset):
                            gen=md.gen)
 
 
+@app.route("/speed_tiers/<dataset>/")
+def speed_tiers(dataset):
+    """Page for displaying speed tiers in a format."""
+    md = get_md(dataset)
+    return render_template("SpeedTiers.html",
+                           speed_tiers=md.speed_tiers,
+                           dataset=dataset)
+
+
 @app.route("/update/<key>/")
 def request_update(key):
     """Endpoint to download new statistics. Not for public use."""

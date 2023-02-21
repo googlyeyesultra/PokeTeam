@@ -72,6 +72,7 @@ class MetagameData:
             self.abilities = data["abilities"]
             self.moves = data["moves"]
             self.counters = data["info"]["counters"]
+            self.speed_tiers = data["speed_tiers"]
 
         if self.counters:
             with open(threat_file, "rb") as file:

@@ -13,6 +13,11 @@
   --glow-color: var(--text-color);
   --pokemon-width: 12.5em;
   --highlighted-row-color: #121212;
+  --redshift-2: #321111;
+  --redshift-1: #2a1818;
+  --midshift: #261D1D;
+  --greenshift-1: #182a18;
+  --greenshift-2: #113211;
 }
 
 #input_pokemon {
@@ -355,7 +360,7 @@ form {
     display: none;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1045px) {
     #hamburger_icon {
         position: absolute;
         top: 0px;
@@ -494,6 +499,10 @@ body {
     text-align: right;
 }
 
+.l-align {
+    text-align: left;
+}
+
 .dt-body-right {
     text-align: right;
     padding-right: 26px !important;
@@ -591,6 +600,52 @@ body {
 
 .pagedPoke {
     min-width: var(--pokemon-width);
+}
+
+#speed-tiers {
+    border-collapse: collapse;
+}
+
+#speed-tiers th {
+    font-size: 2rem;
+    font-weight: normal;
+}
+
+#speed-tiers td {
+    padding: 7px;
+    text-align: center;
+}
+
+#speed-tiers tr {
+    border-bottom: 1px solid;
+}
+
+.speed {
+    font-size: 1.5rem;
+}
+
+.speed_tier_poke {
+    font-size: .7em;
+}
+
+.min2 {
+    background-color: var(--redshift-2);
+}
+
+.min1 {
+    background-color: var(--redshift-1);
+}
+
+.plus0 {
+    background-color: var(--midshift);
+}
+
+.plus1 {
+    background-color: var(--greenshift-1);
+}
+
+.plus2 {
+    background-color: var(--greenshift-2);
 }
 
 /* Table sort controls - code from datatables default styling. */

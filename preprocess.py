@@ -7,6 +7,7 @@ import re
 COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
 MIN_BATTLES = 500
+SPEED_TIER_THRESHOLD = .005
 # TODO define min move/item usage, maybe digits to round
 
 
@@ -51,9 +52,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         if data["info"]["number of battles"] < MIN_BATTLES:
             raise ValueError("Not enough battles.")
 
-        pokemon = data.pop("data")
-
-        pokemon = {name: info for (name, info) in pokemon.items()
+        pokemon = {name: info for (name, info) in data.pop("data").items()
                    if info["usage"] > MIN_USAGE
                    and len(info["Teammates"]) > 1
                    and info["Raw count"] > 100}
@@ -109,7 +108,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         total_pokes = 0
         total_team_members = 0
         for poke in pokemon:
-            pokemon[poke]["count"] = sum(pokemon[poke]["Abilities"].values())
+            pokemon[poke]["count"] = sum(pokemon[poke]["Abilities"].values())  # Leave this unrounded to avoid div by 0.
             total_pokes += pokemon[poke]["count"]
             total_team_members += sum(pokemon[poke]["Teammates"].values())
 
@@ -131,13 +130,6 @@ def prepare_files(json_file, threat_file, teammate_file):
                 {i: round(data/pokemon[poke]["count"], 3) for (i, data)
                  in pokemon[poke]["Items"].items()}
 
-        total_pairs = 0
-        for poke in pokemon:
-            # Divide by 2 - otherwise we count (A, B) and (B, A).
-            total_pairs += sum(pokemon[poke]["Teammates"].values()) / 2
-
-        data["info"]["total_pairs"] = round(total_pairs, 3)
-
     if counters:
         threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
         for index, mon in enumerate(pokemon):
@@ -148,34 +140,31 @@ def prepare_files(json_file, threat_file, teammate_file):
         with open(threat_file, "wb") as file:
             np.save(file, threat_matrix)
 
-    # team score for X given Y is TODO
-    # If X never appears with Y, needs to be 0.
-    # If X appears on every team with Y, needs to be huge.
-    # P(X|Y): 1 if x appears on every team with Y. Maybe divide by 1-P(X|Y)? Except it's per slot, so it won't be 1. 0 if never appears with Y.
-    # P(Y|X): Not obviously useful?
-    # P(X|not Y):
-    # P(Y|not X):
     team_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
     for index, mon in enumerate(pokemon):
         for column, c_mon in enumerate(pokemon):
-            denom = _p_x_given_not_y(pokemon, c_mon, mon, data["info"]["total_pairs"])
-            num = _p_x_given_y(pokemon, c_mon, mon)
-            if num == 0:
+            if c_mon not in pokemon[mon]["Teammates"]:
                 team_matrix[index, column] = 0
-            elif denom == 0:
-                team_matrix[index, column] = np.inf
             else:
-                team_matrix[index, column] = num / denom
+                num = pokemon[mon]["Teammates"][c_mon]
+                denom = pokemon[mon]["count"] - num
+                if denom <= 0:
+                    team_matrix[index, column] = np.inf
+                else:
+                    team_matrix[index, column] = num / denom / pokemon[c_mon]["usage"]
 
     with open(teammate_file, "wb") as file:
         np.save(file, team_matrix)
+
+    # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
+    # Supports through gen 19.
+    data["info"]["gen"] = re.match("^gen(1?[0-9]?)", data["info"]["metagame"]).group(1)
 
     # Clear the raw data since we only need the matrices.
     for poke in pokemon:
         del pokemon[poke]["Checks and Counters"]
         del pokemon[poke]["Teammates"]
         del pokemon[poke]["Happiness"]
-        del pokemon[poke]["Spreads"]
         del pokemon[poke]["Viability Ceiling"]
         del pokemon[poke]["Raw count"]
 
@@ -188,9 +177,14 @@ def prepare_files(json_file, threat_file, teammate_file):
     data["moves"] = _users(pokemon, "Moves")
     data["items"] = _users(pokemon, "Items")
 
-    # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
-    # Supports through gen 19.
-    data["info"]["gen"] = re.match("^gen(1?[0-9]?)", data["info"]["metagame"]).group(1)
+    if ("vgc" in data["info"]["metagame"] or
+        "battlestadium" in data["info"]["metagame"] or
+        "nintendocup1997" in data["info"]["metagame"]):  # Technically this is a weird variable level format.
+        data["info"]["level"] = 50
+    elif data["info"]["metagame"].endswith("lc"):
+        data["info"]["level"] = 5
+    else:
+        data["info"]["level"] = 100
 
     with open(json_file, "w", encoding="utf-8") as file:
         json.dump(data, file)
@@ -247,43 +241,3 @@ def _threat_for_poke(pokemon, threat, poke):
         # Don't need one counter for every mon that's weak to something.
         strength *= COUNTER_COVERED_FACTOR
     return strength * weight
-
-
-def _p_x_given_y(pokemon, x, y):
-    """Calculate probability that x appears in a slot if y is on team.
-
-    Args:
-        x (str): Name of a Pokemon.
-
-        y (str): Name of a Pokemon.
-
-    Returns:
-        float [0, 1]: Probability(x is in a slot|y is on that team)
-    """
-    if y not in pokemon[x]["Teammates"]:
-        return 0  # Never appear together.
-
-    return pokemon[x]["Teammates"][y] / sum(pokemon[y]["Teammates"].values())
-
-
-def _p_x_given_not_y(pokemon, x, y, total_pairs):  # TODO try using this other ways. What about dividing by opposite direction? p(y|not x)?
-    """Calculate probability that x appears on a slot if y does not.
-
-    Args:
-        x (str): Nam^gen(1?[0-9]?)e of a Pokemon.
-
-        y (str): Name of a Pokemon.
-
-    Returns:
-        float [0, 1]: Probability(x is on a team|y is not on that team)
-    """
-
-    if y not in pokemon[x]["Teammates"]:
-        # Never appear together, so P(x|not y) = p(x)
-        return sum(pokemon[x]["Teammates"].values()) / total_pairs
-
-    # P(x|not y) = P(x and not y) / P(not y)
-    # (x - (x U y)) is count of times x appeared without y
-    count_x_and_not_y = sum(pokemon[x]["Teammates"].values()) - pokemon[x]["Teammates"][y]
-    count_not_y = total_pairs - sum(pokemon[y]["Teammates"].values())
-    return count_x_and_not_y / count_not_y

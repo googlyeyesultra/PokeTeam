@@ -1,0 +1,49 @@
+{% extends "NavBar.html" %}
+{% block title %}Speed Tiers{% endblock %}
+{% block below_navbar %}
+    <span>This lists relevant speed tiers within a format, based on the actual usage of EV spreads. There are some caveats:</span>
+    <ul>
+        <li>IVs are assumed to be 31, unless the Pokémon is running a -Speed nature with 0 Speed EVs (in which case 0 IVs are assumed).</li>
+        <li>This means formats where Hidden Power depends on IVs do not take that into account.</li>
+        <li>Metagames like 350 Cup that change base stats or stat calculation will not be accurate.</li>
+        <li>Nintendo Cup 1997 has a unique mechanic where Pokémon can be anywhere from level 50-55. This assumes level 50.</li>
+    </ul>
+
+<table id="speed-tiers">
+    <colgroup>
+        <col class="speed_col">
+        <col class="min2 hide_mobile">
+        <col class="min1">
+        <col class="plus0">
+        <col class="plus1">
+        <col class="plus2 hide_mobile">
+        <col class="speed_col hide_mobile">
+    </colgroup>
+    <thead>
+        <tr>
+            <th></th>
+            <th class="hide_mobile">-2</th>
+            <th>-1</th>
+            <th>+0</th>
+            <th>+1</th>
+            <th class="hide_mobile">+2</th>
+            <th class="hide_mobile"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for speed in speed_tiers %}
+            <tr>
+                <td class="speed r-align">{{speed}}</td>
+                {% for modifier in range(speed_tiers[speed] | length) %}
+                    <td {% if modifier == 0 or modifier == 4 %} class="hide_mobile"{% endif %}>
+                        {% for poke in speed_tiers[speed][modifier] %}
+                            <div class="speed_tier_poke">{{ "{:.0%}".format(poke[1]) }} of {{ lb.poke_link_text_only(poke[0], dataset) }}</div>
+                        {% endfor %}
+                    </td>
+                {% endfor %}
+                <td class="speed l-align hide_mobile">{{speed}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

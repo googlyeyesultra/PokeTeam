@@ -10,6 +10,7 @@ import re
 import requests
 import boto3
 import preprocess
+from build_speed_tiers import build_speed_tiers
 from file_constants import *
 import subprocess
 from datetime import datetime
@@ -68,6 +69,9 @@ def update():
     print("Building dexes.")
     subprocess.run(["npm", "install", "@pkmn/dex"], shell=True).check_returncode()
     subprocess.run(["node", "./nodejs/build_dexes.mjs"]).check_returncode()
+
+    print("Building speed tiers.")
+    build_speed_tiers()
 
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):
