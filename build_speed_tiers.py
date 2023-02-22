@@ -45,13 +45,10 @@ def build_speed_tiers():
                     speed_tiers[speed_tier] = [(s[0], s[1]) for s in sorted(speed_tiers[speed_tier], key=lambda k: -k[2])]
 
                 speed_tiers = {k: speed_tiers[k] for k in sorted(speed_tiers, reverse=True)}
-                if int(gen) <= 2:
-                    multipliers = [1/2, 33/50, 1, 3/2, 2]
-                else:
-                    multipliers = [1/2, 2/3, 1, 3/2, 2]
+                multipliers = [1, 3/2, 2]
 
                 modified_speed_tiers = {}
-                for index, mult in enumerate(multipliers):
+                for index, mult in enumerate(multipliers):  # This will not work correctly with negative speed tiers.
                     for speed in speed_tiers:
                         new_speed = floor(speed*mult)
                         if new_speed in modified_speed_tiers:
@@ -76,7 +73,7 @@ def calc_speed(base, ev, nature, level, gen):
     elif nature in ["Brave", "Relaxed", "Quiet", "Sassy"]:
         mult = .9
         if ev == 0:
-            iv = 0  # If negative nature and 0 speed investment, assume min speed for trick room, gyro ball, etc.
+            iv = 0  # If negative nature and 0 speed investment, assume min speed for Trick Room, Gyro Ball, etc.
     else:
         mult = 1
 

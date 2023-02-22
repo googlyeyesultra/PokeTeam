@@ -12,36 +12,29 @@
 <table id="speed-tiers">
     <colgroup>
         <col class="speed_col">
-        <col class="min2 hide_mobile">
-        <col class="min1">
         <col class="plus0">
         <col class="plus1">
         <col class="plus2 hide_mobile">
-        <col class="speed_col hide_mobile">
     </colgroup>
     <thead>
         <tr>
             <th></th>
-            <th class="hide_mobile">-2</th>
-            <th>-1</th>
             <th>+0</th>
             <th>+1</th>
             <th class="hide_mobile">+2</th>
-            <th class="hide_mobile"></th>
         </tr>
     </thead>
     <tbody>
         {% for speed in speed_tiers %}
-            <tr>
+            <tr {% if not speed_tiers[speed][0] and not speed_tiers[speed][1] %} class="hide_mobile"{% endif %}>
                 <td class="speed r-align">{{speed}}</td>
                 {% for modifier in range(speed_tiers[speed] | length) %}
-                    <td {% if modifier == 0 or modifier == 4 %} class="hide_mobile"{% endif %}>
+                    <td {% if modifier == 2 %} class="hide_mobile"{% endif %}>
                         {% for poke in speed_tiers[speed][modifier] %}
                             <div class="speed_tier_poke">{{ "{:.0%}".format(poke[1]) }} of {{ lb.poke_link_text_only(poke[0], dataset) }}</div>
                         {% endfor %}
                     </td>
                 {% endfor %}
-                <td class="speed l-align hide_mobile">{{speed}}</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -13,10 +13,8 @@
   --glow-color: var(--text-color);
   --pokemon-width: 12.5em;
   --highlighted-row-color: #121212;
-  --redshift-2: #321111;
-  --redshift-1: #2a1818;
-  --midshift: #261D1D;
-  --greenshift-1: #182a18;
+  --greenshift-0: #261D1D;
+  --greenshift-1: #1C2817;
   --greenshift-2: #113211;
 }
 
@@ -499,10 +497,6 @@ body {
     text-align: right;
 }
 
-.l-align {
-    text-align: left;
-}
-
 .dt-body-right {
     text-align: right;
     padding-right: 26px !important;
@@ -620,24 +614,12 @@ body {
     border-bottom: 1px solid;
 }
 
-.speed {
-    font-size: 1.5rem;
-}
-
 .speed_tier_poke {
     font-size: .7em;
 }
 
-.min2 {
-    background-color: var(--redshift-2);
-}
-
-.min1 {
-    background-color: var(--redshift-1);
-}
-
 .plus0 {
-    background-color: var(--midshift);
+    background-color: var(--greenshift-0);
 }
 
 .plus1 {
