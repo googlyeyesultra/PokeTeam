@@ -96,9 +96,7 @@ class MetagameData:
             return None
 
         team_indices = [self._indices[t] for t in team]
-        summed = self._threat_matrix[team_indices].sum(0)
-
-        return summed
+        return self._threat_matrix[team_indices].sum(0)
 
     def count_pokemon(self, poke):
         """Count how many times a given Pokemon was used.
@@ -165,7 +163,7 @@ class MetagameData:
 
         if self.counters and team:
             new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
-            sum_pos = np.nansum(np.where(new_threats > 0, new_threats, np.nan), 1)
+            sum_pos = np.sum(np.where(new_threats > 0, new_threats, 0), 1)
             c_scores = 100 ** (-sum_pos / (len(team) + 1))
         else:
             c_scores = np.ones(len(self.pokemon))
