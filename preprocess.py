@@ -8,7 +8,9 @@ COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
 MIN_BATTLES = 500
 SPEED_TIER_THRESHOLD = .005
-# TODO define min move/item usage, maybe digits to round
+MIN_SUB_USAGE = .05  # Minimum usage for items/abilities/moves.
+MAX_SUB_TO_KEEP = 10  # Most items/abilities/moves to keep per Pokemon, and Pokemon per move/item/ability.
+DIGITS_KEPT = 3
 
 
 def prepare_files(json_file, threat_file, teammate_file):
@@ -112,22 +114,22 @@ def prepare_files(json_file, threat_file, teammate_file):
             total_pokes += pokemon[poke]["count"]
             total_team_members += sum(pokemon[poke]["Teammates"].values())
 
-        data["info"]["total_pokes"] = round(total_pokes, 3)
-        data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, 3)
-        data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], 3)
+        data["info"]["total_pokes"] = round(total_pokes, DIGITS_KEPT)
+        data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, DIGITS_KEPT)
+        data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], DIGITS_KEPT)
 
         # Round values to reduce size of files.
         # Also convert to percentages.
         for poke in pokemon:
-            pokemon[poke]["usage"] = round(pokemon[poke]["usage"], 3)
+            pokemon[poke]["usage"] = round(pokemon[poke]["usage"], DIGITS_KEPT)
             pokemon[poke]["Moves"] = \
-                {m: round(data/pokemon[poke]["count"], 3) for (m, data)
+                {m: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (m, data)
                  in pokemon[poke]["Moves"].items()}
             pokemon[poke]["Abilities"] = \
-                {a: round(data/pokemon[poke]["count"], 3) for (a, data)
+                {a: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (a, data)
                  in pokemon[poke]["Abilities"].items()}
             pokemon[poke]["Items"] = \
-                {i: round(data/pokemon[poke]["count"], 3) for (i, data)
+                {i: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (i, data)
                  in pokemon[poke]["Items"].items()}
 
     if counters:
@@ -193,22 +195,22 @@ def prepare_files(json_file, threat_file, teammate_file):
     return data["info"]["metagame"], data["info"]["number of battles"], data["info"]["counters"]
 
 
-def _users(pokemon, key):  # Creates data for how often a move/ability/item is used by different Pokemon.
+def _users(pokemon, key):  # Creates data for how often a move/ability/item is used by different Pokemon. Also strips low usage things.
     items = {}
     for poke in pokemon:
-        sorted_items = sorted(pokemon[poke][key].items(), key=lambda i: -i[1])[:10]
-        pokemon[poke][key] = dict([i for i in sorted_items if i[1] > .05])
+        sorted_items = sorted(pokemon[poke][key].items(), key=lambda i: -i[1])[:MAX_SUB_TO_KEEP]
+        pokemon[poke][key] = dict([i for i in sorted_items if i[1] > MIN_SUB_USAGE])
         usage = pokemon[poke]["usage"]
         for k in pokemon[poke][key]:
             use = pokemon[poke][key][k]
-            entry = (poke, round(usage * use, 3), use, usage)
+            entry = (poke, round(usage * use, DIGITS_KEPT), use, usage)
             if k in items:
                 items[k].append(entry)
             else:
                 items[k] = [entry]
 
     for item in items:
-        items[item] = sorted(items[item], key=lambda t: -t[1])[:10]
+        items[item] = sorted(items[item], key=lambda t: -t[1])[:MAX_SUB_TO_KEEP]
 
     return dict(sorted(items.items()))
 
