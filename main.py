@@ -32,10 +32,10 @@ def get_md(dataset):
     except FileNotFoundError:
         abort(404)
 
+
 @functools.lru_cache(maxsize=12, typed=False)
 def get_dex(gen):
     """Get generation appropriate dex for a format."""
-
     try:
         return dex.Dex(DataFilePath(DEX_PREFIX + gen + DEX_SUFFIX))
     except FileNotFoundError:
@@ -140,6 +140,7 @@ def move_dex(dataset):
     return render_template("MoveDex.html",
                            moves=md.moves, dataset=dataset,
                            gen=md.gen, dex=get_dex(md.gen))
+
 
 @app.route("/abilities/<dataset>/<abil>/")
 def display_ability(dataset, abil):
