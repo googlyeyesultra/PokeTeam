@@ -14,7 +14,7 @@ TEAM_WEIGHT_DEFAULT = 5
 USAGE_WEIGHT_DEFAULT = 2  # TODO maybe move this up to 3
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True)  # Immutable prevents all weights from being made 0.
 class Weights:
     """Simple wrapper for score weights."""
 
@@ -38,8 +38,6 @@ class Weights:
         object.__setattr__(self, 'counter', counter_weight)
         object.__setattr__(self, 'team', team_weight)
         object.__setattr__(self, 'usage', usage_weight)
-        object.__setattr__(self, 'total',
-                           counter_weight + team_weight + usage_weight)
 
 
 class MetagameData:
