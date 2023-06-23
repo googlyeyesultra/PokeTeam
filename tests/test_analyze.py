@@ -21,6 +21,22 @@ class AnalyzeTestCase(unittest.TestCase):
                         self.validate_scores(scores)
                         self.validate_threats(threats)
 
+    def test_only_one_nonzero_weight(self):
+        # If only one weight is nonzero, combined score should sort the same as the nonzero weight.
+        poke_iter = iter(self.md.pokemon)
+        poke1 = next(poke_iter)
+        poke2 = next(poke_iter)
+        poke3 = next(poke_iter)
+
+        for weight_index in range(2):
+            weights_packed = [0, 0, 0]
+            weights_packed[weight_index] = 1
+            weights = analyze.Weights(*weights_packed)
+            _, scores, _, _ = self.md.analyze([poke1, poke2, poke3], weights)
+            sorted_by_combined = sorted(scores, key=lambda kv: kv[1])
+            sorted_by_weight = sorted(scores, key=lambda kv: kv[2+weight_index])
+            self.assertListEqual(sorted_by_combined, sorted_by_weight)
+
     def test_order_invariance(self):
         poke_iter = iter(self.md.pokemon)
         poke1 = next(poke_iter)

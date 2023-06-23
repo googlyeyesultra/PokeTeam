@@ -1,0 +1,68 @@
+{
+	"info": {
+		"metagame": "gen32test",
+		"number of battles": 500,
+		"counters": true,
+		"total_pokes": 5900,
+		"pokes_per_team": 5.9,
+		"num_teams": 1000,
+		"gen": "32",
+		"level": 100
+	},
+	"indices": {
+		"Rock": 0,
+		"Paper": 1,
+		"Scissors": 2,
+		"MegaRock": 3,
+		"MegaPaper": 4,
+		"MegaScissors": 5
+	},
+	"pokemon": {
+		"Rock": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.1,
+			"Items": {},
+			"count": 4394
+		},
+		"Paper": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.2,
+			"Items": {},
+			"count": 4394
+		},
+		"Scissors": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.3,
+			"Items": {},
+			"count": 4394
+		},
+		"MegaRock": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.4,
+			"Items": {},
+			"count": 4394
+		},
+		"MegaPaper": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.5,
+			"Items": {},
+			"count": 4394
+		},
+		"MegaScissors": {
+			"Moves": {},
+			"Abilities": {},
+			"usage": 0.6,
+			"Items": {},
+			"count": 4394
+		}
+	},
+	"abilities": {},
+	"moves": {},
+	"items": {},
+	"speed_tiers": {}
+}
