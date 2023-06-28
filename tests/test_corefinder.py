@@ -30,4 +30,5 @@ class CoreFinderTestCase(unittest.TestCase):
             c = frozenset(core)
             for c_set in cores_set:
                 self.assertFalse(c.issubset(c_set))
+                self.assertFalse(c_set.issubset(c))
             cores_set.add(c)
