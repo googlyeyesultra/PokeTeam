@@ -18,16 +18,19 @@
     <tbody>
       {% for format in formats %}
         <tr>
-          <td>{{format[0]}}</td>
-          <td class="dt-body-right">{{format[1]}}</td>
+          <td>
+            <span class="{% if format[1]%}has_counters{% else %}no_counters{% endif %}">
+              {{format[0]}}
+            </span>
+          </td>
+          <td class="dt-body-right">
+              {{format[2]}}
+          </td>
           <td class="ratings-wrapper">
-            {% for rating in format[2] %}
-              <span class="{% if rating[1]%}has_counters{% else %}no_counters{% endif %}">
-              {{lb.analysis_link(format[0], rating[0])}}
-              </span>
+            {% for rating in format[3] %}
+              {{lb.analysis_link(format[0], rating)}}
             {% endfor %}
           </td>
-
         </tr>
       {% endfor %}
     </tbody>

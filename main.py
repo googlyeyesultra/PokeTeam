@@ -52,10 +52,10 @@ def select_data():
         top = f.read().splitlines()
         formats = []
         for metagame in top:
-            format_name, battles_played, ratings = metagame.split(" ")
+            format_name, battles_played, counters, ratings = metagame.split(" ")
+            counters = counters == "C"
             ratings = ratings.split(",")
-            ratings = [(r[:-1], r[-1] == "C") for r in ratings]
-            formats.append((format_name, battles_played, ratings))
+            formats.append((format_name, counters, battles_played, ratings))
 
     return render_template("DataSelector.html", date=date, formats=formats)
 
@@ -71,6 +71,10 @@ def display_pokemon(dataset, poke):
 
     if md.counters:
         counters = sorted(md.find_counters(poke).items(), key=lambda kv: -kv[1])
+        for i in range(len(counters)):  # Only show things that actually counter.
+            if counters[i][1] <= 0:
+                counters = counters[:i]
+                break
     else:
         counters = None
 

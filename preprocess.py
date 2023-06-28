@@ -3,8 +3,8 @@
 import ujson as json
 import numpy as np
 import re
+import os
 
-COUNTER_COVERED_FACTOR = 1
 MIN_USAGE = 0.0015
 MIN_BATTLES = 500
 SPEED_TIER_THRESHOLD = .005
@@ -12,8 +12,27 @@ MIN_SUB_USAGE = .05  # Minimum usage for items/abilities/moves.
 MAX_SUB_TO_KEEP = 10  # Most items/abilities/moves to keep per Pokemon, and Pokemon per move/item/ability.
 DIGITS_KEPT = 3
 
+# TODO json dump file options everywhere in this file (raise if nan, force utf-8)
 
-def prepare_files(json_file, threat_file, teammate_file):
+# TODO check if no counters data, if so don't write file
+def raw_counters(json_file, raw_counters_file):
+    if "doubles" in json_file.name or "vgc" in json_file.name:
+        # Doubles formats don't have good checks/counters data,
+        # but it's sometimes included in the raw data.
+        return
+
+    with open(json_file, "r", encoding="utf-8") as f:
+        data = json.load(f)["data"]
+        pokemon_counters = {}
+        for poke in data:
+            pokemon_counters[poke] = data[poke]["Checks and Counters"]
+
+    with open(raw_counters_file, "w", encoding="utf-8") as f:
+        json.dump(pokemon_counters, f)
+
+
+# TODO args may not be str?
+def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
     """Validate and pre-process files directly from Smogon.
 
     Removes Pokemon with extremely low usage.
@@ -25,6 +44,8 @@ def prepare_files(json_file, threat_file, teammate_file):
     Args:
         json_file (str): Path to file containing raw version of
         Smogon's chaos json for a metagame. File will be overwritten.
+
+        raw_counters_file (str): Path to file containing counters data for 0-rating version of metagame.
 
         threat_file (str): Path to save the numpy threat matrix to.
         File will be overwritten.
@@ -41,11 +62,7 @@ def prepare_files(json_file, threat_file, teammate_file):
         int: number of battles in metagame (not filtered by rating)
     """
 
-    counters = True
-    if "doubles" in json_file.name or "vgc" in json_file.name:
-        # Doubles formats don't have good checks/counters data,
-        # but it's sometimes included in the raw data.
-        counters = False
+    counters = os.path.isfile(raw_counters_file)
 
     indices = {}
     with open(json_file, "r", encoding="utf-8") as file:
@@ -61,7 +78,6 @@ def prepare_files(json_file, threat_file, teammate_file):
 
         pokemon_to_remove = []
         while True:
-            has_counters_data = 0
             for poke in pokemon_to_remove:
                 del pokemon[poke]
             pokemon_to_remove = []
@@ -76,19 +92,8 @@ def prepare_files(json_file, threat_file, teammate_file):
                 if len(pokemon[poke]["Teammates"]) < 5 or sum(pokemon[poke]["Teammates"].values()) == 0:
                     pokemon_to_remove.append(poke)
 
-                if counters:
-                    pokemon[poke]["Checks and Counters"] = \
-                        {c: data for (c, data)
-                         in pokemon[poke]["Checks and Counters"].items()
-                         if c in pokemon}
-                    if pokemon[poke]["Checks and Counters"]:
-                        has_counters_data += 1
-
             if not pokemon_to_remove:
                 break
-
-        if has_counters_data <= len(pokemon) / 2:
-            counters = False
             
         data["info"]["counters"] = counters
 
@@ -133,11 +138,13 @@ def prepare_files(json_file, threat_file, teammate_file):
                  in pokemon[poke]["Items"].items()}
 
     if counters:
-        threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
-        for index, mon in enumerate(pokemon):
-            for column, c_mon in enumerate(pokemon):
-                threat_matrix[index, column] = \
-                    _threat_for_poke(pokemon, c_mon, mon)
+        with open(raw_counters_file, "r", encoding="utf-8") as raw_c:
+            raw_c_data = json.load(raw_c)
+            threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
+            for index, mon in enumerate(pokemon):
+                for column, c_mon in enumerate(pokemon):
+                    threat_matrix[index, column] = \
+                        _threat_for_poke(pokemon, raw_c_data, c_mon, mon)
 
         with open(threat_file, "wb") as file:
             np.save(file, threat_matrix)
@@ -215,11 +222,12 @@ def _users(pokemon, key):  # Creates data for how often a move/ability/item is u
     return dict(sorted(items.items()))
 
 
-def _threat_for_poke(pokemon, threat, poke):
+def _threat_for_poke(pokemon, counters_data, threat, poke):
     """Calculate how threatening threat is to poke.
 
     Args:
         pokemon (dict[str] -> dict): Data for all Pokemon in the format.
+        counters_data (dict[str] -> dict): Counters from 0 rating for all Pokemon in the format.
         threat (str): Name of Pokemon that is a threat.
         poke (str): Name of a Pokemon that is being threatened.
 
@@ -228,18 +236,12 @@ def _threat_for_poke(pokemon, threat, poke):
         Higher values are more threatening. Ranges from neg->pos.
 
     """
-    if poke not in pokemon[threat]["Checks and Counters"]:
-        return 0
+
+    if poke not in counters_data[threat]:
+            return 0
 
     weight = pokemon[threat]["usage"]
-    strength = (pokemon[poke]["Checks and Counters"][threat][1]
-                - pokemon[threat]["Checks and Counters"][poke][1])
-    sum_wins = (pokemon[poke]["Checks and Counters"][threat][1]
-                + pokemon[threat]["Checks and Counters"][poke][1])
-    if sum_wins == 0:
-        return 0
-    strength /= sum_wins  # Scale so that we eliminate ties.
-    if strength < 0:
-        # Don't need one counter for every mon that's weak to something.
-        strength *= COUNTER_COVERED_FACTOR
+    strength = (counters_data[poke][threat][1]
+                - counters_data[threat][poke][1])
+
     return strength * weight

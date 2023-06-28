@@ -28,24 +28,29 @@ def update():
     print("Data downloaded.")
 
     format_playstats = {}
+    format_counters = {}
     format_ratings = {}
 
-    for file in os.scandir(TEMP_DATA_DIR):
+    for file in sorted(os.scandir(TEMP_DATA_DIR), key=lambda f: f.name):  # Sort so we always start with 0 rating.
         try:
+            # Files are named like gen8ou-1500.json
+            rating = file.name[:-5].split("-")[1]
+            raw_counters_filename = file.path.rsplit("-", 1)[0] + TEMP_COUNTERS_FILE
+            if rating == "0":
+                preprocess.raw_counters(file, raw_counters_filename)
+
             threat_filename = file.path[:-5] + THREAT_FILE
             teammate_filename = file.path[:-5] + TEAMMATE_FILE
             format_name, times_played, has_counters = \
-                preprocess.prepare_files(file, threat_filename, teammate_filename)
-
-            # Files are named like gen8ou-1500.json
-            rating = file.name[:-5].split("-")[1]
+                preprocess.prepare_files(file, raw_counters_filename, threat_filename, teammate_filename)
 
             if format_name not in format_playstats:
                 # Times played data is same for all ratings.
                 format_playstats[format_name] = times_played
-                format_ratings[format_name] = [(rating, has_counters)]
+                format_counters[format_name] = has_counters
+                format_ratings[format_name] = [rating]
             else:
-                format_ratings[format_name].append((rating, has_counters))
+                format_ratings[format_name].append(rating)
 
             print(file.name + " is valid.")
         except ValueError as e:
@@ -59,10 +64,8 @@ def update():
     with open(TEMP_DATA_DIR + FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
             line = form + " " + str(format_playstats[form]) + " "
-            rating_strings = []
-            for rating in sorted(format_ratings[form], key=lambda k: k[0]):
-                rating_strings.append(rating[0] + ("C" if rating[1] else "N"))
-
+            line += "C " if format_counters[form] else "N "
+            rating_strings = sorted(format_ratings[form], key=lambda k: k[0])
             line += ",".join(rating_strings) + "\n"
             top_formats_fd.write(line)
 
@@ -72,6 +75,10 @@ def update():
 
     print("Building speed tiers.")
     build_speed_tiers()
+
+    for file in os.scandir(TEMP_DATA_DIR):
+        if file.name.endswith(TEMP_COUNTERS_FILE):
+            os.remove(file)
 
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):
