@@ -79,6 +79,11 @@ def display_pokemon(dataset, poke):
         counters = None
 
     teammates = sorted(md.partner_scores(poke).items(), key=lambda kv: -kv[1])
+    for i in range(len(teammates)):  # Only show positive teammates.
+        if teammates[i][1] <= 0:
+            teammates = teammates[:i]
+            break
+
     items = list(md.pokemon[poke]["Items"].items())
     moves = list(md.pokemon[poke]["Moves"].items())
     abilities = list(md.pokemon[poke]["Abilities"].items())
