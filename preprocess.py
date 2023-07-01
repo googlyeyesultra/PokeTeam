@@ -238,7 +238,7 @@ def _threat_for_poke(pokemon, counters_data, threat, poke):
     """
 
     if poke not in counters_data[threat]:
-            return 0
+        return 0
 
     weight = pokemon[threat]["usage"]
     strength = (counters_data[poke][threat][1]
