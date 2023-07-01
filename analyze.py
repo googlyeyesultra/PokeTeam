@@ -160,7 +160,9 @@ class MetagameData:
             t_scores = np.ones(len(self.pokemon))
 
         if self.counters and team:
-            new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + self._threat_matrix
+            # Previous version calculated what the new threats would be. That tends to lead to samey recommendations.
+            # This instead ignores to what degree a new Pokemon might add new threats or make threats worse, only how it covers existing threats.
+            new_threats = np.repeat(threats[None, :], len(self.pokemon), axis=0) + np.where(self._threat_matrix < 0, self._threat_matrix, 0)
             sum_pos = np.sum(np.where(new_threats > 0, new_threats, 0), 1)
             c_scores = 100 ** (-sum_pos / (len(team) + 1))
         else:
