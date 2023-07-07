@@ -3,7 +3,7 @@
 This module is responsible for loading data for a given metagame.
 It evaluates Pokemon and teams and makes recommendations.
 """
-
+from collections import Counter
 from dataclasses import dataclass
 import ujson as json
 import numpy as np
@@ -156,6 +156,13 @@ class MetagameData:
         team_indices = [self._indices[t] for t in team]
         if team:
             t_scores = gmean(self._team_matrix[team_indices], 0, nan_policy="raise")
+            team_count = Counter(team_indices)
+            for index in team_count:
+                # Our formula results in .5 / usage more in the team matrix for duplicates.
+                # For instance, if every team has 3 Blisseys, it would be .5 / usage(Blissey) more than if every team had 2.
+                t_scores[index] -= .5 * (team_count[index] - 1) / u_scores[index]
+                if t_scores[index] < 0:  # Negatives work poorly with geometric mean.
+                    t_scores[index] = 0
         else:
             t_scores = np.ones(len(self.pokemon))
 

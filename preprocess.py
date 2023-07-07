@@ -155,8 +155,9 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
             if c_mon not in pokemon[mon]["Teammates"]:
                 team_matrix[index, column] = 0
             else:
+                cAndC = pokemon[c_mon]["Teammates"][c_mon] if c_mon in pokemon[c_mon]["Teammates"] else 0
                 num = pokemon[mon]["Teammates"][c_mon]
-                denom = pokemon[mon]["count"] - num
+                denom = pokemon[mon]["count"] - num + cAndC
                 if denom <= 0:
                     team_matrix[index, column] = np.inf
                 else:
