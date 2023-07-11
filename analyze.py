@@ -7,7 +7,7 @@ from collections import Counter
 from dataclasses import dataclass
 import ujson as json
 import numpy as np
-from scipy.stats.mstats import gmean
+from scipy.stats import gmean
 
 COUNTER_WEIGHT_DEFAULT = 2
 TEAM_WEIGHT_DEFAULT = 5
