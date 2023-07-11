@@ -167,8 +167,7 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
         np.save(file, team_matrix)
 
     # Want to match gen1, gen8, gen10, but not the extra digit in gen81v1.
-    # Supports through gen 19.
-    data["info"]["gen"] = re.match("^gen(1?[0-9]?)", data["info"]["metagame"]).group(1)
+    data["info"]["gen"] = re.match("^gen(\d+)(?!v\d)", data["info"]["metagame"]).group(1)
 
     # Clear the raw data since we only need the matrices.
     for poke in pokemon:
