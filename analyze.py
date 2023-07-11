@@ -77,7 +77,7 @@ class MetagameData:
                 self._threat_matrix = np.load(file)
 
         with open(team_file, "rb") as file:
-            self._team_matrix = np.load(file)
+            self.team_matrix = np.load(file)
 
     def _find_threats(self, team):
         """Generate threat ratings for threats for a provided team.
@@ -155,7 +155,7 @@ class MetagameData:
         u_scores = [self.pokemon[p]["usage"] for p in self.pokemon]
         team_indices = [self._indices[t] for t in team]
         if team:
-            t_scores = gmean(self._team_matrix[team_indices], 0, nan_policy="raise")
+            t_scores = gmean(self.team_matrix[team_indices], 0, nan_policy="raise")
             team_count = Counter(team_indices)
             for index in team_count:
                 # Our formula results in .5 / usage more in the team matrix for duplicates.
@@ -366,7 +366,7 @@ class MetagameData:
         """
         teammates = {}
 
-        sliced = self._team_matrix[self._indices[poke]]
+        sliced = self.team_matrix[self._indices[poke]]
         for partner in self.pokemon:
             teammates[partner] = sliced[self._indices[partner]] * self.pokemon[partner]["usage"]
 

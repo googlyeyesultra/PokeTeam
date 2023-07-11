@@ -34,7 +34,7 @@ class CoreFinder:
         self.pokemon_names = list(md.pokemon.keys())
         usages = [md.pokemon[poke]["usage"] ** usage_weight for poke in md.pokemon]
 
-        core_matrix = np.array(md._team_matrix)
+        core_matrix = np.array(md.team_matrix)
         core_matrix *= usages
         np.fill_diagonal(core_matrix, 0)
         core_matrix *= core_matrix.transpose()
