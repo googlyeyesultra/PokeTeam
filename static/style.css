@@ -631,6 +631,12 @@ body {
     background-color: var(--greenshift-2);
 }
 
+.github_link {
+    text-align: center;
+    font-size: .7em;
+    padding-top: 1em;
+}
+
 /* Table sort controls - code from datatables default styling. */
 table.dataTable td.dt-control {
   text-align: center;
