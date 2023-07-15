@@ -27,7 +27,8 @@ DIGITS_KEPT = 3  # We round off numbers to shrink the files.
 class ValidationError(Exception):
     """Used to indicate a file can't be used.
     This is not for malformed files, but for cases where there is insufficient data
-    or there is something about the metagame that makes it unusuable."""
+    or there is something about the metagame that makes it unusuable.
+    """
     pass
 
 
