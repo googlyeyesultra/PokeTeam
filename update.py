@@ -36,8 +36,11 @@ def update():
             # Files are named like gen8ou-1500.json
             rating = file.name[:-5].split("-")[1]
             raw_counters_filename = file.path.rsplit("-", 1)[0] + TEMP_COUNTERS_FILE
-            if rating == "0":
-                preprocess.raw_counters(file, raw_counters_filename)
+
+            # Doubles formats don't have good checks/counters data, but it's sometimes included in the raw data.
+            if "doubles" not in file.name and "vgc" not in file.name:
+                if rating == "0":  # We share counters data across ratings, and 0 rating has the most data.
+                    preprocess.raw_counters(file, raw_counters_filename)
 
             threat_filename = file.path[:-5] + THREAT_FILE
             teammate_filename = file.path[:-5] + TEAMMATE_FILE
@@ -45,7 +48,7 @@ def update():
                 preprocess.prepare_files(file, raw_counters_filename, threat_filename, teammate_filename)
 
             if format_name not in format_playstats:
-                # Times played data is same for all ratings.
+                # Number of times played and the existence of counters is same for all ratings.
                 format_playstats[format_name] = times_played
                 format_counters[format_name] = has_counters
                 format_ratings[format_name] = [rating]
@@ -53,7 +56,7 @@ def update():
                 format_ratings[format_name].append(rating)
 
             print(file.name + " is valid.")
-        except ValueError as e:
+        except preprocess.ValidationError as e:
             os.remove(file)
             print(file.name + " failed validation: " + str(e))
 
@@ -113,6 +116,7 @@ def _download_data():
         for file in os.scandir(TEMP_DATA_DIR):
             os.remove(file)
 
+    # First link is just to go back, so we skip that.
     for metagame in re.findall(r'<a href="(.*)"', chaos_page.text)[1:]:
         meta_url = chaos_url + metagame
         req = requests.get(meta_url)
