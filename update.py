@@ -32,18 +32,19 @@ def update():
     format_ratings = {}
 
     for file in sorted(os.scandir(TEMP_DATA_DIR), key=lambda f: f.name):  # Sort so we always start with 0 rating.
+        # Files are named like gen8ou-1500.json
+        rating = file.name[:-5].split("-")[1]
+        raw_counters_filename = file.path.rsplit("-", 1)[0] + TEMP_COUNTERS_FILE
+
+        # Doubles formats don't have good checks/counters data, but it's sometimes included in the raw data.
+        if "doubles" not in file.name and "vgc" not in file.name:
+            if rating == "0":  # We share counters data across ratings, and 0 rating has the most data.
+                preprocess.raw_counters(file, raw_counters_filename)
+
+        threat_filename = file.path[:-5] + THREAT_FILE
+        teammate_filename = file.path[:-5] + TEAMMATE_FILE
+
         try:
-            # Files are named like gen8ou-1500.json
-            rating = file.name[:-5].split("-")[1]
-            raw_counters_filename = file.path.rsplit("-", 1)[0] + TEMP_COUNTERS_FILE
-
-            # Doubles formats don't have good checks/counters data, but it's sometimes included in the raw data.
-            if "doubles" not in file.name and "vgc" not in file.name:
-                if rating == "0":  # We share counters data across ratings, and 0 rating has the most data.
-                    preprocess.raw_counters(file, raw_counters_filename)
-
-            threat_filename = file.path[:-5] + THREAT_FILE
-            teammate_filename = file.path[:-5] + TEAMMATE_FILE
             format_name, times_played, has_counters = \
                 preprocess.prepare_files(file, raw_counters_filename, threat_filename, teammate_filename)
 
@@ -61,11 +62,12 @@ def update():
             print(file.name + " failed validation: " + str(e))
 
     with open(TEMP_DATA_DIR + DATE_FILE, "w", encoding="utf-8") as date_fd:
-        date_fd.write(date)
+        date_fd.write(date)  # Store the month the data is from so we know if we're current.
 
     top_formats = sorted(format_playstats, key=format_playstats.get, reverse=True)
     with open(TEMP_DATA_DIR + FORMATS_FILE, "w", encoding="utf-8") as top_formats_fd:
         for form in top_formats:
+            # Lines in file look like: metagame #battles (C or N) rating1,rating2,rating3,etc
             line = form + " " + str(format_playstats[form]) + " "
             line += "C " if format_counters[form] else "N "
             rating_strings = sorted(format_ratings[form], key=lambda k: k[0])
@@ -79,17 +81,19 @@ def update():
     print("Building speed tiers.")
     build_speed_tiers()
 
+    print("Removing temporary files.")
     for file in os.scandir(TEMP_DATA_DIR):
         if file.name.endswith(TEMP_COUNTERS_FILE):
             os.remove(file)
 
+    print("Moving data to active directory.")
     if os.path.isdir(DATA_DIR):
         for file in os.scandir(DATA_DIR):
             os.remove(file)
         os.rmdir(DATA_DIR)
     os.rename(TEMP_DATA_DIR, DATA_DIR)
 
-    print("Clearing old files.")
+    print("Clearing old files from cloud.")
     session = boto3.session.Session(aws_access_key_id=os.environ["S3_ACCESS_KEY"],
                                     aws_secret_access_key=os.environ["S3_SECRET_KEY"])
     bucket = session.resource("s3", endpoint_url=os.environ["S3_ENDPOINT"]).Bucket(os.environ["BUCKET"])
