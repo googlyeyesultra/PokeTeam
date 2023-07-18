@@ -1,9 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ item }}{% endblock %}
 {% block below_navbar %}
-  <div class="info-box">
-    <span class="info-title">{{lb.item_title(item, dataset)}}</span>
-    <div class="info-description">{{dex.items[item]["desc"]}}</div>
-  </div>
-  {% include "ItemHoldersTable.html" %}
+<div class="info-box">
+    <span class="info-title">{{ lb.item_title(item, dataset) }}</span>
+    <div class="info-description">{{ dex.items[item]["desc"] }}</div>
+</div>
+{% include "ItemHoldersTable.html" %}
 {% endblock %}

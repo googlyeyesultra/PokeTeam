@@ -1,26 +1,26 @@
 {% extends "Base.html" %}
-  {% block content %}
-  <div id="top_wrapper">
-    <div class="format-name">
-      {{ dataset }}
+{% block content %}
+    <div id="top_wrapper">
+        <div class="format-name">
+           {{ dataset }}
+        </div>
+        <header class="topnav">
+            <label id="hamburger_icon" for="navbar_hamburger"></label>
+            <input type="checkbox" id="navbar_hamburger">
+            <nav class="topnav-links">
+                <a href="{{ url_for('select_data') }}">Data Selector</a>
+                <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
+                <a href="{{ url_for('cores', dataset=dataset) }}">Core Finder</a>
+                <a href="{{ url_for('pokedex', dataset=dataset) }}">Pokédex</a>
+                <a href="{{ url_for('item_dex', dataset=dataset) }}">Items</a>
+                <a href="{{ url_for('move_dex', dataset=dataset) }}">Moves</a>
+                <a href="{{ url_for('ability_dex', dataset=dataset) }}">Abilities</a>
+                <a href="{{ url_for('speed_tiers', dataset=dataset) }}">Speed Tiers</a>
+            </nav>
+        </header>
     </div>
-    <header class="topnav">
-      <label id="hamburger_icon" for="navbar_hamburger"></label>
-      <input type="checkbox" id="navbar_hamburger">
-      <nav class="topnav-links">
-        <a href="{{ url_for('select_data') }}">Data Selector</a>
-        <a href="{{ url_for('analysis', dataset=dataset) }}">Team Analysis</a>
-        <a href="{{ url_for('cores', dataset=dataset) }}">Core Finder</a>
-        <a href="{{ url_for('pokedex', dataset=dataset) }}">Pokédex</a>
-        <a href="{{ url_for('item_dex', dataset=dataset) }}">Items</a>
-        <a href="{{ url_for('move_dex', dataset=dataset) }}">Moves</a>
-        <a href="{{ url_for('ability_dex', dataset=dataset) }}">Abilities</a>
-        <a href="{{ url_for('speed_tiers', dataset=dataset) }}">Speed Tiers</a>
-      </nav>
-    </header>
-  </div>
-  <div class="content">
-  {% block below_navbar %}
-  {% endblock %}
-  </div>
+    <div class="content">
+      {% block below_navbar %}
+      {% endblock %}
+    </div>
 {% endblock %}

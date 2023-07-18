@@ -5,14 +5,10 @@
         <th class="bst-stat-name">{{stat}}:</th>
         <td class="bst-stat-value">{{dex.pokemon[poke].base_stats[stat]}}</td>
         <td>
-            <div class="bst-stat-bar"
-            style="--bar-hue: {{[145, [dex.pokemon[poke].base_stats[stat]-40, 0] | max ] | min}}; width: {{dex.pokemon[poke].base_stats[stat] * 2 / 3 | int}}px">
+            <div class="bst-stat-bar" style="--bar-hue: {{[145, [dex.pokemon[poke].base_stats[stat]-40, 0] | max ] | min}}; width: {{dex.pokemon[poke].base_stats[stat] * 2 / 3 | int}}px">
             </div>
         </td>
     </tr>
-
     {% endfor %}
     </tbody>
-
-
 </table>

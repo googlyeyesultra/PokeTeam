@@ -3,26 +3,26 @@
 {% block below_navbar %}
 <form id=analyze>
 <div id="poke-wrapper">
-  <div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon"></div>
+    <div data-url={{url_for('display_pokemon', dataset=dataset, poke="~")}} id="input_pokemon"></div>
 </div>
 <details class="advanced-options">
-  <summary>Advanced Options</summary>
-  <table class="alignment-table">
-    <tbody>
-      {% if has_counters_data %}
-      <tr><td>Counter Weighting:</td>
-        <td><input type="number" name="counter_weight" min=0.1 value={{counter_setting}} required step=".1"></td>
-      </tr>
-      {% endif %}
-      <tr><td>Team Weighting:</td>
-        <td><input type="number" name="team_weight" min=0.1 value={{team_setting}} required step=".1"></td>
-      </tr>
-      <tr><td>Usage Weighting:</td>
-        <td><input type="number" name="usage_weight" min=0.1 value={{usage_setting}} required step=".1"></td>
-      </tr>
-    </tbody>
-  </table>
-  <input type="submit" value="Analyze">
+    <summary>Advanced Options</summary>
+    <table class="alignment-table">
+        <tbody>
+            {% if has_counters_data %}
+            <tr><td>Counter Weighting:</td>
+                <td><input type="number" name="counter_weight" min=0.1 value={{counter_setting}} required step=".1"></td>
+            </tr>
+            {% endif %}
+            <tr><td>Team Weighting:</td>
+                <td><input type="number" name="team_weight" min=0.1 value={{team_setting}} required step=".1"></td>
+            </tr>
+            <tr><td>Usage Weighting:</td>
+                <td><input type="number" name="usage_weight" min=0.1 value={{usage_setting}} required step=".1"></td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="Analyze">
 </details>
 </form>
 <div id="analysis_location"></div>

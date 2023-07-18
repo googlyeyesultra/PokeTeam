@@ -1,14 +1,14 @@
 {% extends "NavBar.html" %}
 {% block title %}Speed Tiers{% endblock %}
 {% block below_navbar %}
-    <span>This lists relevant speed tiers within a format, based on the actual usage of EV spreads. There are some caveats:</span>
-    <ul>
-        <li>IVs are assumed to be 31, unless the Pokémon is running a -Speed nature with 0 Speed EVs (in which case 0 IVs are assumed).</li>
-        <li>This means formats where Hidden Power depends on IVs do not take that into account.</li>
-        <li>In-battle form changes are not taken into account.</li>
-        <li>Metagames like 350 Cup that change base stats or stat calculation will not be accurate.</li>
-        <li>Nintendo Cup 1997 has a unique mechanic where Pokémon can be anywhere from level 50-55. This assumes level 50.</li>
-    </ul>
+<span>This lists relevant speed tiers within a format, based on the actual usage of EV spreads. There are some caveats:</span>
+<ul>
+    <li>IVs are assumed to be 31, unless the Pokémon is running a -Speed nature with 0 Speed EVs (in which case 0 IVs are assumed).</li>
+    <li>This means formats where Hidden Power depends on IVs do not take that into account.</li>
+    <li>In-battle form changes are not taken into account.</li>
+    <li>Metagames like 350 Cup that change base stats or stat calculation will not be accurate.</li>
+    <li>Nintendo Cup 1997 has a unique mechanic where Pokémon can be anywhere from level 50-55. This assumes level 50.</li>
+</ul>
 
 <table id="speed-tiers">
     <colgroup>

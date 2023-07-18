@@ -1,28 +1,23 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ poke }}{% endblock %}
 {% block below_navbar %}
-  <div class="info-box">
+<div class="info-box">
     <div class="info-title">{{poke}}</div>
     <div class="side-by-side">
-      <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
-      {% include "BaseStats.html" %}
+        <img class="poke-sprite" data-poke="{{poke}}" data-gen="{{gen}}">
+        {% include "BaseStats.html" %}
     </div>
     <table class="info-table">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Usage</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="poke-type" data-types='{{dex.pokemon[poke].types|tojson}}'></td>
-          <td>{{"{:.1%}".format(usage)}}</td>
-        </tr>
-      </tbody>
+        <thead><tr><th>Type</th><th>Usage</th></tr></thead>
+        <tbody>
+            <tr>
+                <td class="poke-type" data-types='{{dex.pokemon[poke].types|tojson}}'></td>
+                <td>{{"{:.1%}".format(usage)}}</td>
+            </tr>
+        </tbody>
     </table>
-  </div>
-  <div class="tables-wrapper">
+</div>
+<div class="tables-wrapper">
     {% if counters %}
       {% include "CountersTable.html" %}
     {% endif %}
@@ -30,5 +25,5 @@
     {% include "MovesTable.html" %}
     {% include "ItemsTable.html" %}
     {% include "AbilitiesTable.html" %}
-  </div>
+</div>
 {% endblock %}

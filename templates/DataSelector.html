@@ -2,39 +2,39 @@
 {% block title %}Pokéteam{% endblock %}
 {% block content %}
 <div class="content">
-  <img src="{{ url_for('static', filename='icons/logo.png') }}">
-  <div>Pick the dataset to use.</div>
-  <div>Some datasets don't have checks and counters data available.</div>
-  <div>These datasets have a few features disabled.</div>
-  <div>Data is from {{date}}.</div>
-  <table class="data-table sortable">
-    <thead>
-        <tr>
-            <th class="searchable default_desc">Format</th>
-            <th class="default_desc sort_desc">Battles</th>
-            <th class="unsortable">Ratings</th>
-        </tr>
-    </thead>
-    <tbody>
-      {% for format in formats %}
-        <tr>
-          <td>
-            <span class="{% if format[1]%}has_counters{% else %}no_counters{% endif %}">
-              {{format[0]}}
-            </span>
-          </td>
-          <td class="dt-body-right">
-              {{format[2]}}
-          </td>
-          <td class="ratings-wrapper">
-            {% for rating in format[3] %}
-              {{lb.analysis_link(format[0], rating)}}
+    <img src="{{ url_for('static', filename='icons/logo.png') }}">
+    <div>Pick the dataset to use.</div>
+    <div>Some datasets don't have checks and counters data available.</div>
+    <div>These datasets have a few features disabled.</div>
+    <div>Data is from {{date}}.</div>
+    <table class="data-table sortable">
+        <thead>
+            <tr>
+                <th class="searchable default_desc">Format</th>
+                <th class="default_desc sort_desc">Battles</th>
+                <th class="unsortable">Ratings</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for format in formats %}
+                <tr>
+                    <td>
+                        <span class="{% if format[1]%}has_counters{% else %}no_counters{% endif %}">
+                            {{format[0]}}
+                        </span>
+                    </td>
+                    <td class="dt-body-right">
+                          {{format[2]}}
+                    </td>
+                    <td class="ratings-wrapper">
+                        {% for rating in format[3] %}
+                            {{lb.analysis_link(format[0], rating)}}
+                        {% endfor %}
+                    </td>
+                </tr>
             {% endfor %}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <a class="github_link" href="https://github.com/googlyeyesultra/PokeTeam">Project homepage</a>
+        </tbody>
+    </table>
+    <a class="github_link" href="https://github.com/googlyeyesultra/PokeTeam">Project homepage</a>
 </div>
 {% endblock %}

@@ -1,9 +1,9 @@
 {% extends "NavBar.html" %}
 {% block title %}{{ abil }}{% endblock %}
 {% block below_navbar %}
-  <div class="info-box">
+<div class="info-box">
     <span class="info-title">{{ abil }}</span>
     <div class="info-description">{{dex.abilities[abil]["full_desc"]}}</div>
-  </div>
-  {% include "AbilityUsersTable.html" %}
+</div>
+{% include "AbilityUsersTable.html" %}
 {% endblock %}
