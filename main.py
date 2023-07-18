@@ -221,11 +221,11 @@ def output_analysis(dataset):
 @app.route("/cores/<dataset>/")
 def cores(dataset):
     """Page for finding cores in a format."""
-    usage_weight = corefinder.USAGE_WEIGHT_DEFAULT
-    target_edges = corefinder.TARGET_EDGES_DEFAULT
     return render_template("CoreFinder.html",
-                           usage_weight=usage_weight,
-                           target_edges=target_edges,
+                           usage_weight=corefinder.USAGE_WEIGHT_DEFAULT,
+                           target_edges=corefinder.TARGET_EDGES_DEFAULT,
+                           min_edges=corefinder.MIN_EDGES,
+                           max_edges=corefinder.MAX_EDGES,
                            dataset=dataset)
 
 
@@ -235,6 +235,10 @@ def find_cores(dataset):
 
     usage_weight = float(request.form["usage_weight"])
     target_edges = float(request.form["target_edges"])
+    if target_edges < corefinder.MIN_EDGES or target_edges > corefinder.MAX_EDGES:
+        return render_template("NumberEdgesError.html",
+                               min_edges=corefinder.MIN_EDGES,
+                               max_edges=corefinder.MAX_EDGES)
 
     md = get_md(dataset)
     cf = corefinder.CoreFinder(md, usage_weight, target_edges)

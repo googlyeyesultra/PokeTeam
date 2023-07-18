@@ -11,6 +11,8 @@ from collections import Counter
 
 TARGET_EDGES_DEFAULT = 100
 USAGE_WEIGHT_DEFAULT = 1
+MAX_EDGES = 500
+MIN_EDGES = 5
 
 
 class CoreFinder:
