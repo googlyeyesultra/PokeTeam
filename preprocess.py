@@ -99,7 +99,7 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
 
     if data["info"]["number of battles"] < MIN_BATTLES:
         raise ValidationError("Not enough battles.")
-    elif len(data["data"] < MIN_POKEMON):
+    elif len(data["data"]) < MIN_POKEMON:
         raise ValidationError("Not enough Pokemon.")
 
     # Quick filter. We pop "data", since we rename that to "pokemon" in our output.
@@ -124,49 +124,49 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
             if len(pokemon[poke]["Teammates"]) < MIN_TEAMMATES:
                 pokemon_to_remove.append(poke)
 
-        if not pokemon_to_remove:
-            break
-
         if len(pokemon) < MIN_POKEMON:
             raise ValidationError("Not enough Pokemon remaining after cleanup.")
 
-        indices = {}  # Build Pokemon name->number mapping.
-        for index, mon in enumerate(pokemon):
-            indices[mon] = index
-        data["indices"] = indices
+        if not pokemon_to_remove:
+            break
 
-        # Fix no move being an empty string.
-        for poke in pokemon:
-            if "" in pokemon[poke]["Moves"]:
-                pokemon[poke]["Moves"]["nomove"] = pokemon[poke]["Moves"].pop("")
+    indices = {}  # Build Pokemon name->number mapping.
+    for index, mon in enumerate(pokemon):
+        indices[mon] = index
+    data["indices"] = indices
 
-        # Calculate average pokemon per team. Typically a little less than 6.
-        # Smaller in some formats like 1v1.
-        # Can't just use number of battles since that isn't weighted by rating.
-        total_pokes = 0
-        total_team_members = 0
-        for poke in pokemon:
-            pokemon[poke]["count"] = sum(pokemon[poke]["Abilities"].values())  # Leave this unrounded to avoid div by 0.
-            total_pokes += pokemon[poke]["count"]
-            total_team_members += sum(pokemon[poke]["Teammates"].values())
+    # Fix no move being an empty string.
+    for poke in pokemon:
+        if "" in pokemon[poke]["Moves"]:
+            pokemon[poke]["Moves"]["nomove"] = pokemon[poke]["Moves"].pop("")
 
-        data["info"]["total_pokes"] = round(total_pokes, DIGITS_KEPT)
-        data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, DIGITS_KEPT)
-        data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], DIGITS_KEPT)
+    # Calculate average pokemon per team. Typically a little less than 6.
+    # Smaller in some formats like 1v1.
+    # Can't just use number of battles since that isn't weighted by rating.
+    total_pokes = 0
+    total_team_members = 0
+    for poke in pokemon:
+        pokemon[poke]["count"] = sum(pokemon[poke]["Abilities"].values())  # Leave this unrounded to avoid div by 0.
+        total_pokes += pokemon[poke]["count"]
+        total_team_members += sum(pokemon[poke]["Teammates"].values())
 
-        # Round values to reduce size of files.
-        # Also convert to percentages.
-        for poke in pokemon:
-            pokemon[poke]["usage"] = round(pokemon[poke]["usage"], DIGITS_KEPT)
-            pokemon[poke]["Moves"] = \
-                {m: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (m, data)
-                 in pokemon[poke]["Moves"].items()}
-            pokemon[poke]["Abilities"] = \
-                {a: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (a, data)
-                 in pokemon[poke]["Abilities"].items()}
-            pokemon[poke]["Items"] = \
-                {i: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (i, data)
-                 in pokemon[poke]["Items"].items()}
+    data["info"]["total_pokes"] = round(total_pokes, DIGITS_KEPT)
+    data["info"]["pokes_per_team"] = round(total_team_members / total_pokes + 1, DIGITS_KEPT)
+    data["info"]["num_teams"] = round(total_pokes / data["info"]["pokes_per_team"], DIGITS_KEPT)
+
+    # Round values to reduce size of files.
+    # Also convert to percentages.
+    for poke in pokemon:
+        pokemon[poke]["usage"] = round(pokemon[poke]["usage"], DIGITS_KEPT)
+        pokemon[poke]["Moves"] = \
+            {m: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (m, data)
+             in pokemon[poke]["Moves"].items()}
+        pokemon[poke]["Abilities"] = \
+            {a: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (a, data)
+             in pokemon[poke]["Abilities"].items()}
+        pokemon[poke]["Items"] = \
+            {i: round(data/pokemon[poke]["count"], DIGITS_KEPT) for (i, data)
+             in pokemon[poke]["Items"].items()}
 
     data["info"]["counters"] = os.path.isfile(raw_counters_file)  # Do we have counters data for this format?
     if data["info"]["counters"]:
