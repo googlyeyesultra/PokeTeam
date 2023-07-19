@@ -564,8 +564,6 @@ body {
 .no_counters::after {
     content: "(no counters)";
     font-size: .6em;
-    display: block;
-    text-align: center;
 }
 
 .dataTables_filter label::before, #filter_cores_label::before {
