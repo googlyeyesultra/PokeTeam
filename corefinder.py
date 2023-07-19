@@ -62,12 +62,18 @@ class CoreFinder:
             if len(x) >= 2:
                 cores.append(Counter([self.pokemon_names[y] for y in x]))
 
+        if len(cores) == 0:
+            return []  # Trying to do TSP will cause an error, so we return now.
+
         cores_graph = Graph()
         for index1, core1 in enumerate(cores):
             for index2, core2 in enumerate(cores[:index1]):
                 weight = (core1 - core2).total() + (core2 - core1).total()
                 cores_graph.add_edge(index1, index2, weight=weight)
 
+        # We use TSP so we can put similar cores next to each other in the display.
+        # The distance between cores is the number of things different between them.
+        # We build a path that minimizes the distance between cores.
         ordered_indices = tsp(cores_graph)  # This is a cycle. We want a shortest path, so we need to break an edge.
         longest_edge = max(range(len(ordered_indices)-1), key=lambda k: cores_graph[ordered_indices[k]][ordered_indices[k+1]]["weight"])
         ordered_indices = ordered_indices[longest_edge+1:-1] + ordered_indices[:longest_edge+1]
