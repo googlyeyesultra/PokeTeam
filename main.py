@@ -262,8 +262,10 @@ def request_update(key):
     if key != os.environ["UPDATE_PASS"]:
         abort(401)
 
-    update.update()
-    return "Update complete!"
+    if update.update():
+        return "Update complete!"
+    else:
+        return "Update failed - update already in progress."
 
 
 if __name__ == "__main__":

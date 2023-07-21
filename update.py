@@ -13,16 +13,25 @@ import preprocess
 from build_speed_tiers import build_speed_tiers
 from file_constants import *
 import subprocess
+import threading
 from datetime import datetime
 
 STATS_URL = "https://www.smogon.com/stats/"
+
+update_lock = threading.Lock()
 
 
 def update():
     """Do whole update procedure.
 
     Delete existing files, download new ones, preprocess and validate.
+
+    Returns True if updated succeeded, False if it failed due to an update already being underway.
     """
+    if not update_lock.acquire(blocking=False):
+        print("Failed to acquire lock to update.")
+        return False
+
     print("Update started.")
     date = _download_data()
     print("Data downloaded.")
@@ -103,6 +112,8 @@ def update():
         bucket.upload_file(file.path, file.name)
 
     print("Update complete!")
+    update_lock.release()
+    return True
 
 
 def _download_data():
