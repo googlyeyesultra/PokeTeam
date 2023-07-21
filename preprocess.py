@@ -119,7 +119,7 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
                                           in pokemon[poke]["Teammates"].items()
                                           if t in pokemon and data > 0}
 
-            # Empty teammate lists create issues, so we have to remove that mon.
+            # Empty teammate lists create issues, so we have to remove that poke.
             # Then after that's gone, we need to go back and remove any references to it.
             if len(pokemon[poke]["Teammates"]) < MIN_TEAMMATES:
                 pokemon_to_remove.append(poke)
@@ -131,8 +131,8 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
             break
 
     indices = {}  # Build Pokemon name->number mapping.
-    for index, mon in enumerate(pokemon):
-        indices[mon] = index
+    for index, poke in enumerate(pokemon):
+        indices[poke] = index
     data["indices"] = indices
 
     # Fix no move being an empty string.
@@ -173,32 +173,32 @@ def prepare_files(json_file, raw_counters_file, threat_file, teammate_file):
         with open(raw_counters_file, "r", encoding="utf-8") as raw_c:
             raw_c_data = json.load(raw_c)
         threat_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
-        for index, mon in enumerate(pokemon):
-            for column, c_mon in enumerate(pokemon):
-                threat_matrix[index, column] = _threat_for_poke(pokemon, raw_c_data, c_mon, mon)
+        for index, poke in enumerate(pokemon):
+            for column, c_poke in enumerate(pokemon):
+                threat_matrix[index, column] = _threat_for_poke(pokemon, raw_c_data, c_poke, poke)
 
         with open(threat_file, "wb") as file:
             np.save(file, threat_matrix)
 
     team_matrix = np.empty((len(pokemon), len(pokemon)), dtype=np.single)
-    for index, mon in enumerate(pokemon):
-        for column, c_mon in enumerate(pokemon):
-            if c_mon not in pokemon[mon]["Teammates"]:
+    for index, poke in enumerate(pokemon):
+        for column, c_poke in enumerate(pokemon):
+            if c_poke not in pokemon[poke]["Teammates"]:
                 team_matrix[index, column] = 0
             else:
-                # In the normal case, we use #times they both occur / (#times the first mon occurs - #times they both occur)
+                # In the normal case, we use #times they both occur / (#times the first poke occurs - #times they both occur)
                 # This has some good properties - if they never occur together, we get 0, and if they always occur together, we get infinity.
                 # Unfortunately, if Pokemon can occur multiple times, the denominator can be negative,
                 # so we add the number of times the teammate occurs with itself.
-                c_and_c = pokemon[c_mon]["Teammates"][c_mon] if c_mon in pokemon[c_mon]["Teammates"] else 0
-                num = pokemon[mon]["Teammates"][c_mon]
-                denom = pokemon[mon]["count"] - num + c_and_c
+                c_and_c = pokemon[c_poke]["Teammates"][c_poke] if c_poke in pokemon[c_poke]["Teammates"] else 0
+                num = pokemon[poke]["Teammates"][c_poke]
+                denom = pokemon[poke]["count"] - num + c_and_c
                 if denom <= 0:
                     team_matrix[index, column] = np.inf
                 else:
                     # We also scale by usage. Pokemon with high usage would otherwise show up as teammates for everything,
                     # and the usage is already taken into account via the usage score.
-                    team_matrix[index, column] = num / denom / pokemon[c_mon]["usage"]
+                    team_matrix[index, column] = num / denom / pokemon[c_poke]["usage"]
 
     with open(teammate_file, "wb") as file:
         np.save(file, team_matrix)

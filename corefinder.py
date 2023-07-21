@@ -58,7 +58,7 @@ class CoreFinder:
         """
         cores = []
         for x in clique.find_cliques(self.graph):
-            # One mon is not a core.
+            # One poke is not a core.
             if len(x) >= 2:
                 cores.append(Counter([self.pokemon_names[y] for y in x]))
 
