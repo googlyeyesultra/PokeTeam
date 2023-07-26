@@ -19,7 +19,7 @@
 {%- endmacro %}
 
 {% macro move_link(move, dataset, dex=False) -%}
-<a {% if dex %}title="{{dex.moves[move]['type']}} | {{dex.moves[move]['category']}}{% if dex.moves[move]['power'] is integer %} | {{dex.moves[move]['power']}} Power{% endif %} | {{dex.moves[move]['short_desc']}}"{% endif %} href="{{url_for('display_move', dataset=dataset, move=move)}}">{{move}}</a>
+<a {% if dex %}title="{{dex.moves[move]['type']}} | {{dex.moves[move]['category']}}{% if dex.moves[move]['power'] is integer %} | {{dex.moves[move]['power']}} Power{% endif %}{% if dex.moves[move]['accuracy'] is integer %} | {{dex.moves[move]['accuracy']}}%{% endif %} | {{dex.moves[move]['short_desc']}}"{% endif %} href="{{url_for('display_move', dataset=dataset, move=move)}}">{{move}}</a>
 {%- endmacro %}
 
 {% macro abil_link(abil, dataset, dex=False) -%}
