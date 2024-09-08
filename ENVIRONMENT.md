@@ -9,7 +9,7 @@ This allows for stdout/stderr to be dumped immediately, preventing error message
 This sets the password for the update url (accessed at /update/???).
 
 #### S3_ACCESS_KEY, S3_SECRET_KEY, S3_ENDPOINT
-These are needed for storing and fetching data in a persistant fashion.
+These are needed for storing and fetching data in a persistent fashion.
 
 #### BUCKET
 Name of the bucket in S3.
